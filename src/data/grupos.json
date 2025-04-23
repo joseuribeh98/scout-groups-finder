@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "nombre": "Grupo Scout San Jorge",
+        "direccion": "Calle 5 #10-15, Cali",
+        "latitud": 3.4516,
+        "longitud": -76.5320,
+        "telefono": "+57 300 123 4567",
+        "email": "sanjorge@scouts.org.co",
+        "sitioWeb": "https://www.scouts.org.co/sanjorge",
+        "horarios": "Sábados de 2:00pm a 5:00pm",
+        "descripcion": "Fundado en 1980, el Grupo Scout San Jorge ofrece programas para todas las ramas: Lobatos, Scouts, Rovers y Caminantes."
+    },
+    {
+        "id": 2,
+        "nombre": "Grupo Scout Palmira",
+        "direccion": "Carrera 15 #25-30, Palmira",
+        "latitud": 3.5394,
+        "longitud": -76.3036,
+        "telefono": "+57 310 987 6543",
+        "email": "palmira@scouts.org.co",
+        "sitioWeb": "https://www.scouts.org.co/palmira",
+        "horarios": "Domingos de 9:00am a 12:00pm",
+        "descripcion": "Especialistas en actividades al aire libre y conservación ambiental. Nuestro grupo enfatiza la educación ecológica."
+    }
+]
