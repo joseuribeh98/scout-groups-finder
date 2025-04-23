@@ -2,14 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Estilos personalizados */
 @layer components {
   .scout-btn {
-    @apply bg-scout-blue text-white px-4 py-2 rounded-md hover:bg-opacity-90 transition-all;
+    @apply bg-scout-purple text-white px-4 py-2 rounded-md hover:bg-scout-dark transition-all;
   }
 
   .scout-card {
     @apply bg-white rounded-lg shadow-md p-4 border border-gray-200;
   }
+}
+
+/* Para los checkbox */
+.form-checkbox {
+  @apply rounded border-gray-300 text-scout-purple focus:ring-scout-purple;
 }
 
 /* Ajustes para Leaflet */
@@ -26,6 +32,15 @@
   @apply p-2 m-0;
 }
 
-.scout-popup .leaflet-popup-tip-container {
-  @apply text-white;
+.scout-popup .leaflet-popup-tip {
+  @apply bg-white;
+}
+
+/* Estilos para links */
+a {
+  @apply transition-colors;
+}
+
+a.text-blue-600 {
+  @apply text-scout-purple hover:text-scout-dark;
 }
