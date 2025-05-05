@@ -3,7 +3,7 @@
     "id": 815,
     "nombre": "Fénix Escarlata",
     "ciudad": "Cali",
-    "direccion": "Parque del Amor Avenida 6ta con calle 70",
+    "direccion": "Parque del Amor. Avenida 6ta con calle 70",
     "horarios": "Sábados de 2-6 PM",
     "jefe": "Lina María Cifuentes Garcia",
     "telefono": "3187656949",
@@ -13,14 +13,14 @@
     "ramas": ["Manada", "Tropa", "Comunidad", "Clan"],
     "instagram": "https://www.instagram.com/fenix_escarlata_815",
     "facebook": "",
-    "latitud": 3.477183,
-    "longitud": -76.527341
+    "latitud": 3.493053,
+    "longitud": -76.520585
   },
   {
     "id": 662,
     "nombre": "León Blanco",
     "ciudad": "Palmira",
-    "direccion": "Colegio Fray Luis Amigó calle 41 No 48-00",
+    "direccion": "Colegio Fray Luis Amigó. Calle 41 #48-00",
     "horarios": "Sábados de 2 a 6 p.m.",
     "jefe": "Katherine Giraldo Arias",
     "telefono": "3164929123",
@@ -30,8 +30,8 @@
     "ramas": ["Manada", "Tropa", "Comunidad", "Clan"],
     "instagram": "https://www.instagram.com/gruposcoutleonblanco",
     "facebook": "https://www.facebook.com/share/15qF28HrdA",
-    "latitud": 3.536664,
-    "longitud": -76.304115
+    "latitud": 3.536616,
+    "longitud": -76.31662
   },
   {
     "id": 928,
@@ -47,8 +47,8 @@
     "ramas": ["Manada", "Tropa", "Comunidad"],
     "instagram": "https://www.instagram.com/gruposcoutsalesiano928",
     "facebook": "",
-    "latitud": 3.448705,
-    "longitud": -76.533705
+    "latitud": 3.442695,
+    "longitud": -76.533868
   },
   {
     "id": 823,
@@ -64,8 +64,8 @@
     "ramas": ["Manada", "Tropa", "Comunidad", "Clan"],
     "instagram": "https://www.instagram.com/823jaguares",
     "facebook": "https://www.facebook.com/GrupoScout823JaguaresCaliColombia",
-    "latitud": 3.467595,
-    "longitud": -76.516068
+    "latitud": 3.471808,
+    "longitud": -76.497181
   },
   {
     "id": 938,
@@ -81,8 +81,8 @@
     "ramas": ["Manada", "Tropa", "Comunidad", "Clan"],
     "instagram": "https://www.instagram.com/gruposcout938",
     "facebook": "",
-    "latitud": 3.339673,
-    "longitud": -76.535828
+    "latitud": 3.3429132,
+    "longitud": -76.5366428
   },
   {
     "id": 901,
@@ -98,8 +98,8 @@
     "ramas": ["Manada", "Tropa", "Comunidad", "Clan"],
     "instagram": "https://www.instagram.com/grupo1berchmans",
     "facebook": "",
-    "latitud": 3.34906,
-    "longitud": -76.536682
+    "latitud": 3.349023,
+    "longitud": -76.533957
   },
   {
     "id": 315,
@@ -107,16 +107,16 @@
     "ciudad": "Buga",
     "direccion": "Parque Biosaludable Buga. Calle 3 Este #9-92",
     "horarios": "Sábado 2:00 pm",
-    "jefe": "Fernando Torres",
-    "telefono": "3170846652",
-    "telefonoAlt": "3154020130",
+    "jefe": "Karen Arias",
+    "telefono": "3244908229",
+    "telefonoAlt": "",
     "email": "valle.grupo315@scout.org.co",
     "sitioWeb": "",
     "ramas": ["Manada", "Tropa", "Comunidad", "Clan"],
     "instagram": "https://www.instagram.com/aguilasdoradas315",
     "facebook": "https://www.facebook.com/wallace.aguilasdoradas",
-    "latitud": 3.899532,
-    "longitud": -76.299117
+    "latitud": 3.891845,
+    "longitud": -76.290028
   },
   {
     "id": 808,
@@ -132,8 +132,8 @@
     "ramas": ["Manada", "Tropa", "Comunidad"],
     "instagram": "",
     "facebook": "Grupo scout 808 Delfines",
-    "latitud": 3.468352,
-    "longitud": -76.518289
+    "latitud": 3.477667,
+    "longitud": -76.497274
   },
   {
     "id": 904,
@@ -149,8 +149,8 @@
     "ramas": ["Manada", "Tropa", "Comunidad"],
     "instagram": "https://www.instagram.com/gruposcoutmohwa904",
     "facebook": "https://www.facebook.com/share/g/19vymGHDR1",
-    "latitud": 3.420895,
-    "longitud": -76.541761
+    "latitud": 3.422331,
+    "longitud": -76.532107
   },
   {
     "id": 208,
@@ -166,8 +166,8 @@
     "ramas": ["Manada", "Tropa", "Comunidad", "Clan"],
     "instagram": "",
     "facebook": "Grupo scout 208 Baden Powell",
-    "latitud": 4.083271,
-    "longitud": -76.197495
+    "latitud": 4.096108,
+    "longitud": -76.199634
   },
   {
     "id": 607,
@@ -184,7 +184,7 @@
     "instagram": "https://www.instagram.com/rozoscout607",
     "facebook": "https://www.facebook.com/share/19sqotD4N1/",
     "latitud": 3.608983,
-    "longitud": -76.412613
+    "longitud": -76.38815
   },
   {
     "id": 828,
@@ -192,16 +192,16 @@
     "ciudad": "Cali",
     "direccion": "Calle 12 C Carrera 29 Parque Colseguros",
     "horarios": "Sabados 2y30 p.m. a 5:30 p.m.",
-    "jefe": "Jackelyn Rosero Cardenas",
-    "telefono": "3104524872",
+    "jefe": "Oscar Eduardo Parra",
+    "telefono": "3152284884",
     "telefonoAlt": "3005180937",
-    "email": "jaroscar@hotmail.com",
+    "email": "valle.grupo828@scout.org.co",
     "sitioWeb": "",
     "ramas": ["Manada", "Tropa", "Comunidad", "Clan"],
     "instagram": "https://www.instagram.com/gruposcout828yanaconas/",
     "facebook": "https://www.facebook.com/gruposcout828",
-    "latitud": 3.413813,
-    "longitud": -76.524778
+    "latitud": 3.427869,
+    "longitud": -76.52958
   },
   {
     "id": 117,
@@ -217,8 +217,8 @@
     "ramas": ["Manada", "Tropa", "Comunidad", "Clan"],
     "instagram": "https://www.instagram.com/gruposcout_117leones",
     "facebook": "https://www.facebook.com/share/1ATHJZ7jcs",
-    "latitud": 3.429047,
-    "longitud": -76.534211
+    "latitud": 3.422368,
+    "longitud": -76.51575
   },
   {
     "id": 123,
@@ -234,8 +234,8 @@
     "ramas": ["Manada", "Tropa", "Comunidad", "Clan"],
     "instagram": "https://www.instagram.com/condores_123",
     "facebook": "",
-    "latitud": 3.415695,
-    "longitud": -76.547015
+    "latitud": 3.402878,
+    "longitud": -76.533179
   },
   {
     "id": 411,
@@ -243,7 +243,7 @@
     "ciudad": "Cartago",
     "direccion": "Sede Scout Carrera 9A # 10A-51 B/ Palatino",
     "horarios": "Sábados 2:30 pm",
-    "jefe": "Quimbayas",
+    "jefe": "Carlos Arturo Quimbayas",
     "telefono": "3214635758",
     "telefonoAlt": "3104902907",
     "email": "carturgom@gmail.com",
@@ -251,8 +251,8 @@
     "ramas": ["Manada", "Tropa", "Comunidad", "Clan"],
     "instagram": "https://www.instagram.com/gruposcoutquimbayas_411",
     "facebook": "https://www.facebook.com/share/1BLLLZ5fLx",
-    "latitud": 4.746006,
-    "longitud": -75.913351
+    "latitud": 4.744738,
+    "longitud": -75.913164
   },
   {
     "id": 601,
@@ -268,8 +268,8 @@
     "ramas": ["Manada", "Tropa", "Comunidad", "Clan"],
     "instagram": "https://www.instagram.com/mafeking601colombia",
     "facebook": "",
-    "latitud": 3.536159,
-    "longitud": -76.310694
+    "latitud": 3.541669,
+    "longitud": -76.290389
   },
   {
     "id": 841,
@@ -285,7 +285,7 @@
     "ramas": ["Manada", "Tropa", "Comunidad"],
     "instagram": "https://www.instagram.com/samaguare_841",
     "facebook": "",
-    "latitud": 3.408517,
+    "latitud": 3.408866,
     "longitud": -76.349872
   },
   {
@@ -302,8 +302,8 @@
     "ramas": ["Cachorros", "Manada", "Tropa", "Comunidad", "Clan"],
     "instagram": "https://www.instagram.com/grupo.orion840",
     "facebook": "https://www.facebook.com/scouts840cali",
-    "latitud": 3.453095,
-    "longitud": -76.515868
+    "latitud": 3.455941,
+    "longitud": -76.507872
   },
   {
     "id": 816,
@@ -319,8 +319,8 @@
     "ramas": ["Manada", "Tropa", "Comunidad", "Clan"],
     "instagram": "",
     "facebook": "",
-    "latitud": 3.469249,
-    "longitud": -76.526856
+    "latitud": 3.460982,
+    "longitud": -76.535212
   },
   {
     "id": 909,
@@ -336,8 +336,8 @@
     "ramas": ["Manada", "Tropa", "Comunidad"],
     "instagram": "https://www.instagram.com/fundadores909",
     "facebook": "Grupo Scout 909 los fundadores",
-    "latitud": 3.403989,
-    "longitud": -76.550112
+    "latitud": 3.406291,
+    "longitud": -76.542204
   },
   {
     "id": 605,
@@ -353,8 +353,8 @@
     "ramas": ["Manada", "Tropa", "Comunidad", "Clan"],
     "instagram": "https://www.instagram.com/scoutjaguares605",
     "facebook": "https://www.facebook.com/share/18EMozBn3w/",
-    "latitud": 3.532842,
-    "longitud": -76.299721
+    "latitud": 3.526538,
+    "longitud": -76.287038
   },
   {
     "id": 809,
@@ -370,7 +370,7 @@
     "ramas": ["Manada", "Tropa", "Comunidad", "Clan"],
     "instagram": "",
     "facebook": "https://www.facebook.com/share/1MiLHYBSkw",
-    "latitud": 3.395362,
-    "longitud": -76.529456
+    "latitud": 3.469729,
+    "longitud": -76.517361
   }
 ]

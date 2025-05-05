@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Map from "./components/Map";
 import GroupInfo from "./components/GroupInfo";
-import gruposData from "./data/grupos.json";
 import {
   FiSearch,
   FiMapPin,
@@ -16,28 +15,43 @@ const RAMA_ORDER = ["Cachorros", "Manada", "Tropa", "Comunidad", "Clan"];
 function App() {
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [groups, setGroups] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [selectedRamas, setSelectedRamas] = useState({});
 
   useEffect(() => {
-    setGroups(gruposData);
+    const fetchGrupos = async () => {
+      try {
+        const response = await fetch("./grupos.json");
+        if (!response.ok) throw new Error("Error al cargar los datos");
+        const data = await response.json();
+        setGroups(data);
 
-    // Inicializar selectedRamas con todas las ramas posibles
-    const allRamas = new Set();
-    gruposData.forEach((group) => {
-      group.ramas.forEach((rama) => allRamas.add(rama));
-    });
+        // Inicializar selectedRamas con todas las ramas posibles
+        const allRamas = new Set();
+        data.forEach((group) => {
+          group.ramas.forEach((rama) => allRamas.add(rama));
+        });
 
-    const initialRamas = {};
-    RAMA_ORDER.forEach((rama) => {
-      if (allRamas.has(rama)) {
-        initialRamas[rama] = false; // Inicialmente ninguna rama está seleccionada
+        const initialRamas = {};
+        RAMA_ORDER.forEach((rama) => {
+          if (allRamas.has(rama)) {
+            initialRamas[rama] = false;
+          }
+        });
+
+        setSelectedRamas(initialRamas);
+        setIsLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setIsLoading(false);
       }
-    });
+    };
 
-    setSelectedRamas(initialRamas);
+    fetchGrupos();
   }, []);
 
   // Extraer lista única de ciudades
@@ -104,6 +118,21 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      {isLoading && (
+        <div className="fixed inset-0 bg-white bg-opacity-90 flex items-center justify-center z-50">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-scout-purple mx-auto"></div>
+            <p className="mt-2 text-gray-600">Cargando grupos...</p>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+          Error al cargar los datos: {error}
+        </div>
+      )}
+
       <header className="bg-scout-purple text-white py-4 shadow-md">
         <div className="container mx-auto px-4">
           <h1 className="text-2xl md:text-3xl font-bold text-center">

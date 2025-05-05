@@ -3,7 +3,6 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
-  base: "/scout-groups-finder/",
   build: {
     outDir: "dist",
     assetsDir: "assets",
@@ -14,4 +13,5 @@ export default defineConfig({
       },
     },
   },
+  publicDir: "public",
 });
