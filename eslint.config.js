@@ -1,17 +1,22 @@
 import js from "@eslint/js";
-import globals from "globals";
-import pluginReact from "eslint-plugin-react";
 import { defineConfig } from "eslint/config";
+import astro from "eslint-plugin-astro";
+import globals from "globals";
+import tseslint from "typescript-eslint";
 
 export default defineConfig([
   {
-    files: ["**/*.{js,mjs,cjs,jsx}"],
-    plugins: { js },
-    extends: ["js/recommended"],
+    ignores: [
+      "dist/",
+      ".astro/",
+      ".vercel/",
+      "node_modules/",
+      "playwright-report/",
+      "test-results/",
+    ],
   },
-  {
-    files: ["**/*.{js,mjs,cjs,jsx}"],
-    languageOptions: { globals: globals.browser },
-  },
-  pluginReact.configs.flat.recommended,
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
+  ...astro.configs.recommended,
+  { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
 ]);

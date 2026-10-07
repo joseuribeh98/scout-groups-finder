@@ -1,0 +1,23 @@
+---
+import { RAMAS, ramaLabel, type RamaId } from "@/data/ramas";
+import type { Lang } from "@/i18n/lang";
+import { translator } from "@/i18n/ui";
+
+interface Props {
+  id: RamaId;
+  lang: Lang;
+  showAge?: boolean;
+}
+const { id, lang, showAge = false } = Astro.props;
+const t = translator(lang);
+const rama = RAMAS[id];
+---
+
+<span class="rama-chip" data-rama={id}>
+  {ramaLabel(id, lang)}
+  {showAge && (
+    <span class="font-normal">
+      · {t("finder.ramaAge", { min: rama.edadMin, max: rama.edadMax })}
+    </span>
+  )}
+</span>

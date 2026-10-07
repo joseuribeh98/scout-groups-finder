@@ -1,0 +1,23 @@
+---
+import AboutEn from "@/components/AboutEn.astro";
+import AboutEs from "@/components/AboutEs.astro";
+import type { Lang } from "@/i18n/lang";
+import { pagePath } from "@/i18n/routes";
+import { translator } from "@/i18n/ui";
+import Base from "@/layouts/Base.astro";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = translator(lang);
+---
+
+<Base
+  lang={lang}
+  path={pagePath(lang, "about")}
+  title={t("about.metaTitle")}
+  description={t("about.metaDescription")}
+>
+  {lang === "es" ? <AboutEs /> : <AboutEn />}
+</Base>

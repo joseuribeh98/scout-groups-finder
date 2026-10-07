@@ -1,0 +1,23 @@
+---
+import type { Lang } from "@/i18n/lang";
+import { alternatePath } from "@/i18n/routes";
+import { translator } from "@/i18n/ui";
+
+interface Props {
+  lang: Lang;
+  path: string;
+}
+const { lang, path } = Astro.props;
+const t = translator(lang);
+const target: Lang = lang === "es" ? "en" : "es";
+---
+
+<a
+  href={alternatePath(path, target)}
+  hreflang={target}
+  lang={target}
+  aria-label={t("lang.switchLabel")}
+  class="rounded-full px-3 py-2 text-sm font-semibold text-ink-soft hover:bg-brand-soft hover:text-ink"
+>
+  {t("lang.switch")}
+</a>

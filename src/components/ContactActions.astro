@@ -1,0 +1,113 @@
+---
+import type { Grupo } from "@/data/schema";
+import { REGION } from "@/data/region";
+import type { Lang } from "@/i18n/lang";
+import { translator } from "@/i18n/ui";
+import { directionsUrl, mailtoUrl, wazeUrl, whatsappUrl } from "@/lib/contact";
+
+interface Props {
+  grupo: Grupo;
+  lang: Lang;
+}
+const { grupo, lang } = Astro.props;
+const t = translator(lang);
+const vars = { id: grupo.id, nombre: grupo.nombre };
+const { email, whatsapp, instagram, facebook, web } = grupo.contacto;
+const hasDirectContact = Boolean(whatsapp || email || instagram || facebook || web);
+const primary = "flex items-center justify-center gap-2 rounded-xl px-4 py-3 font-semibold";
+const secondary = `${primary} border border-line bg-surface hover:bg-brand-soft`;
+---
+
+<div class="grid gap-3">
+  {whatsapp && (
+    <a
+      class={`${primary} bg-whatsapp text-white dark:text-canvas`}
+      href={whatsappUrl(whatsapp, t("grupo.whatsappMsg", vars))}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-action="whatsapp"
+    >
+      {t("grupo.whatsapp")}
+    </a>
+  )}
+  {email && (
+    <a
+      class={`${primary} bg-brand text-on-brand`}
+      href={mailtoUrl(email, t("grupo.emailSubject", vars))}
+      data-action="email"
+    >
+      {t("grupo.email")}
+    </a>
+  )}
+  {!hasDirectContact && (
+    <p class="rounded-xl bg-brand-soft p-4 text-sm">
+      {t("grupo.noContact")}{" "}
+      <a class="font-semibold underline" href={REGION.web} data-action="region">
+        {t("grupo.contactRegion")}
+      </a>
+    </p>
+  )}
+  <div class="grid grid-cols-2 gap-3">
+    <a
+      class={secondary}
+      href={directionsUrl(grupo.ubicacion)}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-action="directions"
+    >
+      {t("grupo.directions")}
+    </a>
+    <a
+      class={secondary}
+      href={wazeUrl(grupo.ubicacion)}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-action="waze"
+    >
+      {t("grupo.waze")}
+    </a>
+  </div>
+  {(instagram || facebook || web) && (
+    <ul class="flex flex-wrap gap-2">
+      {instagram && (
+        <li>
+          <a
+            class={secondary}
+            href={instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-action="instagram"
+          >
+            {t("grupo.instagram")}
+          </a>
+        </li>
+      )}
+      {facebook && (
+        <li>
+          <a
+            class={secondary}
+            href={facebook}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-action="facebook"
+          >
+            {t("grupo.facebook")}
+          </a>
+        </li>
+      )}
+      {web && (
+        <li>
+          <a
+            class={secondary}
+            href={web}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-action="web"
+          >
+            {t("grupo.web")}
+          </a>
+        </li>
+      )}
+    </ul>
+  )}
+</div>

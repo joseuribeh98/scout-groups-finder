@@ -1,0 +1,68 @@
+---
+import RamaChip from "@/components/RamaChip.astro";
+import { RAMA_IDS, RAMAS } from "@/data/ramas";
+import { REGION } from "@/data/region";
+import { pagePath } from "@/i18n/routes";
+
+const descripcion = {
+  cachorros: "Descubren el mundo jugando y explorando, acompañados por adultos voluntarios.",
+  lobatos: "Viven la aventura en Manada, inspirados en El libro de la selva.",
+  scouts: "Aprenden en patrullas, al aire libre, a cuidarse, cuidar a otros y a la naturaleza.",
+  nomadas: "Asumen retos personales y desarrollan proyectos con su comunidad.",
+  rovers: "Orientan su vida al servicio y construyen su proyecto de vida.",
+} as const;
+---
+
+<div class="grid gap-8">
+  <header class="grid gap-3">
+    <h1 class="text-4xl font-extrabold text-brand">¿Qué es ser scout?</h1>
+    <p class="text-lg text-ink-soft">
+      El Movimiento Scout es un movimiento educativo para niños, niñas y jóvenes. A través del
+      juego, la vida al aire libre y el servicio, les ayuda a crecer como personas autónomas,
+      solidarias y comprometidas con su comunidad. En Colombia lo lidera la Asociación Scouts de
+      Colombia; en el Valle del Cauca, la Región Valle.
+    </p>
+  </header>
+  <section class="grid gap-4">
+    <h2 class="text-2xl font-bold">Las ramas por edad</h2>
+    <ul class="grid gap-4 sm:grid-cols-2">
+      {RAMA_IDS.map((id) => (
+        <li class="rounded-2xl border border-line bg-surface p-5">
+          <h3 class="text-xl font-bold">{RAMAS[id].nombre}</h3>
+          <p class="mt-1">
+            <RamaChip id={id} lang="es" showAge />
+          </p>
+          <p class="mt-3 text-ink-soft">{descripcion[id]}</p>
+        </li>
+      ))}
+    </ul>
+    <p class="text-sm text-ink-soft">
+      Los adultos también pueden sumarse como voluntarios en los grupos.
+    </p>
+  </section>
+  <section class="grid gap-3">
+    <h2 class="text-2xl font-bold">¿Cómo inscribirse?</h2>
+    <ol class="grid list-decimal gap-2 pl-6">
+      <li>
+        Encuentra un grupo cerca de tu casa en el{" "}
+        <a class="font-semibold text-brand underline" href={pagePath("es", "home")}>
+          buscador
+        </a>
+        .
+      </li>
+      <li>Escríbele al grupo y pregunta si puedes asistir a una reunión para conocerlo.</li>
+      <li>El grupo te orientará sobre el registro en la Asociación Scouts de Colombia.</li>
+    </ol>
+  </section>
+  <p class="text-sm text-ink-soft">
+    Más información en{" "}
+    <a class="underline" href={REGION.nacional}>
+      scout.org.co
+    </a>{" "}
+    y{" "}
+    <a class="underline" href={REGION.web}>
+      vallescout.org.co
+    </a>
+    .
+  </p>
+</div>

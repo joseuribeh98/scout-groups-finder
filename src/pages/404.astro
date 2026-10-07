@@ -1,0 +1,38 @@
+---
+import { translator } from "@/i18n/ui";
+import Base from "@/layouts/Base.astro";
+
+const es = translator("es");
+const en = translator("en");
+---
+
+<Base
+  lang="es"
+  path="/404/"
+  title={`${es("notFound.title")} · ${en("notFound.title")}`}
+  description={es("notFound.body")}
+  noindex
+>
+  <div class="grid gap-10 py-10 text-center">
+    <section class="grid gap-3">
+      <h1 class="text-4xl font-extrabold text-brand">{es("notFound.title")}</h1>
+      <p class="text-ink-soft">{es("notFound.body")}</p>
+      <a
+        href="/"
+        class="justify-self-center rounded-xl bg-brand px-5 py-3 font-semibold text-on-brand"
+      >
+        {es("notFound.cta")}
+      </a>
+    </section>
+    <section class="grid gap-3" lang="en">
+      <h2 class="text-2xl font-bold">{en("notFound.title")}</h2>
+      <p class="text-ink-soft">{en("notFound.body")}</p>
+      <a
+        href="/en/"
+        class="justify-self-center rounded-xl border border-line px-5 py-3 font-semibold"
+      >
+        {en("notFound.cta")}
+      </a>
+    </section>
+  </div>
+</Base>

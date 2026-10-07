@@ -1,61 +1,50 @@
-# 🧭 Mapa de Grupos Scout del Valle del Cauca
+# Buscador de Grupos Scout · Región Valle
 
-Aplicación web interactiva que muestra la ubicación y detalles de contacto de los Grupos Scout en el Valle del Cauca, Colombia.
+[![CI](https://github.com/joseuribeh98/scout-groups-finder/actions/workflows/ci.yml/badge.svg)](https://github.com/joseuribeh98/scout-groups-finder/actions/workflows/ci.yml)
 
-## 🚀 Características
+Encuentra el grupo scout más cercano en el Valle del Cauca (Colombia), mira cuándo se reúne y contáctalo.
 
-- Mapa interactivo con la ubicación de cada grupo scout
-- Información detallada de contacto
-- Diseño responsivo para dispositivos móviles y de escritorio
-- Interfaz intuitiva construida con React y Tailwind CSS
+**→ [buscador.vallescout.org.co](https://buscador.vallescout.org.co)**
 
-## 💻 Tecnologías utilizadas
+![Buscador con lista de grupos y mapa](docs/screenshot.png)
 
-- React
-- Vite
-- Tailwind CSS
-- React Leaflet (mapas)
+## Qué hace
 
-## 🛠️ Instalación y uso
+- Búsqueda por nombre, número, municipio o dirección, sin importar tildes.
+- Filtros por municipio y por rama (Cachorros, Lobatos, Scouts, Nómadas Scout, Rovers), con edades oficiales.
+- "Cerca de mí": ordena los grupos por distancia.
+- Mapa con agrupación de pines, sincronizado con la lista.
+- Una ficha con enlace propio por grupo, con WhatsApp, correo, cómo llegar y redes.
+- En español e inglés, con tema claro y oscuro, probado con axe (WCAG 2.2 AA). La lista de grupos y las fichas se generan en el servidor y se leen sin JavaScript; búsqueda, filtros y mapa lo requieren.
 
-1. Clona este repositorio:
-   \`\`\`bash
-   git clone https://github.com/joseuribeh98/scout-groups-finder
-   cd grupos-scout-valle
-   \`\`\`
+## Stack
 
-2. Instala las dependencias:
-   \`\`\`bash
-   npm install
-   \`\`\`
+[Astro](https://astro.build) (salida estática) · [Preact](https://preactjs.com) (una isla para el buscador) · TypeScript estricto · Tailwind CSS 4 · Leaflet + OpenStreetMap · Zod · Vitest · Playwright + axe · Vercel.
 
-3. Inicia el servidor de desarrollo:
-   \`\`\`bash
-   npm run dev
-   \`\`\`
+Decisiones de diseño: [`docs/superpowers/specs/2026-10-07-buscador-refactor-design.md`](docs/superpowers/specs/2026-10-07-buscador-refactor-design.md).
 
-4. Para generar los archivos de producción:
-   \`\`\`bash
-   npm run build
-   \`\`\`
+## Desarrollo
 
-## 📁 Estructura del proyecto
+Requiere Node 22.12 o superior.
 
-- \`/src\`: Código fuente
-  - \`/components\`: Componentes React
-  - \`/data\`: Datos de los grupos scout
-- \`/public\`: Archivos estáticos
+```bash
+npm install
+npm run dev          # http://localhost:4321
+npm test             # tests unitarios
+npm run test:e2e     # tests end-to-end (instala antes: npx playwright install chromium)
+npm run build        # sitio estático en dist/
+```
 
-## 🤝 Contribuciones
+## Actualizar la información de un grupo
 
-Las contribuciones son bienvenidas. Si deseas colaborar:
+Todos los datos están en [`src/data/grupos.json`](src/data/grupos.json). Edita, haz commit y push: CI valida los datos y Vercel publica. Guía paso a paso: [`docs/actualizar-grupos.md`](docs/actualizar-grupos.md).
 
-1. Haz un fork del repositorio
-2. Crea una rama para tu característica (\`git checkout -b feature/nueva-funcionalidad\`)
-3. Realiza tus cambios y haz commit (\`git commit -m 'Añade nueva funcionalidad'\`)
-4. Sube tus cambios (\`git push origin feature/nueva-funcionalidad\`)
-5. Abre un Pull Request
+Por privacidad, el sitio solo publica canales institucionales (correos `@scout.org.co`), redes del grupo y números de WhatsApp autorizados por cada grupo. El esquema rechaza cualquier otro campo.
 
-## 📃 Licencia
+## English
 
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
+Scout group finder for the Valle del Cauca region of the Scouts of Colombia Association. Static Astro site with a single Preact island, bilingual (ES/EN), tested with axe (WCAG 2.2 AA), with validated data and no personal information. See the sections above for commands; group data lives in `src/data/grupos.json`.
+
+## Licencia
+
+Código bajo licencia [MIT](LICENSE). Los nombres, logos y emblemas de Scouts de Colombia y de la Región Valle pertenecen a sus titulares.

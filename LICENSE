@@ -1,15 +1,29 @@
-Copyright (c) 2025 Jose Uribe. All rights reserved.
+MIT License
 
-This source code is published for portfolio and evaluation purposes only.
-It is source-available, not open source.
+Copyright (c) 2025-2026 Jose Uribe
 
-You may read this code, and fork this repository within GitHub to the extent
-permitted by the GitHub Terms of Service.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-You may not use, copy, modify, merge, publish, distribute, sublicense or sell
-copies of this software, in whole or in part, nor create derivative works from
-it, without prior written permission from the copyright holder.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-No trademark, patent or other right is granted by this notice.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
-Permission requests: jose@overnatic.us
+---
+
+Trademark notice: The MIT License applies to the source code only. The names,
+logos and emblems of the Asociación Scouts de Colombia and its Valle Region,
+including the files in src/assets/ and public/favicon.png and
+public/apple-touch-icon.png, belong to their respective owners and are not
+covered by this license.

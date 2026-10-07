@@ -1,0 +1,44 @@
+---
+import { Image } from "astro:assets";
+import logo from "@/assets/logo-region-valle.png";
+import logoWhite from "@/assets/logo-region-valle-white.png";
+import LangSwitch from "@/components/LangSwitch.astro";
+import ThemeToggle from "@/components/ThemeToggle.astro";
+import type { Lang } from "@/i18n/lang";
+import { pagePath } from "@/i18n/routes";
+import { translator } from "@/i18n/ui";
+
+interface Props {
+  lang: Lang;
+  path: string;
+}
+const { lang, path } = Astro.props;
+const t = translator(lang);
+const about = pagePath(lang, "about");
+---
+
+<header class="sticky top-0 z-[1100] border-b border-line bg-surface/95 backdrop-blur">
+  <div class="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4">
+    <a href={pagePath(lang, "home")} aria-label={t("nav.home")} class="shrink-0">
+      <Image src={logo} alt="" height={40} class="h-10 w-auto dark:hidden" loading="eager" />
+      <Image
+        src={logoWhite}
+        alt=""
+        height={40}
+        class="hidden h-10 w-auto dark:block"
+        loading="eager"
+      />
+    </a>
+    <nav class="ml-auto flex items-center gap-1" aria-label={t("nav.main")}>
+      <a
+        href={about}
+        aria-current={path === about ? "page" : undefined}
+        class="hidden rounded-full px-3 py-2 text-sm font-semibold text-ink-soft hover:bg-brand-soft hover:text-ink aria-[current=page]:text-brand sm:block"
+      >
+        {t("nav.about")}
+      </a>
+      <LangSwitch lang={lang} path={path} />
+      <ThemeToggle lang={lang} />
+    </nav>
+  </div>
+</header>

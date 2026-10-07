@@ -1,0 +1,42 @@
+---
+import type { Lang } from "@/i18n/lang";
+import { pagePath } from "@/i18n/routes";
+import { translator } from "@/i18n/ui";
+import { REGION, REPO_URL } from "@/data/region";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = translator(lang);
+const link = "underline decoration-line underline-offset-4 hover:text-ink hover:decoration-current";
+---
+
+<footer class="border-t border-line bg-surface">
+  <div class="mx-auto grid max-w-7xl gap-3 px-4 py-8 text-sm text-ink-soft">
+    <p>{t("footer.about")}</p>
+    <ul class="flex flex-wrap gap-x-5 gap-y-2">
+      <li>
+        <a class={link} href={pagePath(lang, "about")}>
+          {t("nav.about")}
+        </a>
+      </li>
+      <li>
+        <a class={link} href={REGION.web}>
+          {t("footer.region")}
+        </a>
+      </li>
+      <li>
+        <a class={link} href={REGION.nacional}>
+          {t("footer.national")}
+        </a>
+      </li>
+      <li>
+        <a class={link} href={REPO_URL}>
+          {t("footer.source")}
+        </a>
+      </li>
+    </ul>
+    <p class="text-xs">{t("footer.trademark")}</p>
+  </div>
+</footer>

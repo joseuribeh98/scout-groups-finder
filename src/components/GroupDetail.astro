@@ -1,0 +1,68 @@
+---
+import ContactActions from "@/components/ContactActions.astro";
+import MiniMap from "@/components/map/MiniMap";
+import RamaChip from "@/components/RamaChip.astro";
+import type { Grupo } from "@/data/schema";
+import { formatMonth } from "@/i18n/format";
+import type { Lang } from "@/i18n/lang";
+import { pagePath } from "@/i18n/routes";
+import { translator } from "@/i18n/ui";
+import { directionsUrl } from "@/lib/contact";
+import { formatReunion } from "@/lib/schedule";
+
+interface Props {
+  grupo: Grupo;
+  lang: Lang;
+}
+const { grupo, lang } = Astro.props;
+const t = translator(lang);
+const lugar = grupo.localidad ? `${grupo.localidad}, ${grupo.municipio}` : grupo.municipio;
+---
+
+<article class="grid gap-8 md:grid-cols-[1fr_20rem]">
+  <div class="grid content-start gap-6">
+    <a href={pagePath(lang, "home")} class="text-sm font-semibold text-brand hover:underline">
+      ← {t("grupo.back")}
+    </a>
+    <header>
+      <p class="text-sm font-semibold tracking-wide text-ink-soft uppercase">
+        {t("grupo.number", { id: grupo.id })} · {lugar}
+      </p>
+      <h1 class="mt-1 text-4xl font-extrabold text-balance text-brand">{grupo.nombre}</h1>
+    </header>
+    <dl class="grid gap-4">
+      <div>
+        <dt class="text-sm font-semibold text-ink-soft">{t("grupo.meets")}</dt>
+        <dd class="text-lg tabular-nums">{formatReunion(grupo.reunion, lang)}</dd>
+      </div>
+      <div>
+        <dt class="text-sm font-semibold text-ink-soft">{t("grupo.address")}</dt>
+        <dd class="text-lg">{grupo.direccion}</dd>
+      </div>
+      <div>
+        <dt class="text-sm font-semibold text-ink-soft">{t("grupo.ramas")}</dt>
+        <dd class="mt-2 flex flex-wrap gap-2">
+          {grupo.ramas.map((id) => (
+            <RamaChip id={id} lang={lang} showAge />
+          ))}
+        </dd>
+      </div>
+    </dl>
+    <MiniMap
+      client:visible
+      lat={grupo.ubicacion.lat}
+      lng={grupo.ubicacion.lng}
+      label={t("grupo.mapLabel", { id: grupo.id, nombre: grupo.nombre })}
+      errorText={t("map.error")}
+      fallbackHref={directionsUrl(grupo.ubicacion)}
+      fallbackText={t("grupo.directions")}
+    />
+  </div>
+  <aside class="grid content-start gap-4">
+    <h2 class="text-lg font-bold">{t("grupo.contact")}</h2>
+    <ContactActions grupo={grupo} lang={lang} />
+    <p class="text-xs text-ink-soft">
+      {t("grupo.updated", { fecha: formatMonth(grupo.actualizado, lang) })}
+    </p>
+  </aside>
+</article>
