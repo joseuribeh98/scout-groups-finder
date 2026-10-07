@@ -1,0 +1,552 @@
+[
+  {
+    "id": 117,
+    "nombre": "Leones",
+    "municipio": "Cali",
+    "localidad": null,
+    "direccion": "Iglesia Santiago Apóstol calle 29 # 33a11",
+    "ubicacion": {
+      "lat": 3.422368,
+      "lng": -76.51575
+    },
+    "reunion": {
+      "dia": "sabado",
+      "inicio": "15:00",
+      "fin": null
+    },
+    "ramas": ["lobatos", "scouts", "nomadas", "rovers"],
+    "contacto": {
+      "email": null,
+      "whatsapp": null,
+      "instagram": "https://www.instagram.com/gruposcout_117leones",
+      "facebook": "https://www.facebook.com/share/1ATHJZ7jcs",
+      "web": null
+    },
+    "actualizado": "2025-05"
+  },
+  {
+    "id": 123,
+    "nombre": "Cóndores",
+    "municipio": "Cali",
+    "localidad": null,
+    "direccion": "Calle 13E con Carrera 58 Parque 1 de mayo",
+    "ubicacion": {
+      "lat": 3.402878,
+      "lng": -76.533179
+    },
+    "reunion": {
+      "dia": "sabado",
+      "inicio": "15:00",
+      "fin": "18:00"
+    },
+    "ramas": ["lobatos", "scouts", "nomadas", "rovers"],
+    "contacto": {
+      "email": null,
+      "whatsapp": null,
+      "instagram": "https://www.instagram.com/condores_123",
+      "facebook": null,
+      "web": "https://scoutcondores123.jimdofree.com"
+    },
+    "actualizado": "2025-05"
+  },
+  {
+    "id": 208,
+    "nombre": "Baden Powell",
+    "municipio": "Tuluá",
+    "localidad": null,
+    "direccion": "calle 13, carrera 23 cancha basquetbol barrio El Jardín",
+    "ubicacion": {
+      "lat": 4.096108,
+      "lng": -76.199634
+    },
+    "reunion": {
+      "dia": "sabado",
+      "inicio": "15:00",
+      "fin": null
+    },
+    "ramas": ["lobatos", "scouts", "nomadas", "rovers"],
+    "contacto": {
+      "email": null,
+      "whatsapp": null,
+      "instagram": null,
+      "facebook": null,
+      "web": null
+    },
+    "actualizado": "2025-05"
+  },
+  {
+    "id": 315,
+    "nombre": "Águilas Doradas",
+    "municipio": "Buga",
+    "localidad": null,
+    "direccion": "Parque Biosaludable Buga. Calle 3 Este #9-92",
+    "ubicacion": {
+      "lat": 3.891845,
+      "lng": -76.290028
+    },
+    "reunion": {
+      "dia": "sabado",
+      "inicio": "14:00",
+      "fin": null
+    },
+    "ramas": ["lobatos", "scouts", "nomadas", "rovers"],
+    "contacto": {
+      "email": "valle.grupo315@scout.org.co",
+      "whatsapp": null,
+      "instagram": "https://www.instagram.com/aguilasdoradas315",
+      "facebook": "https://www.facebook.com/wallace.aguilasdoradas",
+      "web": null
+    },
+    "actualizado": "2025-05"
+  },
+  {
+    "id": 411,
+    "nombre": "Quimbayas",
+    "municipio": "Cartago",
+    "localidad": null,
+    "direccion": "Sede Scout Carrera 9A # 10A-51 B/ Palatino",
+    "ubicacion": {
+      "lat": 4.744738,
+      "lng": -75.913164
+    },
+    "reunion": {
+      "dia": "sabado",
+      "inicio": "14:30",
+      "fin": null
+    },
+    "ramas": ["lobatos", "scouts", "nomadas", "rovers"],
+    "contacto": {
+      "email": null,
+      "whatsapp": null,
+      "instagram": "https://www.instagram.com/gruposcoutquimbayas_411",
+      "facebook": "https://www.facebook.com/share/1BLLLZ5fLx",
+      "web": null
+    },
+    "actualizado": "2025-05"
+  },
+  {
+    "id": 601,
+    "nombre": "Mafeking",
+    "municipio": "Palmira",
+    "localidad": null,
+    "direccion": "Colegio Seminario, Km 1 via Tienda Nueva",
+    "ubicacion": {
+      "lat": 3.541669,
+      "lng": -76.290389
+    },
+    "reunion": {
+      "dia": "sabado",
+      "inicio": "14:30",
+      "fin": null
+    },
+    "ramas": ["lobatos", "scouts", "nomadas", "rovers"],
+    "contacto": {
+      "email": "valle.grupo601@scout.org.co",
+      "whatsapp": null,
+      "instagram": "https://www.instagram.com/mafeking601colombia",
+      "facebook": null,
+      "web": null
+    },
+    "actualizado": "2025-05"
+  },
+  {
+    "id": 605,
+    "nombre": "Jaguares",
+    "municipio": "Palmira",
+    "localidad": null,
+    "direccion": "Bosque Municipal",
+    "ubicacion": {
+      "lat": 3.526538,
+      "lng": -76.287038
+    },
+    "reunion": {
+      "dia": "sabado",
+      "inicio": "14:00",
+      "fin": "17:30"
+    },
+    "ramas": ["lobatos", "scouts", "nomadas", "rovers"],
+    "contacto": {
+      "email": "valle.grupo605@scout.org.co",
+      "whatsapp": null,
+      "instagram": "https://www.instagram.com/scoutjaguares605",
+      "facebook": "https://www.facebook.com/share/18EMozBn3w/",
+      "web": null
+    },
+    "actualizado": "2025-05"
+  },
+  {
+    "id": 607,
+    "nombre": "Zimbabue",
+    "municipio": "Palmira",
+    "localidad": "Rozo",
+    "direccion": "Calle 10 No. 10-81 B/. El Centro",
+    "ubicacion": {
+      "lat": 3.608983,
+      "lng": -76.38815
+    },
+    "reunion": {
+      "dia": "sabado",
+      "inicio": "14:00",
+      "fin": "17:30"
+    },
+    "ramas": ["lobatos", "scouts"],
+    "contacto": {
+      "email": "valle.grupo607@scout.org.co",
+      "whatsapp": null,
+      "instagram": "https://www.instagram.com/rozoscout607",
+      "facebook": "https://www.facebook.com/share/19sqotD4N1/",
+      "web": null
+    },
+    "actualizado": "2025-05"
+  },
+  {
+    "id": 662,
+    "nombre": "León Blanco",
+    "municipio": "Palmira",
+    "localidad": null,
+    "direccion": "Colegio Fray Luis Amigó. Calle 41 #48-00",
+    "ubicacion": {
+      "lat": 3.536616,
+      "lng": -76.31662
+    },
+    "reunion": {
+      "dia": "sabado",
+      "inicio": "14:00",
+      "fin": "18:00"
+    },
+    "ramas": ["lobatos", "scouts", "nomadas", "rovers"],
+    "contacto": {
+      "email": null,
+      "whatsapp": null,
+      "instagram": "https://www.instagram.com/gruposcoutleonblanco",
+      "facebook": "https://www.facebook.com/share/15qF28HrdA",
+      "web": null
+    },
+    "actualizado": "2025-05"
+  },
+  {
+    "id": 808,
+    "nombre": "Delfines",
+    "municipio": "Cali",
+    "localidad": null,
+    "direccion": "Carrera 1B no. 59-00",
+    "ubicacion": {
+      "lat": 3.477667,
+      "lng": -76.497274
+    },
+    "reunion": {
+      "dia": "sabado",
+      "inicio": "15:00",
+      "fin": "18:00"
+    },
+    "ramas": ["lobatos", "scouts", "nomadas"],
+    "contacto": {
+      "email": null,
+      "whatsapp": null,
+      "instagram": null,
+      "facebook": null,
+      "web": null
+    },
+    "actualizado": "2025-05"
+  },
+  {
+    "id": 809,
+    "nombre": "León Dorado",
+    "municipio": "Cali",
+    "localidad": null,
+    "direccion": "Parque del Avion",
+    "ubicacion": {
+      "lat": 3.469729,
+      "lng": -76.517361
+    },
+    "reunion": {
+      "dia": "sabado",
+      "inicio": "14:00",
+      "fin": "18:00"
+    },
+    "ramas": ["lobatos", "scouts", "nomadas", "rovers"],
+    "contacto": {
+      "email": null,
+      "whatsapp": null,
+      "instagram": null,
+      "facebook": "https://www.facebook.com/share/1MiLHYBSkw",
+      "web": null
+    },
+    "actualizado": "2025-05"
+  },
+  {
+    "id": 815,
+    "nombre": "Fénix Escarlata",
+    "municipio": "Cali",
+    "localidad": null,
+    "direccion": "Parque del Amor. Avenida 6ta con calle 70",
+    "ubicacion": {
+      "lat": 3.493053,
+      "lng": -76.520585
+    },
+    "reunion": {
+      "dia": "sabado",
+      "inicio": "14:00",
+      "fin": "18:00"
+    },
+    "ramas": ["lobatos", "scouts", "nomadas", "rovers"],
+    "contacto": {
+      "email": "valle.grupo815@scout.org.co",
+      "whatsapp": null,
+      "instagram": "https://www.instagram.com/fenix_escarlata_815",
+      "facebook": null,
+      "web": null
+    },
+    "actualizado": "2025-05"
+  },
+  {
+    "id": 816,
+    "nombre": "San Luis Gonzaga",
+    "municipio": "Cali",
+    "localidad": null,
+    "direccion": "Colegio San Luis Gonzaga Av 10A Nte No.14 N 85, Barrio Granada",
+    "ubicacion": {
+      "lat": 3.460982,
+      "lng": -76.535212
+    },
+    "reunion": {
+      "dia": "sabado",
+      "inicio": "14:30",
+      "fin": "18:00"
+    },
+    "ramas": ["lobatos", "scouts", "nomadas", "rovers"],
+    "contacto": {
+      "email": null,
+      "whatsapp": null,
+      "instagram": null,
+      "facebook": null,
+      "web": null
+    },
+    "actualizado": "2025-05"
+  },
+  {
+    "id": 823,
+    "nombre": "Jaguares",
+    "municipio": "Cali",
+    "localidad": null,
+    "direccion": "Parque Dakota Cra 1F con 59 B/ Los Almendros",
+    "ubicacion": {
+      "lat": 3.471808,
+      "lng": -76.497181
+    },
+    "reunion": {
+      "dia": "sabado",
+      "inicio": "15:00",
+      "fin": "18:30"
+    },
+    "ramas": ["lobatos", "scouts", "nomadas", "rovers"],
+    "contacto": {
+      "email": "valle.grupo823@scout.org.co",
+      "whatsapp": null,
+      "instagram": "https://www.instagram.com/823jaguares",
+      "facebook": "https://www.facebook.com/GrupoScout823JaguaresCaliColombia",
+      "web": null
+    },
+    "actualizado": "2025-05"
+  },
+  {
+    "id": 828,
+    "nombre": "Yanaconas",
+    "municipio": "Cali",
+    "localidad": null,
+    "direccion": "Calle 12 C Carrera 29 Parque Colseguros",
+    "ubicacion": {
+      "lat": 3.427869,
+      "lng": -76.52958
+    },
+    "reunion": {
+      "dia": "sabado",
+      "inicio": "14:30",
+      "fin": "17:30"
+    },
+    "ramas": ["lobatos", "scouts", "nomadas", "rovers"],
+    "contacto": {
+      "email": "valle.grupo828@scout.org.co",
+      "whatsapp": null,
+      "instagram": "https://www.instagram.com/gruposcout828yanaconas/",
+      "facebook": "https://www.facebook.com/gruposcout828",
+      "web": null
+    },
+    "actualizado": "2025-05"
+  },
+  {
+    "id": 840,
+    "nombre": "Orión",
+    "municipio": "Cali",
+    "localidad": null,
+    "direccion": "Acuaparque de la caña, Cra. 8 #39-01",
+    "ubicacion": {
+      "lat": 3.455941,
+      "lng": -76.507872
+    },
+    "reunion": {
+      "dia": "sabado",
+      "inicio": "14:00",
+      "fin": "18:00"
+    },
+    "ramas": ["cachorros", "lobatos", "scouts", "nomadas", "rovers"],
+    "contacto": {
+      "email": null,
+      "whatsapp": null,
+      "instagram": "https://www.instagram.com/grupo.orion840",
+      "facebook": "https://www.facebook.com/scouts840cali",
+      "web": null
+    },
+    "actualizado": "2025-05"
+  },
+  {
+    "id": 841,
+    "nombre": "Samaguare",
+    "municipio": "Candelaria",
+    "localidad": null,
+    "direccion": "Cra. 34C #17b-53 Reservas del Poblado. Parque",
+    "ubicacion": {
+      "lat": 3.408866,
+      "lng": -76.349872
+    },
+    "reunion": {
+      "dia": "sabado",
+      "inicio": "14:30",
+      "fin": null
+    },
+    "ramas": ["lobatos", "scouts", "nomadas"],
+    "contacto": {
+      "email": null,
+      "whatsapp": null,
+      "instagram": "https://www.instagram.com/samaguare_841",
+      "facebook": null,
+      "web": null
+    },
+    "actualizado": "2025-05"
+  },
+  {
+    "id": 901,
+    "nombre": "Berchmans",
+    "municipio": "Cali",
+    "localidad": null,
+    "direccion": "Colegio Berchmans (Cra. 120A # 16 - 86, barrio Pance)",
+    "ubicacion": {
+      "lat": 3.349023,
+      "lng": -76.533957
+    },
+    "reunion": {
+      "dia": "sabado",
+      "inicio": "14:30",
+      "fin": "17:30"
+    },
+    "ramas": ["lobatos", "scouts", "nomadas", "rovers"],
+    "contacto": {
+      "email": "valle.grupo901@scout.org.co",
+      "whatsapp": null,
+      "instagram": "https://www.instagram.com/grupo1berchmans",
+      "facebook": null,
+      "web": "https://gruposcout1berchmans.org/"
+    },
+    "actualizado": "2025-05"
+  },
+  {
+    "id": 904,
+    "nombre": "Mohwa",
+    "municipio": "Cali",
+    "localidad": null,
+    "direccion": "Unidad Recreativa El Olimpico, carrera 36A #12-00",
+    "ubicacion": {
+      "lat": 3.422331,
+      "lng": -76.532107
+    },
+    "reunion": {
+      "dia": "sabado",
+      "inicio": "14:30",
+      "fin": "18:00"
+    },
+    "ramas": ["lobatos", "scouts", "nomadas"],
+    "contacto": {
+      "email": null,
+      "whatsapp": null,
+      "instagram": "https://www.instagram.com/gruposcoutmohwa904",
+      "facebook": "https://www.facebook.com/share/g/19vymGHDR1",
+      "web": null
+    },
+    "actualizado": "2025-05"
+  },
+  {
+    "id": 909,
+    "nombre": "Fundadores",
+    "municipio": "Cali",
+    "localidad": null,
+    "direccion": "Cra 61 9-101",
+    "ubicacion": {
+      "lat": 3.406291,
+      "lng": -76.542204
+    },
+    "reunion": {
+      "dia": "domingo",
+      "inicio": "10:00",
+      "fin": "12:30"
+    },
+    "ramas": ["lobatos", "scouts", "nomadas"],
+    "contacto": {
+      "email": null,
+      "whatsapp": null,
+      "instagram": "https://www.instagram.com/fundadores909",
+      "facebook": null,
+      "web": null
+    },
+    "actualizado": "2025-05"
+  },
+  {
+    "id": 928,
+    "nombre": "Salesiano",
+    "municipio": "Cali",
+    "localidad": null,
+    "direccion": "Parque San Antonio / Colegio San Bosco",
+    "ubicacion": {
+      "lat": 3.442695,
+      "lng": -76.533868
+    },
+    "reunion": {
+      "dia": "sabado",
+      "inicio": "14:00",
+      "fin": null
+    },
+    "ramas": ["lobatos", "scouts", "nomadas"],
+    "contacto": {
+      "email": "valle.grupo928@scout.org.co",
+      "whatsapp": null,
+      "instagram": "https://www.instagram.com/gruposcoutsalesiano928",
+      "facebook": null,
+      "web": null
+    },
+    "actualizado": "2025-05"
+  },
+  {
+    "id": 938,
+    "nombre": "Claret",
+    "municipio": "Cali",
+    "localidad": null,
+    "direccion": "Colegio Claret, Cra. 122 #15-21, Barrio Pance",
+    "ubicacion": {
+      "lat": 3.3429132,
+      "lng": -76.5366428
+    },
+    "reunion": {
+      "dia": "sabado",
+      "inicio": "14:00",
+      "fin": "17:00"
+    },
+    "ramas": ["lobatos", "scouts", "nomadas", "rovers"],
+    "contacto": {
+      "email": "valle.grupo938@scout.org.co",
+      "whatsapp": null,
+      "instagram": "https://www.instagram.com/gruposcout938",
+      "facebook": null,
+      "web": "https://gruposcout938.webnode.es/"
+    },
+    "actualizado": "2025-05"
+  }
+]
