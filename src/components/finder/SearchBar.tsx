@@ -12,7 +12,7 @@ interface Props {
   onChange: (q: string) => void;
   onNearMe: () => void;
   onFocus?: () => void;
-  onBlur?: () => void;
+  onBlur?: (e: FocusEvent) => void;
 }
 
 export default function SearchBar({

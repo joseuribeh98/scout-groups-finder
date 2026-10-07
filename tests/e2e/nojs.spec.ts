@@ -16,5 +16,6 @@ test("sin JavaScript, la portada lista todos los grupos con enlaces a sus fichas
   await expect(page.locator(".leaflet-container")).toHaveCount(0);
   // La página hace scroll: el último grupo es alcanzable.
   await items.last().scrollIntoViewIfNeeded();
-  await expect(items.last()).toBeVisible();
+  await expect(items.last()).toBeInViewport();
+  expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
 });

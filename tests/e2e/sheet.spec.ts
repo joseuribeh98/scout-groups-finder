@@ -50,11 +50,14 @@ test.describe("hoja inferior (móvil)", () => {
   test("ningún pin queda bajo la hoja asomada", async ({ page }) => {
     await gotoHydrated(page, "/");
     await expect(page.locator(".leaflet-marker-pane .leaflet-marker-icon").first()).toBeVisible();
-    const sheet = (await ui(page).boundingBox())!;
-    const pins = await page
-      .locator(".leaflet-marker-pane .leaflet-marker-icon")
-      .evaluateAll((els) => els.map((el) => el.getBoundingClientRect().bottom));
-    for (const bottom of pins) expect(bottom).toBeLessThanOrEqual(sheet.y + 1);
+    // El mapa reajusta el encuadre al medir la hoja: espera a que se asiente.
+    await expect(async () => {
+      const sheet = (await ui(page).boundingBox())!;
+      const pins = await page
+        .locator(".leaflet-marker-pane .leaflet-marker-icon")
+        .evaluateAll((els) => els.map((el) => el.getBoundingClientRect().bottom));
+      for (const bottom of pins) expect(bottom).toBeLessThanOrEqual(sheet.y + 1);
+    }).toPass();
   });
 
   test("al soltar un arrastre en media altura, la atribución queda sobre la hoja", async ({
@@ -79,5 +82,42 @@ test.describe("hoja inferior (móvil)", () => {
       const sheet = (await ui(page).boundingBox())!;
       expect(a.y + a.height).toBeLessThanOrEqual(sheet.y + 1);
     }).toPass();
+  });
+
+  test("soltar un arrastre corto en la misma posición mantiene los controles sobre la hoja", async ({
+    page,
+  }) => {
+    await gotoHydrated(page, "/");
+    await ui(page).getByRole("button", { name: "Expandir lista" }).click();
+    await page.keyboard.press("ArrowDown");
+    await expect(ui(page)).toHaveAttribute("data-snap", "half");
+    // Espera a que termine la transición de alto antes de medir el asa.
+    await ui(page).evaluate((el) => Promise.all(el.getAnimations().map((a) => a.finished)));
+    const box = (await ui(page).locator("[data-sheet-grip]").boundingBox())!;
+    const x = box.x + box.width / 2,
+      y = box.y + 6;
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    for (let i = 1; i <= 4; i++) await page.mouse.move(x, y - i * 5);
+    await page.mouse.up();
+    await expect(ui(page)).toHaveAttribute("data-snap", "half");
+    const attribution = page.locator(".leaflet-control-attribution");
+    await expect(async () => {
+      const a = (await attribution.boundingBox())!;
+      const sheet = (await ui(page).boundingBox())!;
+      expect(a.y + a.height).toBeLessThanOrEqual(sheet.y + 1);
+    }).toPass();
+  });
+
+  test("tras enfocar la búsqueda, el asa contrae la hoja a asomada y se queda ahí", async ({
+    page,
+  }) => {
+    await gotoHydrated(page, "/");
+    await searchBox(page).focus();
+    await expect(ui(page)).toHaveAttribute("data-snap", "full");
+    await ui(page).getByRole("button", { name: "Contraer lista" }).click();
+    await expect(ui(page)).toHaveAttribute("data-snap", "peek");
+    await page.waitForTimeout(300);
+    await expect(ui(page)).toHaveAttribute("data-snap", "peek");
   });
 });

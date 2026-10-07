@@ -6,6 +6,7 @@ import SelectedCard from "@/components/finder/SelectedCard";
 import Sheet, { type Snap } from "@/components/finder/Sheet";
 import GroupMap, { type FitPadding, type FocusRequest } from "@/components/finder/GroupMap";
 import SearchBar, { type GeoStatus } from "@/components/finder/SearchBar";
+import { SNAP_OFFSET } from "@/components/finder/useSheet";
 import { useMediaQuery } from "@/components/finder/useMediaQuery";
 import { VALLE_BOUNDS } from "@/data/region";
 import type { Grupo } from "@/data/schema";
@@ -124,8 +125,7 @@ export default function Finder({ grupos, lang, municipios }: Props) {
 
   // Los controles del mapa suben con la hoja; Task 6 lo actualizará en vivo durante el arrastre.
   useEffect(() => {
-    const offset = { peek: "30%", half: "55%", full: "calc(100% - 0.5rem)" }[snap];
-    root.current?.style.setProperty("--sheet-offset", offset);
+    root.current?.style.setProperty("--sheet-offset", SNAP_OFFSET[snap]);
   }, [snap]);
 
   // La hoja asomada (medida por la propia hoja) deja libre el borde inferior del mapa.
@@ -262,7 +262,11 @@ export default function Finder({ grupos, lang, municipios }: Props) {
           geoStatus={geoStatus}
           compact
           onFocus={() => setSnap("full")}
-          onBlur={() => {
+          onBlur={(e) => {
+            // Sin cambios si el foco pasa a la hoja (asa, chips), hay un grupo elegido o ya no está completa.
+            const to = e.relatedTarget;
+            if (to instanceof Element && to.closest("[data-finder-ui]")) return;
+            if (selectedId !== null || snap !== "full") return;
             if (!filters.q.trim()) setSnap("half");
           }}
           onChange={(q) => setFilters({ ...filters, q })}

@@ -2,8 +2,14 @@ import { useEffect, useRef } from "preact/hooks";
 import type { Snap } from "@/components/finder/Sheet";
 
 const ORDER: Snap[] = ["peek", "half", "full"];
-const PEEK = 0.3;
-const HALF = 0.55;
+export const PEEK = 0.3;
+export const HALF = 0.55;
+/** Offset de los controles del mapa para cada posición (única fuente de verdad). */
+export const SNAP_OFFSET: Record<Snap, string> = {
+  peek: "30%",
+  half: "55%",
+  full: "calc(100% - 0.5rem)",
+};
 const TAP_PX = 8;
 const FLICK_PX = 60;
 
@@ -39,13 +45,13 @@ export function useSheet({ snap, onSnap, onPeekHeight }: Options) {
     if (i >= 0 && i < ORDER.length) onSnap(ORDER[i]!);
   };
 
-  /** Termina el arrastre y devuelve el control de los controles del mapa al efecto de `snap`. */
-  const endDrag = () => {
+  /** Termina el arrastre y deja los controles del mapa en el offset de la posición final. */
+  const endDrag = (settled: Snap = snap) => {
     const el = ref.current;
     drag.current = null;
     el?.classList.remove("is-dragging");
     el?.style.removeProperty("--sheet-h");
-    el?.parentElement?.style.removeProperty("--sheet-offset");
+    el?.parentElement?.style.setProperty("--sheet-offset", SNAP_OFFSET[settled]);
   };
 
   const gripProps = {
@@ -62,6 +68,11 @@ export function useSheet({ snap, onSnap, onPeekHeight }: Options) {
     onPointerMove: (e: PointerEvent) => {
       const el = ref.current;
       if (!el || !drag.current) return;
+      if (e.buttons === 0) {
+        // Pulsación obsoleta: se soltó fuera del asa antes de iniciar el arrastre.
+        drag.current = null;
+        return;
+      }
       if (!drag.current.active) {
         if (Math.abs(drag.current.startY - e.clientY) < TAP_PX) return;
         drag.current.active = true;
@@ -82,17 +93,24 @@ export function useSheet({ snap, onSnap, onPeekHeight }: Options) {
       const { active, startY, startH } = drag.current;
       const dy = startY - e.clientY;
       const h = startH + dy;
-      endDrag();
-      if (!active) return; // un toque lo gestiona el botón del asa
+      if (!active) return endDrag(); // un toque lo gestiona el botón del asa
       const b = bounds();
-      const nearest = (["peek", "half", "full"] as const).reduce((best, s) =>
+      const nearest = ORDER.reduce((best, s) =>
         Math.abs(b[s] - h) < Math.abs(b[best] - h) ? s : best,
       );
       // Un gesto corto que cae en la misma posición avanza un paso en su dirección.
-      if (nearest === snap && Math.abs(dy) > FLICK_PX) return step(dy > 0 ? 1 : -1);
-      onSnap(nearest);
+      let settled = nearest;
+      if (nearest === snap && Math.abs(dy) > FLICK_PX) {
+        settled = ORDER[ORDER.indexOf(snap) + (dy > 0 ? 1 : -1)] ?? snap;
+      }
+      endDrag(settled);
+      if (settled !== snap) onSnap(settled);
     },
-    onPointerCancel: endDrag,
+    onPointerCancel: () => endDrag(),
+    onLostPointerCapture: () => {
+      // Si la captura se pierde sin pointerup, abandona el arrastre en curso.
+      if (drag.current) endDrag();
+    },
   };
 
   const onGripKeyDown = (e: KeyboardEvent) => {
