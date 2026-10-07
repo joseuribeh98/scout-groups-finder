@@ -29,6 +29,7 @@ export default function GroupMap({ results, activeId, origin, lang, t, visible, 
   const youMarker = useRef<Leaflet.Marker | null>(null);
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
+  const needsFit = useRef(false);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
 
@@ -64,6 +65,18 @@ export default function GroupMap({ results, activeId, origin, lang, t, visible, 
     };
   }, []);
 
+  const fitToResults = () => {
+    const L = leaflet.current;
+    const m = map.current;
+    if (!L || !m || results.length === 0) return;
+    const bounds = L.latLngBounds(
+      results.map(({ grupo }) => [grupo.ubicacion.lat, grupo.ubicacion.lng]),
+    );
+    if (origin) bounds.extend([origin.lat, origin.lng]);
+    m.fitBounds(bounds, { padding: [40, 40], maxZoom: 15 });
+    needsFit.current = false;
+  };
+
   // Redibujar marcadores cuando cambian los resultados.
   useEffect(() => {
     const L = leaflet.current;
@@ -91,13 +104,8 @@ export default function GroupMap({ results, activeId, origin, lang, t, visible, 
       group.addLayer(marker);
     }
 
-    if (results.length > 0) {
-      const bounds = L.latLngBounds(
-        results.map(({ grupo }) => [grupo.ubicacion.lat, grupo.ubicacion.lng]),
-      );
-      if (origin) bounds.extend([origin.lat, origin.lng]);
-      m.fitBounds(bounds, { padding: [40, 40], maxZoom: 15 });
-    }
+    if (visible) fitToResults();
+    else needsFit.current = true;
   }, [ready, results, origin, lang, t]);
 
   // Marcador "tu ubicación".
@@ -127,8 +135,10 @@ export default function GroupMap({ results, activeId, origin, lang, t, visible, 
 
   // Leaflet necesita recalcular tamaño cuando el contenedor deja de estar oculto.
   useEffect(() => {
-    if (visible) map.current?.invalidateSize();
-  }, [visible]);
+    if (!visible || !ready) return;
+    map.current?.invalidateSize();
+    if (needsFit.current) fitToResults();
+  }, [visible, ready]);
 
   if (failed) {
     return (

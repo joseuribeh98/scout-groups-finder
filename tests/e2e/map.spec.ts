@@ -32,8 +32,23 @@ test.describe("mapa del buscador", () => {
     await expect(page.locator("li[data-grupo-id]").first()).toBeVisible();
   });
 
+  test("en móvil, filtrar con el mapa oculto reajusta la vista al mostrarlo", async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(!isMobile, "solo móvil");
+    await gotoHydrated(page, "/");
+    await page.getByRole("button", { name: "Ver mapa" }).click();
+    await expect(page.locator(".leaflet-container")).toBeVisible();
+    await page.getByRole("button", { name: "Ver lista" }).click();
+    await page.getByLabel("Municipio").selectOption("buga");
+    await page.getByRole("button", { name: "Ver mapa" }).click();
+    await expect(page.locator(".leaflet-marker-pane .pin")).toHaveCount(1);
+    await expect(page.locator(".leaflet-marker-pane .pin")).toBeVisible();
+  });
+
   test("si Leaflet no carga, la lista sigue funcionando y se avisa", async ({ page, isMobile }) => {
-    await page.route(/leaflet/i, (route) => route.abort());
+    await page.route(/leaflet[^/]*-src\.[^/]*\.js(\?|$)/i, (route) => route.abort());
     await gotoHydrated(page, "/");
     if (isMobile) await page.getByRole("button", { name: "Ver mapa" }).click();
     await expect(page.getByText("No se pudo cargar el mapa")).toBeVisible();

@@ -15,7 +15,15 @@ interface Props {
   onClear: () => void;
 }
 
-export default function GroupList({ lang, t, results, activeId, scrollToId, onActivate, onClear }: Props) {
+export default function GroupList({
+  lang,
+  t,
+  results,
+  activeId,
+  scrollToId,
+  onActivate,
+  onClear,
+}: Props) {
   useEffect(() => {
     if (scrollToId === null) return;
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
