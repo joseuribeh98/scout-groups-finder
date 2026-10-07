@@ -3,6 +3,10 @@
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
+/* Solo con JavaScript (la clase la pone el script inline del tema). Sin JS, el buscador
+   se renderiza como una columna estática y la página hace scroll normal. */
+@custom-variant js (&:where(.js, .js *));
+
 @theme {
   --font-sans: "Figtree Variable", ui-sans-serif, system-ui, sans-serif;
 
@@ -98,5 +102,27 @@
   }
   [data-rama="rovers"] {
     --rama: var(--color-rama-rovers);
+  }
+
+  /* Hoja inferior del buscador (móvil). Las alturas van por posición; durante el arrastre
+     manda --sheet-h, que Sheet.tsx fija por CSSOM (nunca como atributo style). */
+  .js .sheet {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    height: 30%;
+    transition: height 0.25s ease;
+  }
+  .js .sheet[data-snap="half"] {
+    height: 55%;
+  }
+  .js .sheet[data-snap="full"] {
+    height: calc(100% - 0.5rem);
+  }
+  .js .sheet.is-dragging {
+    height: var(--sheet-h);
+    transition: none;
   }
 }
