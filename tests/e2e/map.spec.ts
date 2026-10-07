@@ -19,7 +19,10 @@ test.describe("mapa del buscador", () => {
     test.skip(isMobile, "solo escritorio");
     await gotoHydrated(page, "/?municipio=buga");
     await page.locator(".leaflet-marker-pane .pin").click();
-    await expect(page.locator('li[data-grupo-id="315"]')).toHaveAttribute("data-active", "true");
+    await expect(ui(page).locator('li[data-grupo-id="315"]')).toHaveAttribute(
+      "data-active",
+      "true",
+    );
   });
 
   test("clic en un pin abre el popup con horario y enlace a la ficha", async ({
@@ -78,11 +81,17 @@ test.describe("mapa del buscador", () => {
     await gotoHydrated(page, "/");
     await page.getByRole("button", { name: "Ver Águilas Doradas en el mapa" }).click();
     await expect(page.locator(".leaflet-popup")).toBeVisible();
-    await page.locator('li[data-grupo-id="901"]').hover();
-    await expect(page.locator('li[data-grupo-id="901"]')).toHaveAttribute("data-active", "true");
+    await ui(page).locator('li[data-grupo-id="901"]').hover();
+    await expect(ui(page).locator('li[data-grupo-id="901"]')).toHaveAttribute(
+      "data-active",
+      "true",
+    );
     await page.mouse.move(5, 5);
-    await expect(page.locator('li[data-grupo-id="315"]')).toHaveAttribute("data-active", "true");
-    await expect(page.locator('li[data-grupo-id="901"]')).not.toHaveAttribute(
+    await expect(ui(page).locator('li[data-grupo-id="315"]')).toHaveAttribute(
+      "data-active",
+      "true",
+    );
+    await expect(ui(page).locator('li[data-grupo-id="901"]')).not.toHaveAttribute(
       "data-active",
       "true",
     );

@@ -89,12 +89,9 @@ test.describe("buscador", () => {
     await expect(cards(page).first()).toHaveAttribute("data-grupo-id", primero ?? "");
   });
 
-  test("la tarjeta lleva a la ficha del grupo", async ({ page }) => {
+  test("el enlace de la tarjeta lleva a la ficha del grupo", async ({ page }) => {
     await gotoHydrated(page, "/?q=815");
-    await ui(page)
-      .locator('li[data-grupo-id="815"]')
-      .getByRole("link", { name: "Ver ficha" })
-      .click();
+    await cards(page).getByRole("link", { name: "Ver ficha de Fénix Escarlata" }).click();
     await expect(page).toHaveURL(/\/grupos\/815-fenix-escarlata\/$/);
   });
 
@@ -102,7 +99,7 @@ test.describe("buscador", () => {
     await gotoHydrated(page, "/en/");
     await expect(ui(page).locator("[data-count]")).toHaveText("22 groups");
     await expect(
-      ui(page).locator('li[data-grupo-id="815"]').getByRole("link", { name: "View details" }),
+      cards(page).getByRole("link", { name: "View details of Fénix Escarlata" }),
     ).toHaveAttribute("href", "/en/groups/815-fenix-escarlata/");
   });
 });

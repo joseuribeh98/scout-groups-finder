@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "preact/hooks";
 import FilterChips, { type Municipio } from "@/components/finder/FilterChips";
-import GroupList from "@/components/finder/GroupList";
+import ResultList from "@/components/finder/ResultList";
 import GroupMap, { type FocusRequest } from "@/components/finder/GroupMap";
 import SearchBar, { type GeoStatus } from "@/components/finder/SearchBar";
 import Icon from "@/components/Icon";
@@ -172,7 +172,7 @@ export default function Finder({ grupos, lang, municipios }: Props) {
             </button>
           )}
         </div>
-        <GroupList
+        <ResultList
           lang={lang}
           t={t}
           results={results}
