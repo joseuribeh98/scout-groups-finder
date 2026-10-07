@@ -1,5 +1,7 @@
 import type * as Leaflet from "leaflet";
+import { render } from "preact";
 import { useEffect, useRef, useState } from "preact/hooks";
+import MapPopup from "@/components/finder/MapPopup";
 import {
   addTiles,
   clusterIcon,
@@ -9,10 +11,15 @@ import {
 } from "@/components/map/leaflet";
 import { VALLE_CENTER, VALLE_ZOOM } from "@/data/region";
 import type { Lang } from "@/i18n/lang";
-import { grupoPath } from "@/i18n/routes";
 import type { Translate } from "@/i18n/ui";
 import type { LatLng } from "@/lib/geo";
 import type { Resultado } from "@/lib/search";
+
+export interface FocusRequest {
+  id: number;
+  /** Cambia en cada clic para que repetir la misma tarjeta vuelva a enfocar el pin. */
+  nonce: number;
+}
 
 interface Props {
   results: Resultado[];
@@ -21,18 +28,32 @@ interface Props {
   lang: Lang;
   t: Translate;
   visible: boolean;
+  focusRequest: FocusRequest | null;
   onSelect: (id: number) => void;
 }
 
 type L = typeof Leaflet;
 
-export default function GroupMap({ results, activeId, origin, lang, t, visible, onSelect }: Props) {
+export default function GroupMap({
+  results,
+  activeId,
+  origin,
+  lang,
+  t,
+  visible,
+  focusRequest,
+  onSelect,
+}: Props) {
   const container = useRef<HTMLDivElement>(null);
   const leaflet = useRef<L | null>(null);
   const map = useRef<Leaflet.Map | null>(null);
   const cluster = useRef<Leaflet.MarkerClusterGroup | null>(null);
   const markers = useRef(new Map<number, Leaflet.Marker>());
+  const popups = useRef<HTMLDivElement[]>([]);
   const youMarker = useRef<Leaflet.Marker | null>(null);
+  const handledFocus = useRef<number | null>(null);
+  const tRef = useRef(t);
+  tRef.current = t;
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
   const needsFit = useRef(false);
@@ -57,6 +78,12 @@ export default function GroupMap({ results, activeId, origin, lang, t, visible, 
           maxClusterRadius: 40,
           iconCreateFunction: (c) => clusterIcon(L, c.getChildCount()),
         }).addTo(m);
+        // Leaflet etiqueta el botón de cerrar en inglés; se traduce al abrir cada popup.
+        m.on("popupopen", (e) => {
+          const close = e.popup.getElement()?.querySelector(".leaflet-popup-close-button");
+          close?.setAttribute("aria-label", tRef.current("popup.close"));
+          close?.setAttribute("title", tRef.current("popup.close"));
+        });
         map.current = m;
         setReady(true);
       })
@@ -65,10 +92,18 @@ export default function GroupMap({ results, activeId, origin, lang, t, visible, 
       });
     return () => {
       cancelled = true;
+      unmountPopups();
       map.current?.remove();
       map.current = null;
     };
   }, []);
+
+  function unmountPopups() {
+    for (const div of popups.current) render(null, div);
+    popups.current = [];
+  }
+
+  const focusPending = () => focusRequest !== null && handledFocus.current !== focusRequest.nonce;
 
   const fitToResults = () => {
     const L = leaflet.current;
@@ -78,8 +113,10 @@ export default function GroupMap({ results, activeId, origin, lang, t, visible, 
       results.map(({ grupo }) => [grupo.ubicacion.lat, grupo.ubicacion.lng]),
     );
     if (origin) bounds.extend([origin.lat, origin.lng]);
-    m.fitBounds(bounds, { padding: [40, 40], maxZoom: 15 });
     needsFit.current = false;
+    // Un clic en una tarjeta pendiente decide la vista; encuadrar ahora competiría con él.
+    if (focusPending()) return;
+    m.fitBounds(bounds, { padding: [40, 40], maxZoom: 15 });
   };
 
   // Redibujar marcadores cuando cambian los resultados.
@@ -91,19 +128,16 @@ export default function GroupMap({ results, activeId, origin, lang, t, visible, 
 
     group.clearLayers();
     markers.current.clear();
-    for (const { grupo } of results) {
+    unmountPopups();
+    for (const { grupo, distanciaKm } of results) {
       const marker = L.marker([grupo.ubicacion.lat, grupo.ubicacion.lng], {
         icon: pinIcon(L),
         title: grupo.nombre,
       });
       const popup = document.createElement("div");
-      const strong = document.createElement("strong");
-      strong.textContent = grupo.nombre;
-      const link = document.createElement("a");
-      link.href = grupoPath(lang, grupo);
-      link.textContent = t("grupo.number", { id: grupo.id });
-      popup.append(strong, document.createElement("br"), link);
-      marker.bindPopup(popup);
+      render(<MapPopup grupo={grupo} distanciaKm={distanciaKm} lang={lang} t={t} />, popup);
+      popups.current.push(popup);
+      marker.bindPopup(popup, { maxWidth: 300, minWidth: 240 });
       marker.on("click", () => onSelectRef.current(grupo.id));
       markers.current.set(grupo.id, marker);
       group.addLayer(marker);
@@ -144,6 +178,23 @@ export default function GroupMap({ results, activeId, origin, lang, t, visible, 
     map.current?.invalidateSize();
     if (needsFit.current) fitToResults();
   }, [visible, ready]);
+
+  // Clic en una tarjeta: acercar al pin y abrir su popup. Si el mapa aún está oculto
+  // (móvil recién cambiado a la vista de mapa), se aplica cuando `visible` pasa a true.
+  useEffect(() => {
+    const m = map.current;
+    const group = cluster.current;
+    if (!ready || !visible || !m || !group || !focusRequest || !focusPending()) return;
+    const marker = markers.current.get(focusRequest.id);
+    if (!marker) return;
+    handledFocus.current = focusRequest.nonce;
+    m.invalidateSize();
+    const animate = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+    group.zoomToShowLayer(marker, () => {
+      m.setView(marker.getLatLng(), Math.max(m.getZoom(), 15), { animate });
+      marker.openPopup();
+    });
+  }, [ready, visible, focusRequest, results]);
 
   if (failed) {
     return (

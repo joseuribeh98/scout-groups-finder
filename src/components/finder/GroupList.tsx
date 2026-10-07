@@ -12,6 +12,7 @@ interface Props {
   activeId: number | null;
   scrollToId: number | null;
   onActivate: (id: number | null) => void;
+  onFocusGroup: (id: number) => void;
   onClear: () => void;
 }
 
@@ -22,6 +23,7 @@ export default function GroupList({
   activeId,
   scrollToId,
   onActivate,
+  onFocusGroup,
   onClear,
 }: Props) {
   useEffect(() => {
@@ -48,11 +50,14 @@ export default function GroupList({
             <button
               type="button"
               onClick={onClear}
-              class="rounded-xl bg-brand px-4 py-2 font-semibold text-on-brand"
+              class="rounded-xl bg-brand px-4 py-2 font-semibold text-on-brand hover:bg-brand-strong"
             >
               {t("finder.clear")}
             </button>
-            <a href={REGION.web} class="rounded-xl border border-line px-4 py-2 font-semibold">
+            <a
+              href={REGION.web}
+              class="rounded-xl border border-line bg-surface px-4 py-2 font-semibold hover:bg-brand-soft"
+            >
               {t("finder.empty.contact")}
             </a>
           </div>
@@ -67,6 +72,7 @@ export default function GroupList({
               t={t}
               active={r.grupo.id === activeId}
               onActivate={onActivate}
+              onFocusGroup={onFocusGroup}
             />
           ))}
         </ul>
