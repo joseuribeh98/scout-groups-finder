@@ -1,9 +1,11 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "preact/hooks";
 import FilterChips, { type Municipio } from "@/components/finder/FilterChips";
+import Panel, { PANEL_INSET, PANEL_WIDTH } from "@/components/finder/Panel";
 import ResultList from "@/components/finder/ResultList";
-import GroupMap, { type FocusRequest } from "@/components/finder/GroupMap";
+import SelectedCard from "@/components/finder/SelectedCard";
+import Sheet, { SHEET_PEEK_RATIO, type Snap } from "@/components/finder/Sheet";
+import GroupMap, { type FitPadding, type FocusRequest } from "@/components/finder/GroupMap";
 import SearchBar, { type GeoStatus } from "@/components/finder/SearchBar";
-import Icon from "@/components/Icon";
 import { useMediaQuery } from "@/components/finder/useMediaQuery";
 import { VALLE_BOUNDS } from "@/data/region";
 import type { Grupo } from "@/data/schema";
@@ -38,14 +40,11 @@ export default function Finder({ grupos, lang, municipios }: Props) {
   const [activeId, setActiveId] = useState<number | null>(null);
   const skipSync = useRef(true);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
-  const [view, setView] = useState<"list" | "map">("list");
-  const [mapRequested, setMapRequested] = useState(false);
+  const root = useRef<HTMLDivElement>(null);
+  const [snap, setSnap] = useState<Snap>("peek");
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const [scrollToId, setScrollToId] = useState<number | null>(null);
   const [focusRequest, setFocusRequest] = useState<FocusRequest | null>(null);
-  const showMap = isDesktop || view === "map";
-  useEffect(() => {
-    if (showMap) setMapRequested(true);
-  }, [showMap]);
 
   // Grupo cuyo popup está abierto: el resaltado no se apaga por hover/blur de su tarjeta.
   const focusedId = useRef<number | null>(null);
@@ -63,16 +62,21 @@ export default function Finder({ grupos, lang, municipios }: Props) {
   const selectFromMap = (id: number) => {
     setActiveId(id);
     setScrollToId(id);
-    if (!isDesktop) focusedId.current = id;
+    if (!isDesktop) {
+      focusedId.current = id;
+      setSelectedId(id);
+      setSnap("peek");
+    }
   };
 
-  // Clic en una tarjeta: mostrar el grupo en el mapa (en móvil, cambiando a la vista de mapa).
+  // Clic en una tarjeta: mostrar el grupo en el mapa (en móvil, con su ficha en la hoja).
   const focusGroup = (id: number) => {
     setActiveId(id);
     if (!isDesktop) {
       // Sin popup que lo retenga, el resaltado se conserva aunque la tarjeta pierda hover/foco.
       focusedId.current = id;
-      setView("map");
+      setSelectedId(id);
+      setSnap("peek");
     }
     setFocusRequest((prev) => ({ id, nonce: (prev?.nonce ?? 0) + 1 }));
   };
@@ -104,7 +108,24 @@ export default function Finder({ grupos, lang, municipios }: Props) {
   const results = useMemo(() => buscar(grupos, filters, origin), [grupos, filters, origin]);
   useEffect(() => {
     focusedId.current = null;
+    setSelectedId(null);
   }, [results]);
+  const selected = useMemo(
+    () => results.find((r) => r.grupo.id === selectedId) ?? null,
+    [results, selectedId],
+  );
+  const closeSelected = () => {
+    focusedId.current = null;
+    setSelectedId(null);
+    setSnap("half");
+  };
+
+  // La hoja asomada ocupa SHEET_PEEK_RATIO del contenedor (Task 6 medirá la real).
+  const fitPadding = useMemo<FitPadding>(() => {
+    if (isDesktop) return { topLeft: [PANEL_WIDTH + PANEL_INSET * 2, 16], bottomRight: [16, 16] };
+    const h = root.current?.clientHeight ?? 0;
+    return { topLeft: [16, 72], bottomRight: [16, Math.round(h * SHEET_PEEK_RATIO) + 16] };
+  }, [isDesktop]);
 
   const nearMe = () => {
     if (geoStatus === "locating") return;
@@ -146,10 +167,66 @@ export default function Finder({ grupos, lang, municipios }: Props) {
             ? t("finder.locating")
             : "";
 
+  const header = (
+    <div>
+      <h1 class="text-2xl leading-tight font-extrabold text-ink lg:text-[1.625rem]">
+        {t("finder.heading")}
+      </h1>
+      <p class="mt-0.5 text-sm text-ink-soft">
+        {t("finder.lead", { n: grupos.length, m: municipios.length })}
+      </p>
+    </div>
+  );
+  const status = (
+    <>
+      <p role="status" class="rounded-xl bg-brand-soft px-3 py-2 text-sm empty:hidden">
+        {geoMessage || null}
+      </p>
+      {hasActiveFilters(filters) && (
+        <button
+          type="button"
+          onClick={clear}
+          class="justify-self-start text-sm font-semibold text-brand underline underline-offset-4"
+        >
+          {t("finder.clear")}
+        </button>
+      )}
+    </>
+  );
+  const list = (
+    <ResultList
+      lang={lang}
+      t={t}
+      results={results}
+      activeId={activeId}
+      scrollToId={scrollToId}
+      onActivate={activate}
+      onFocusGroup={focusGroup}
+      onClear={clear}
+    />
+  );
+
   return (
-    <div class="grid gap-6 lg:grid-cols-[minmax(0,26rem)_1fr] lg:items-start">
-      <div data-finder-ui class={view === "map" ? "hidden lg:grid lg:gap-6" : "grid gap-6"}>
-        <div class="grid gap-3">
+    <div ref={root} class="relative h-full">
+      <div class="hidden js:absolute js:inset-0 js:isolate js:block">
+        <GroupMap
+          results={results}
+          activeId={activeId}
+          origin={origin}
+          lang={lang}
+          t={t}
+          fitPadding={fitPadding}
+          popups={isDesktop}
+          focusRequest={focusRequest}
+          onSelect={selectFromMap}
+          onPopupOpen={onPopupOpen}
+          onPopupClose={onPopupClose}
+        />
+      </div>
+      <Panel
+        label={t("sheet.results")}
+        header={header}
+        search={
           <SearchBar
             t={t}
             q={filters.q}
@@ -157,6 +234,8 @@ export default function Finder({ grupos, lang, municipios }: Props) {
             onChange={(q) => setFilters({ ...filters, q })}
             onNearMe={nearMe}
           />
+        }
+        filters={
           <FilterChips
             lang={lang}
             t={t}
@@ -164,56 +243,46 @@ export default function Finder({ grupos, lang, municipios }: Props) {
             municipios={municipios}
             onChange={setFilters}
           />
-          <p role="status" class="rounded-xl bg-brand-soft px-3 py-2 text-sm empty:hidden">
-            {geoMessage || null}
-          </p>
-          {hasActiveFilters(filters) && (
-            <button
-              type="button"
-              onClick={clear}
-              class="justify-self-start text-sm font-semibold text-brand underline underline-offset-4"
-            >
-              {t("finder.clear")}
-            </button>
-          )}
-        </div>
-        <ResultList
-          lang={lang}
+        }
+        status={status}
+        list={list}
+      />
+      {/* Móvil: búsqueda flotante sobre el mapa + hoja */}
+      <div class="p-4 lg:hidden js:absolute js:inset-x-3 js:top-3 js:z-10 js:p-0">
+        <SearchBar
           t={t}
-          results={results}
-          activeId={activeId}
-          scrollToId={scrollToId}
-          onActivate={activate}
-          onFocusGroup={focusGroup}
-          onClear={clear}
+          q={filters.q}
+          geoStatus={geoStatus}
+          compact
+          onChange={(q) => setFilters({ ...filters, q })}
+          onNearMe={nearMe}
         />
       </div>
-      <div class={showMap ? "h-[70dvh] lg:sticky lg:top-20 lg:h-[calc(100dvh-6rem)]" : "hidden"}>
-        {mapRequested && (
-          <GroupMap
-            results={results}
-            activeId={activeId}
-            origin={origin}
-            lang={lang}
-            t={t}
-            visible={showMap}
-            fitPadding={{ topLeft: [16, 16], bottomRight: [16, 16] }}
-            popups={isDesktop}
-            focusRequest={focusRequest}
-            onSelect={selectFromMap}
-            onPopupOpen={onPopupOpen}
-            onPopupClose={onPopupClose}
-          />
-        )}
-      </div>
-      <button
-        type="button"
-        onClick={() => setView(view === "list" ? "map" : "list")}
-        class="fixed bottom-5 left-1/2 z-[1000] inline-flex -translate-x-1/2 items-center gap-2 rounded-full bg-brand px-5 py-3 font-semibold text-on-brand shadow-lg hover:bg-brand-strong lg:hidden"
-      >
-        <Icon name={view === "list" ? "map" : "list"} />
-        {view === "list" ? t("finder.showMap") : t("finder.showList")}
-      </button>
+      <Sheet
+        t={t}
+        snap={snap}
+        onSnap={setSnap}
+        header={
+          <div class="grid gap-2 pt-1">
+            <h1 class="text-lg leading-tight font-extrabold text-ink">{t("finder.heading")}</h1>
+            <FilterChips
+              lang={lang}
+              t={t}
+              filters={filters}
+              municipios={municipios}
+              onChange={setFilters}
+            />
+            {status}
+          </div>
+        }
+        body={
+          selected ? (
+            <SelectedCard resultado={selected} lang={lang} t={t} onClose={closeSelected} />
+          ) : (
+            list
+          )
+        }
+      />
     </div>
   );
 }

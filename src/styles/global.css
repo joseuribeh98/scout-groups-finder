@@ -104,6 +104,28 @@
     --rama: var(--color-rama-rovers);
   }
 
+  /* Ficha del grupo seleccionado en la hoja: mismos botones que el popup del mapa
+     (map.css solo carga con Leaflet y aplica bajo .leaflet-container). */
+  [data-selected-card] .map-popup a {
+    color: var(--color-ink);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  [data-selected-card] .map-popup a.map-popup__primary {
+    background: var(--color-brand);
+    color: var(--color-on-brand);
+  }
+  [data-selected-card] .map-popup a.map-popup__primary:hover {
+    background: var(--color-brand-strong);
+  }
+  [data-selected-card] .map-popup a.map-popup__whatsapp {
+    background: var(--color-whatsapp);
+    color: #ffffff;
+  }
+  [data-theme="dark"] [data-selected-card] .map-popup a.map-popup__whatsapp {
+    color: var(--color-canvas);
+  }
+
   /* Hoja inferior del buscador (móvil). Las alturas van por posición; durante el arrastre
      manda --sheet-h, que Sheet.tsx fija por CSSOM (nunca como atributo style). */
   .js .sheet {

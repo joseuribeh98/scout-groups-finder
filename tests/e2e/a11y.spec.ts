@@ -33,3 +33,26 @@ for (const theme of ["light", "dark"] as const) {
     });
   }
 }
+
+for (const theme of ["light", "dark"] as const) {
+  test(`sin violaciones serias con la hoja expandida: / (${theme})`, async ({ page, isMobile }) => {
+    test.skip(!isMobile, "solo móvil");
+    await page.addInitScript((t) => localStorage.setItem("theme", t), theme);
+    await gotoHydrated(page, "/");
+    await page.getByRole("button", { name: "Expandir lista" }).click();
+    await expect(page.getByRole("button", { name: "Contraer lista" })).toBeVisible();
+    await page.waitForLoadState("networkidle");
+    const { violations } = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+      .analyze();
+    const serias = violations.filter((v) => v.impact === "serious" || v.impact === "critical");
+    expect(
+      serias,
+      JSON.stringify(
+        serias.map((v) => [v.id, v.nodes.map((n) => n.target)]),
+        null,
+        2,
+      ),
+    ).toEqual([]);
+  });
+}

@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { gotoHydrated, ui } from "./helpers";
+import { cards, gotoHydrated, searchBox, ui } from "./helpers";
 
 test.describe("mapa del buscador", () => {
   test("en escritorio el mapa se muestra junto a la lista", async ({ page, isMobile }) => {
@@ -59,26 +59,13 @@ test.describe("mapa del buscador", () => {
     await expect(page).not.toHaveURL(/\/grupos\//);
   });
 
-  test("en móvil, clic en la tarjeta cambia al mapa y activa el grupo", async ({
-    page,
-    isMobile,
-  }) => {
-    test.skip(!isMobile, "solo móvil");
-    await gotoHydrated(page, "/");
-    await page.getByRole("button", { name: "Ver Águilas Doradas en el mapa" }).click();
-    await expect(page.locator(".leaflet-container")).toBeVisible();
-    // La lista queda oculta en la vista de mapa: `ui(page)` (solo visibles) no la encontraría.
-    await expect(page.locator('li[data-grupo-id="315"]')).toHaveAttribute("data-active", "true");
-    await expect(page).not.toHaveURL(/\/grupos\//);
-  });
-
   test("en móvil, el pin enfocado queda por encima del centro del mapa", async ({
     page,
     isMobile,
   }) => {
     test.skip(!isMobile, "solo móvil");
     await gotoHydrated(page, "/");
-    await page.getByRole("button", { name: "Ver Águilas Doradas en el mapa" }).click();
+    await ui(page).getByRole("button", { name: "Ver Águilas Doradas en el mapa" }).click();
     const mapBox = page.locator(".leaflet-container");
     const pin = page.locator(".leaflet-marker-pane .pin--active");
     await expect(mapBox).toBeVisible();
@@ -157,38 +144,71 @@ test.describe("mapa del buscador", () => {
     await expect(page.locator(".leaflet-marker-pane .pin svg")).toBeVisible();
   });
 
-  test("en móvil el mapa se abre con el botón y no carga antes", async ({ page, isMobile }) => {
-    test.skip(!isMobile, "solo móvil");
+  test("escritorio: ningún pin queda bajo el panel", async ({ page, isMobile }) => {
+    test.skip(isMobile, "solo escritorio");
     await gotoHydrated(page, "/");
-    await expect(page.locator(".leaflet-container")).toHaveCount(0);
-    await page.getByRole("button", { name: "Ver mapa" }).click();
-    await expect(page.locator(".leaflet-container")).toBeVisible();
-    await page.getByRole("button", { name: "Ver lista" }).click();
-    await expect(page.locator("li[data-grupo-id]").first()).toBeVisible();
+    await expect(
+      page.locator(".leaflet-marker-pane .pin, .leaflet-marker-pane .marker-cluster-brand").first(),
+    ).toBeVisible();
+    const panel = await ui(page).boundingBox();
+    const pins = await page
+      .locator(".leaflet-marker-pane .leaflet-marker-icon")
+      .evaluateAll((els) =>
+        els.map((el) => {
+          const r = el.getBoundingClientRect();
+          return { x: r.x, y: r.y, w: r.width, h: r.height };
+        }),
+      );
+    expect(panel).not.toBeNull();
+    for (const p of pins) {
+      const overlaps =
+        p.x < panel!.x + panel!.width &&
+        p.x + p.w > panel!.x &&
+        p.y < panel!.y + panel!.height &&
+        p.y + p.h > panel!.y;
+      expect(overlaps, `pin en ${p.x},${p.y} bajo el panel`).toBe(false);
+    }
   });
 
-  test("en móvil, filtrar con el mapa oculto reajusta la vista al mostrarlo", async ({
+  test("móvil: la hoja arranca asomada y el mapa es visible", async ({ page, isMobile }) => {
+    test.skip(!isMobile, "solo móvil");
+    await gotoHydrated(page, "/");
+    await expect(page.locator(".leaflet-container")).toBeVisible();
+    await expect(ui(page)).toHaveAttribute("data-snap", "peek");
+    await expect(cards(page).first()).toBeVisible();
+  });
+
+  test("móvil: tocar un resultado muestra su tarjeta en la hoja y centra el mapa", async ({
     page,
     isMobile,
   }) => {
     test.skip(!isMobile, "solo móvil");
     await gotoHydrated(page, "/");
-    await page.getByRole("button", { name: "Ver mapa" }).click();
-    await expect(page.locator(".leaflet-container")).toBeVisible();
-    await page.getByRole("button", { name: "Ver lista" }).click();
-    await ui(page).getByRole("button", { name: /^Buga/ }).click();
-    await page.getByRole("button", { name: "Ver mapa" }).click();
-    await expect(page.locator(".leaflet-marker-pane .pin")).toHaveCount(1);
-    await expect(page.locator(".leaflet-marker-pane .pin")).toBeVisible();
+    await ui(page).getByRole("button", { name: "Ver Águilas Doradas en el mapa" }).click();
+    const card = ui(page).locator("[data-selected-card]");
+    await expect(card).toContainText("Águilas Doradas");
+    await expect(card.getByRole("link", { name: "Ver ficha" })).toHaveAttribute(
+      "href",
+      "/grupos/315-aguilas-doradas/",
+    );
+    await expect(page).not.toHaveURL(/\/grupos\//);
+    await ui(page).getByRole("button", { name: "Volver a la lista" }).click();
+    await expect(cards(page)).toHaveCount(22);
   });
 
-  test("si Leaflet no carga, la lista sigue funcionando y se avisa", async ({ page, isMobile }) => {
+  test("móvil: tocar un pin muestra su tarjeta en la hoja", async ({ page, isMobile }) => {
+    test.skip(!isMobile, "solo móvil");
+    await gotoHydrated(page, "/?municipio=buga");
+    await page.locator(".leaflet-marker-pane .pin").click();
+    await expect(ui(page).locator("[data-selected-card]")).toContainText("Águilas Doradas");
+    await expect(page.locator(".leaflet-popup")).toHaveCount(0);
+  });
+
+  test("si Leaflet no carga, la lista sigue funcionando y se avisa", async ({ page }) => {
     await page.route(/leaflet[^/]*-src\.[^/]*\.js(\?|$)/i, (route) => route.abort());
     await gotoHydrated(page, "/");
-    if (isMobile) await page.getByRole("button", { name: "Ver mapa" }).click();
     await expect(page.getByText("No se pudo cargar el mapa")).toBeVisible();
-    if (isMobile) await page.getByRole("button", { name: "Ver lista" }).click();
-    await ui(page).getByLabel("Buscar grupo").fill("fenix");
-    await expect(page.locator("li[data-grupo-id]")).toHaveCount(1);
+    await searchBox(page).fill("fenix");
+    await expect(cards(page)).toHaveCount(1);
   });
 });

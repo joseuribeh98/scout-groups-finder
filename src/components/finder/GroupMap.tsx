@@ -35,7 +35,6 @@ interface Props {
   origin: LatLng | null;
   lang: Lang;
   t: Translate;
-  visible: boolean;
   fitPadding: FitPadding;
   /** Escritorio: popups de Leaflet. Móvil: la ficha se muestra en la hoja (sin popups). */
   popups: boolean;
@@ -53,7 +52,6 @@ export default function GroupMap({
   origin,
   lang,
   t,
-  visible,
   fitPadding,
   popups,
   focusRequest,
@@ -79,7 +77,6 @@ export default function GroupMap({
   onPopupCloseRef.current = onPopupClose;
   const fitPaddingRef = useRef(fitPadding);
   fitPaddingRef.current = fitPadding;
-  const needsFit = useRef(false);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const [tilesFailed, setTilesFailed] = useState(false);
@@ -169,7 +166,6 @@ export default function GroupMap({
       results.map(({ grupo }) => [grupo.ubicacion.lat, grupo.ubicacion.lng]),
     );
     if (origin) bounds.extend([origin.lat, origin.lng]);
-    needsFit.current = false;
     // Un clic en una tarjeta pendiente decide la vista; encuadrar ahora competiría con él.
     if (focusPending()) return;
     const p = fitPaddingRef.current;
@@ -207,8 +203,7 @@ export default function GroupMap({
       group.addLayer(marker);
     }
 
-    if (visible) fitToResults();
-    else needsFit.current = true;
+    fitToResults();
   }, [ready, results, origin, lang, t, popups]);
 
   // Marcador "tu ubicación".
@@ -236,19 +231,11 @@ export default function GroupMap({
     }
   }, [ready, activeId, results]);
 
-  // Leaflet necesita recalcular tamaño cuando el contenedor deja de estar oculto.
-  useEffect(() => {
-    if (!visible || !ready) return;
-    map.current?.invalidateSize();
-    if (needsFit.current) fitToResults();
-  }, [visible, ready]);
-
-  // Clic en una tarjeta: acercar al pin y abrir su popup. Si el mapa aún está oculto
-  // (móvil recién cambiado a la vista de mapa), se aplica cuando `visible` pasa a true.
+  // Clic en una tarjeta: acercar al pin y abrir su popup (escritorio).
   useEffect(() => {
     const m = map.current;
     const group = cluster.current;
-    if (!ready || !visible || !m || !group || !focusRequest || !focusPending()) return;
+    if (!ready || !m || !group || !focusRequest || !focusPending()) return;
     // Se da por atendida antes de buscar el pin: si el grupo ya no está, no debe reaplicarse.
     handledFocus.current = focusRequest.nonce;
     const marker = markers.current.get(focusRequest.id);
@@ -265,7 +252,7 @@ export default function GroupMap({
       m.setView(target, zoom, { animate });
       if (popups) marker.openPopup();
     });
-  }, [ready, visible, focusRequest, results]);
+  }, [ready, focusRequest, results]);
 
   if (failed) {
     return (

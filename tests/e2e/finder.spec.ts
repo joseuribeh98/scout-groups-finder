@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { cards, gotoHydrated, reloadHydrated, ui } from "./helpers";
+import { cards, gotoHydrated, reloadHydrated, searchBox, ui } from "./helpers";
 
 test.describe("buscador", () => {
   test("lista los 22 grupos sin filtros", async ({ page }) => {
@@ -10,7 +10,7 @@ test.describe("buscador", () => {
 
   test("busca sin tildes y actualiza la URL", async ({ page }) => {
     await gotoHydrated(page, "/");
-    await ui(page).getByLabel("Buscar grupo").fill("fenix");
+    await searchBox(page).fill("fenix");
     await expect(cards(page)).toHaveCount(1);
     await expect(page).toHaveURL(/\?q=fenix$/);
   });
@@ -44,7 +44,7 @@ test.describe("buscador", () => {
       page,
       "/?municipio=bogota&rama=foo&q=%3Cimg%20src%3Dx%20onerror%3Dalert(1)%3E",
     );
-    await expect(ui(page).getByLabel("Buscar grupo")).toHaveValue("<img src=x onerror=alert(1)>");
+    await expect(searchBox(page)).toHaveValue("<img src=x onerror=alert(1)>");
     await expect(page.locator("img[src='x']")).toHaveCount(0);
     await expect(ui(page).getByRole("button", { name: "Todo el Valle" })).toHaveAttribute(
       "aria-pressed",
@@ -65,7 +65,7 @@ test.describe("buscador", () => {
     await context.grantPermissions(["geolocation"]);
     await context.setGeolocation({ latitude: 3.9, longitude: -76.3 }); // Buga
     await gotoHydrated(page, "/");
-    await ui(page).getByRole("button", { name: "Cerca de mí" }).click();
+    await page.getByRole("button", { name: "Cerca de mí" }).click();
     await expect(cards(page).first()).toHaveAttribute("data-grupo-id", "315");
     await expect(cards(page).first()).toContainText(/\d+(,\d)? (k)?m/);
   });
@@ -74,7 +74,7 @@ test.describe("buscador", () => {
     await context.clearPermissions();
     await gotoHydrated(page, "/");
     const primero = await cards(page).first().getAttribute("data-grupo-id");
-    await ui(page).getByRole("button", { name: "Cerca de mí" }).click();
+    await page.getByRole("button", { name: "Cerca de mí" }).click();
     await expect(ui(page).getByText("No pudimos obtener tu ubicación")).toBeVisible();
     await expect(cards(page).first()).toHaveAttribute("data-grupo-id", primero ?? "");
   });
@@ -84,7 +84,7 @@ test.describe("buscador", () => {
     await context.setGeolocation({ latitude: 4.71, longitude: -74.07 }); // Bogotá
     await gotoHydrated(page, "/");
     const primero = await cards(page).first().getAttribute("data-grupo-id");
-    await ui(page).getByRole("button", { name: "Cerca de mí" }).click();
+    await page.getByRole("button", { name: "Cerca de mí" }).click();
     await expect(ui(page).getByText("Parece que estás lejos del Valle del Cauca")).toBeVisible();
     await expect(cards(page).first()).toHaveAttribute("data-grupo-id", primero ?? "");
   });

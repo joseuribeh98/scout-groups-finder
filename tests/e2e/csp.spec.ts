@@ -15,7 +15,7 @@ declare global {
 }
 
 for (const { path, openMap } of PAGES) {
-  test(`CSP estricta y sin violaciones: ${path}`, async ({ page, isMobile }) => {
+  test(`CSP estricta y sin violaciones: ${path}`, async ({ page }) => {
     const consola: string[] = [];
     page.on("console", (msg) => {
       if (/Content Security Policy|Refused to/i.test(msg.text())) consola.push(msg.text());
@@ -35,9 +35,6 @@ for (const { path, openMap } of PAGES) {
     expect(policy).toContain("tile.openstreetmap.org");
     expect(policy).not.toContain("'unsafe-inline'");
 
-    if (openMap && isMobile) {
-      await page.getByRole("button", { name: /Ver mapa|Show map/ }).click();
-    }
     if (openMap) {
       await expect(page.locator(".leaflet-tile-loaded").first()).toBeVisible();
     } else if (path.includes("/grupos/")) {
