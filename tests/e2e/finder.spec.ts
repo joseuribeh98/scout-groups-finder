@@ -70,6 +70,29 @@ test.describe("buscador", () => {
     await expect(cards(page).first()).toContainText(/\d+(,\d)? (k)?m/);
   });
 
+  test("cerca de mí acerca el mapa a tu ubicación y al desactivar vuelve a todo", async ({
+    page,
+    context,
+  }) => {
+    await context.grantPermissions(["geolocation"]);
+    await context.setGeolocation({ latitude: 3.9, longitude: -76.3 }); // Buga
+    await gotoHydrated(page, "/");
+    const container = page.locator(".leaflet-container");
+    await expect(container).not.toHaveClass(/zoom-labels/);
+    const nearMe = page.getByRole("button", { name: "Cerca de mí" });
+    await nearMe.click();
+    await expect(page.locator(".leaflet-marker-pane .pin--you")).toBeVisible();
+    await expect(container).toHaveClass(/zoom-labels/);
+    await expect(
+      page.locator(".leaflet-marker-pane .pin__label", { hasText: "315" }),
+    ).toBeVisible();
+    await expect(page.locator(".leaflet-marker-pane .pin__label", { hasText: "411" })).toHaveCount(
+      0,
+    );
+    await nearMe.click();
+    await expect(container).not.toHaveClass(/zoom-labels/);
+  });
+
   test("cerca de mí sin permiso muestra aviso y conserva el orden", async ({ page, context }) => {
     await context.clearPermissions();
     await gotoHydrated(page, "/");

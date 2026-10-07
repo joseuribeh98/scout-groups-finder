@@ -24,6 +24,10 @@ if (typeof window !== "undefined") {
   void loadLeaflet().catch(() => undefined);
 }
 
+/** "Cerca de mí": se encuadra al usuario y a los grupos a ≤ NEAR_KM (máx. NEAR_MAX); si no hay, al más cercano. */
+export const NEAR_KM = 15;
+export const NEAR_MAX = 8;
+
 export interface FocusRequest {
   id: number;
   /** Cambia en cada clic para que repetir la misma tarjeta vuelva a enfocar el pin. */
@@ -85,6 +89,7 @@ export default function GroupMap({
   const onPopupCloseRef = useRef(onPopupClose);
   onPopupCloseRef.current = onPopupClose;
   const paddingSeen = useRef(false);
+  const fitted = useRef(false);
   const activeIdRef = useRef(activeId);
   activeIdRef.current = activeId;
   const fitPaddingRef = useRef(fitPadding);
@@ -173,18 +178,33 @@ export default function GroupMap({
     const L = leaflet.current;
     const m = map.current;
     if (!L || !m || results.length === 0) return;
-    const bounds = L.latLngBounds(
-      results.map(({ grupo }) => [grupo.ubicacion.lat, grupo.ubicacion.lng]),
-    );
-    if (origin) bounds.extend([origin.lat, origin.lng]);
+    let bounds: Leaflet.LatLngBounds;
+    if (origin) {
+      // Con origen los resultados llegan ordenados por distancia.
+      const nearby = results
+        .filter((r) => r.distanciaKm !== null && r.distanciaKm <= NEAR_KM)
+        .slice(0, NEAR_MAX);
+      const focus = nearby.length > 0 ? nearby : results.slice(0, 1);
+      bounds = L.latLngBounds([
+        [origin.lat, origin.lng],
+        ...focus.map(({ grupo }): [number, number] => [grupo.ubicacion.lat, grupo.ubicacion.lng]),
+      ]);
+    } else {
+      bounds = L.latLngBounds(
+        results.map(({ grupo }) => [grupo.ubicacion.lat, grupo.ubicacion.lng]),
+      );
+    }
     // Un clic en una tarjeta pendiente decide la vista; encuadrar ahora competiría con él.
     if (focusPending()) return;
     const p = fitPaddingRef.current;
+    // El primer encuadre no se anima: una animación en curso descartaría el siguiente (p. ej. "Cerca de mí").
+    const animate = fitted.current && !prefersReducedMotion();
+    fitted.current = true;
     m.fitBounds(bounds, {
       paddingTopLeft: p.topLeft,
       paddingBottomRight: p.bottomRight,
       maxZoom: 15,
-      animate: !prefersReducedMotion(),
+      animate,
     });
   };
 
