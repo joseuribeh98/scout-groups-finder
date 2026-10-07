@@ -70,6 +70,24 @@ test.describe("mapa del buscador", () => {
     await expect(page).not.toHaveURL(/\/grupos\//);
   });
 
+  test("el pin con popup abierto conserva el resaltado tras pasar por otra tarjeta", async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(isMobile, "solo escritorio");
+    await gotoHydrated(page, "/");
+    await page.getByRole("button", { name: "Ver Águilas Doradas en el mapa" }).click();
+    await expect(page.locator(".leaflet-popup")).toBeVisible();
+    await page.locator('li[data-grupo-id="901"]').hover();
+    await expect(page.locator('li[data-grupo-id="901"]')).toHaveAttribute("data-active", "true");
+    await page.mouse.move(5, 5);
+    await expect(page.locator('li[data-grupo-id="315"]')).toHaveAttribute("data-active", "true");
+    await expect(page.locator('li[data-grupo-id="901"]')).not.toHaveAttribute(
+      "data-active",
+      "true",
+    );
+  });
+
   test("los clusters centran su número", async ({ page, isMobile }) => {
     test.skip(isMobile, "solo escritorio");
     await gotoHydrated(page, "/");
