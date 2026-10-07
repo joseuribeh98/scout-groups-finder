@@ -20,25 +20,32 @@ export function loadLeaflet(): Promise<L> {
   return cargando;
 }
 
-const TILES = {
-  light: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-  dark: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-} as const;
+const TILE_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 
 const ATTRIBUTION =
-  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>';
+  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
-function currentTheme(): keyof typeof TILES {
-  return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+export function addTiles(L: L, map: Leaflet.Map): Leaflet.TileLayer {
+  return L.tileLayer(TILE_URL, { attribution: ATTRIBUTION, maxZoom: 19 }).addTo(map);
 }
 
-export function addThemedTiles(L: L, map: Leaflet.Map): () => void {
-  const layer = L.tileLayer(TILES[currentTheme()], { attribution: ATTRIBUTION, maxZoom: 19 }).addTo(
-    map,
-  );
-  const observer = new MutationObserver(() => layer.setUrl(TILES[currentTheme()]));
-  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-  return () => observer.disconnect();
+const TILE_ERRORS_BEFORE_NOTICE = 3;
+
+/** Avisa una vez cuando fallan varias teselas seguidas sin que cargue ninguna. */
+export function watchTileFailures(layer: Leaflet.TileLayer, onFail: () => void): void {
+  let errors = 0;
+  let loaded = false;
+  let notified = false;
+  layer.on("tileload", () => {
+    loaded = true;
+  });
+  layer.on("tileerror", () => {
+    errors += 1;
+    if (!loaded && !notified && errors >= TILE_ERRORS_BEFORE_NOTICE) {
+      notified = true;
+      onFail();
+    }
+  });
 }
 
 export function pinIcon(L: L, variant: "default" | "active" | "you" = "default"): Leaflet.DivIcon {

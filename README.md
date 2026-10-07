@@ -19,7 +19,7 @@ Encuentra el grupo scout más cercano en el Valle del Cauca (Colombia), mira cu�
 
 ## Stack
 
-[Astro](https://astro.build) (salida estática) · [Preact](https://preactjs.com) (una isla para el buscador) · TypeScript estricto · Tailwind CSS 4 · Leaflet + OpenStreetMap/CARTO · Zod · Vitest · Playwright + axe · Vercel.
+[Astro](https://astro.build) (salida estática) · [Preact](https://preactjs.com) (una isla para el buscador) · TypeScript estricto · Tailwind CSS 4 · Leaflet + OpenStreetMap · Zod · Vitest · Playwright + axe · Vercel.
 
 Decisiones de diseño: [`docs/superpowers/specs/2026-10-07-buscador-refactor-design.md`](docs/superpowers/specs/2026-10-07-buscador-refactor-design.md).
 

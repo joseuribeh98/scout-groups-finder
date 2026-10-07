@@ -1,6 +1,12 @@
 import type * as Leaflet from "leaflet";
 import { useEffect, useRef, useState } from "preact/hooks";
-import { addThemedTiles, clusterIcon, loadLeaflet, pinIcon } from "@/components/map/leaflet";
+import {
+  addTiles,
+  clusterIcon,
+  loadLeaflet,
+  pinIcon,
+  watchTileFailures,
+} from "@/components/map/leaflet";
 import { VALLE_CENTER, VALLE_ZOOM } from "@/data/region";
 import type { Lang } from "@/i18n/lang";
 import { grupoPath } from "@/i18n/routes";
@@ -32,10 +38,10 @@ export default function GroupMap({ results, activeId, origin, lang, t, visible, 
   const needsFit = useRef(false);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [tilesFailed, setTilesFailed] = useState(false);
 
   // Crear el mapa una sola vez.
   useEffect(() => {
-    let stopTiles: (() => void) | undefined;
     let cancelled = false;
     loadLeaflet()
       .then((L) => {
@@ -45,7 +51,7 @@ export default function GroupMap({ results, activeId, origin, lang, t, visible, 
           center: [VALLE_CENTER.lat, VALLE_CENTER.lng],
           zoom: VALLE_ZOOM,
         });
-        stopTiles = addThemedTiles(L, m);
+        watchTileFailures(addTiles(L, m), () => setTilesFailed(true));
         cluster.current = L.markerClusterGroup({
           showCoverageOnHover: false,
           maxClusterRadius: 40,
@@ -59,7 +65,6 @@ export default function GroupMap({ results, activeId, origin, lang, t, visible, 
       });
     return () => {
       cancelled = true;
-      stopTiles?.();
       map.current?.remove();
       map.current = null;
     };
@@ -159,11 +164,22 @@ export default function GroupMap({ results, activeId, origin, lang, t, visible, 
     );
   }
   return (
-    <div
-      ref={container}
-      role="region"
-      aria-label={t("map.label")}
-      class="h-full min-h-[60dvh] w-full overflow-hidden rounded-2xl border border-line"
-    />
+    <div class="relative h-full min-h-[60dvh] w-full">
+      <div
+        ref={container}
+        role="region"
+        aria-label={t("map.label")}
+        class="h-full min-h-[60dvh] w-full overflow-hidden rounded-2xl border border-line"
+      />
+      {tilesFailed && (
+        <p
+          role="status"
+          class="absolute inset-x-3 top-3 z-[500] rounded-xl border border-line bg-brand-soft p-3 text-sm"
+          data-tiles-error
+        >
+          {t("map.error")}
+        </p>
+      )}
+    </div>
   );
 }

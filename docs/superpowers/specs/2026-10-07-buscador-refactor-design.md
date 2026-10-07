@@ -30,7 +30,7 @@ Backend, login, panel de administración, formularios, analítica con cookies y 
 | Framework                      | Astro 7 (salida estática) + TypeScript 6 estricto                                                                                                                               |
 | Interactividad                 | Una isla Preact para el buscador y el mapa; el resto es HTML sin JS                                                                                                             |
 | Estilos                        | Tailwind CSS 4 con tokens propios                                                                                                                                               |
-| Mapa                           | Leaflet + teselas CARTO Positron / Dark Matter + agrupación de pines (`leaflet.markercluster`)                                                                                  |
+| Mapa                           | Leaflet + teselas estándar de OpenStreetMap (modo oscuro con filtro CSS) + agrupación de pines (`leaflet.markercluster`). CARTO pasó a requerir API key (oct 2026)              |
 | Datos                          | `src/data/grupos.json`, validado con Zod al compilar                                                                                                                            |
 | Actualización                  | Solo el mantenedor, vía commit                                                                                                                                                  |
 | Idiomas                        | ES (por defecto, sin prefijo) y EN (`/en/...`) con i18n nativo de Astro                                                                                                         |
@@ -196,7 +196,7 @@ Un script de una sola vez (no se versiona, o se guarda en `scripts/` con fecha) 
 
 - **Vercel:** proyecto importado desde GitHub. `main` → producción; cada PR → URL de vista previa. Framework preset: Astro.
 - **Dominio:** el administrador DNS de `vallescout.org.co` crea `CNAME buscador → cname.vercel-dns.com`. Luego se agrega el dominio en Vercel (el certificado TLS es automático).
-- **`vercel.json`:** encabezados de seguridad (CSP que permita las teselas de CARTO, HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` con `geolocation=(self)`) y caché inmutable para `/_astro/*`.
+- **`vercel.json`:** encabezados de seguridad (CSP que permita las teselas de OpenStreetMap, HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` con `geolocation=(self)`) y caché inmutable para `/_astro/*`.
 - **SEO:** `@astrojs/sitemap`, `robots.txt`, `hreflang` ES/EN, `canonical`, JSON-LD (`Organization` por grupo).
 - **Analítica:** opcional, Vercel Web Analytics (sin cookies). Se decide después.
 - **Limpieza:** se eliminan `gh-pages`, `homepage`, scripts `predeploy`/`deploy`, restos de la plantilla Vite y el uso de `prop-types`.
@@ -237,7 +237,7 @@ Un script de una sola vez (no se versiona, o se guarda en `scripts/` con fecha) 
 Es el **último paso** y solo se hace con confirmación explícita del mantenedor en ese momento:
 
 1. Backup (`git clone --mirror`).
-2. `git filter-repo` para eliminar los valores de `jefe`, `telefono` y `telefonoAlt` de todo el historial (por reemplazo de texto con la lista de valores actuales).
+2. `git filter-repo` para eliminar los valores de `jefe`, `telefono` y `telefonoAlt` de todo el historial (por reemplazo de texto con la lista de valores actuales). La lista de reemplazo incluye también los correos personales (cualquier correo que no sea `@scout.org.co`), de acuerdo con la Task 17 del plan.
 3. Force-push a `main` y aviso de que los clones o forks existentes siguen teniendo el historial viejo.
 
 ## 12. Pendientes del mantenedor

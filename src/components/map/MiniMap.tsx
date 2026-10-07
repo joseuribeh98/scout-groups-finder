@@ -1,6 +1,6 @@
 import type * as Leaflet from "leaflet";
 import { useEffect, useRef, useState } from "preact/hooks";
-import { addThemedTiles, loadLeaflet, pinIcon } from "@/components/map/leaflet";
+import { addTiles, loadLeaflet, pinIcon, watchTileFailures } from "@/components/map/leaflet";
 
 interface Props {
   lat: number;
@@ -14,12 +14,13 @@ interface Props {
 export default function MiniMap({ lat, lng, label, errorText, fallbackHref, fallbackText }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
+  const [tilesFailed, setTilesFailed] = useState(false);
 
   useEffect(() => {
     let map: Leaflet.Map | undefined;
-    let stopTiles: (() => void) | undefined;
     let cancelled = false;
     setFailed(false);
+    setTilesFailed(false);
 
     loadLeaflet()
       .then((L) => {
@@ -35,7 +36,7 @@ export default function MiniMap({ lat, lng, label, errorText, fallbackHref, fall
           keyboard: false,
           touchZoom: false,
         });
-        stopTiles = addThemedTiles(L, map);
+        watchTileFailures(addTiles(L, map), () => setTilesFailed(true));
         L.marker([lat, lng], {
           icon: pinIcon(L, "active"),
           interactive: false,
@@ -48,7 +49,6 @@ export default function MiniMap({ lat, lng, label, errorText, fallbackHref, fall
 
     return () => {
       cancelled = true;
-      stopTiles?.();
       map?.remove();
     };
   }, [lat, lng]);
@@ -64,11 +64,18 @@ export default function MiniMap({ lat, lng, label, errorText, fallbackHref, fall
     );
   }
   return (
-    <div
-      ref={ref}
-      role="region"
-      aria-label={label}
-      class="h-56 w-full overflow-hidden rounded-xl border border-line"
-    />
+    <div class="grid gap-2">
+      <div
+        ref={ref}
+        role="region"
+        aria-label={label}
+        class="h-56 w-full overflow-hidden rounded-xl border border-line"
+      />
+      {tilesFailed && (
+        <p role="status" class="rounded-xl border border-line bg-brand-soft p-3 text-sm">
+          {errorText}
+        </p>
+      )}
+    </div>
   );
 }

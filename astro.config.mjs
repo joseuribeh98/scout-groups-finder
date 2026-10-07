@@ -24,7 +24,7 @@ export default defineConfig({
       scriptDirective: { hashes: [themeScriptHash] },
       directives: [
         "default-src 'self'",
-        "img-src 'self' data: https://*.basemaps.cartocdn.com",
+        "img-src 'self' data: https://tile.openstreetmap.org",
         "font-src 'self'",
         "connect-src 'self'",
         "object-src 'none'",
