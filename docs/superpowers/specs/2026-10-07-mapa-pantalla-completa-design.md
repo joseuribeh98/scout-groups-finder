@@ -64,6 +64,7 @@ Cambios de datos, nuevas páginas, analítica, y rediseño profundo de "¿Qué e
   7. Estado vacío dentro del panel (mismo texto y acciones de hoy).
 - **Mapa:** controles de zoom abajo a la derecha; atribución abajo a la derecha, discreta. Vista inicial: `fitBounds` a los resultados con `paddingTopLeft = [ancho del panel + 32, 16]` para que ningún pin quede bajo el panel. Al filtrar, se reajusta con el mismo padding.
 - **Pines:** el `divIcon` incluye una etiqueta con el número del grupo; se muestra solo cuando el contenedor del mapa tiene la clase `zoom-labels` (se alterna en `zoomend` cuando zoom ≥ 12).
+- **Cerca de mí:** el mapa encuadra tu posición y los grupos a ≤ 15 km (máx. 8); si no hay, el más cercano.
 - **Popup** (escritorio): el `MapPopup` actual (grupo, nombre, horario, ramas, distancia, WhatsApp, Cómo llegar, **Ver ficha**).
 
 ## 4. Portada en móvil (< 1024 px)
@@ -148,5 +149,6 @@ src/styles/map.css         etiquetas de pin, posición de controles, popup
 ## 10. Riesgos
 
 - **Lighthouse móvil:** Leaflet pasa a cargarse siempre en la portada. Mitigación: carga del mapa tras la hidratación en `requestIdleCallback`, color de fondo de mapa como placeholder y tests de Lighthouse en la vista previa de Vercel.
+- **Rendimiento:** Leaflet y markercluster se cargan en un único chunk dinámico (una petición menos antes de la primera tesela); las teselas se piden con `fetchpriority=high`. El objetivo de Lighthouse móvil se revisará con el mapa como LCP.
 - **Gestos de la hoja:** son la parte más delicada; se implementan con pointer events y umbrales simples, sin librería, y se prueban con Playwright.
 - **Política de teselas OSM:** sin cambios respecto al diseño anterior.

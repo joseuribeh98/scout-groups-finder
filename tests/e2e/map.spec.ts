@@ -9,6 +9,20 @@ test.describe("mapa del buscador", () => {
     await expect(page.locator(".pin, .marker-cluster-brand").first()).toBeVisible();
   });
 
+  test("el Valle se resalta con una máscara que desatura el exterior", async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(isMobile, "solo escritorio");
+    await gotoHydrated(page, "/");
+    await expect(page.locator(".valle-mask")).toBeAttached();
+    await expect(page.locator(".valle-outline")).toBeAttached();
+    const blend = await page.evaluate(
+      () => getComputedStyle(document.querySelector(".leaflet-overlay-pane")!).mixBlendMode,
+    );
+    expect(blend).toBe("saturation");
+  });
+
   test("filtrar por municipio deja solo sus pines", async ({ page, isMobile }) => {
     test.skip(isMobile, "solo escritorio");
     await gotoHydrated(page, "/?municipio=buga");
@@ -227,7 +241,7 @@ test.describe("mapa del buscador", () => {
   });
 
   test("si Leaflet no carga, la lista sigue funcionando y se avisa", async ({ page }) => {
-    await page.route(/leaflet[^/]*-src\.[^/]*\.js(\?|$)/i, (route) => route.abort());
+    await page.route(/leaflet-bundle[^/]*\.js(\?|$)/i, (route) => route.abort());
     await gotoHydrated(page, "/");
     await expect(page.getByText("No se pudo cargar el mapa")).toBeVisible();
     await searchBox(page).fill("fenix");
