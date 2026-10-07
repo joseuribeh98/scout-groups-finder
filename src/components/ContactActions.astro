@@ -10,8 +10,10 @@ import { directionsUrl, mailtoUrl, wazeUrl, whatsappUrl } from "@/lib/contact";
 interface Props {
   grupo: Grupo;
   lang: Lang;
+  /** "bar": solo acción principal y cómo llegar (barra fija en móvil). */
+  variant?: "full" | "bar";
 }
-const { grupo, lang } = Astro.props;
+const { grupo, lang, variant = "full" } = Astro.props;
 const t = translator(lang);
 const vars = { id: grupo.id, nombre: grupo.nombre };
 const { email, whatsapp, instagram, facebook, web } = grupo.contacto;
@@ -90,41 +92,68 @@ const base =
   "flex h-12 items-center justify-center gap-2 rounded-xl px-3 font-semibold whitespace-nowrap transition-colors";
 ---
 
-<div class="grid gap-3">
-  {primary && (
-    <a
-      class={`${base} bg-brand text-on-brand shadow-sm hover:bg-brand-strong`}
-      href={primary.href}
-      target={primary.external ? "_blank" : undefined}
-      rel={primary.external ? "noopener noreferrer" : undefined}
-      data-action={primary.key}
-    >
-      <Icon name={primary.icon} />
-      {primary.label}
-    </a>
-  )}
-  {!hasDirectContact && (
-    <p class="rounded-xl border border-line bg-brand-soft p-4 text-sm">
-      {t("grupo.noContact")}{" "}
-      <a class="font-semibold underline" href={REGION.web} data-action="region">
-        {t("grupo.contactRegion")}
+{variant === "bar" ? (
+  <div data-contact-bar class="flex gap-2">
+    {primary && (
+      <a
+        class={`${base} flex-1 bg-brand text-on-brand`}
+        href={primary.href}
+        target={primary.external ? "_blank" : undefined}
+        rel={primary.external ? "noopener noreferrer" : undefined}
+        data-action={primary.key}
+      >
+        <Icon name={primary.icon} />
+        {primary.label}
       </a>
-    </p>
-  )}
-  <ul class="grid grid-cols-2 gap-3">
-    {secondary.map((a) => (
-      <li>
-        <a
-          class={`${base} border border-line bg-surface text-ink hover:border-brand/60 hover:bg-brand-soft`}
-          href={a.href}
-          target={a.external ? "_blank" : undefined}
-          rel={a.external ? "noopener noreferrer" : undefined}
-          data-action={a.key}
-        >
-          <Icon name={a.icon} class="size-5 text-brand" />
-          {a.label}
+    )}
+    <a
+      class={`${base} ${primary ? "" : "flex-1 "}border border-line bg-surface text-ink`}
+      href={directionsUrl(grupo.ubicacion)}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-action="directions"
+    >
+      <Icon name="navigation" class="size-5 text-brand" />
+      {t("grupo.directions")}
+    </a>
+  </div>
+) : (
+  <div class="grid gap-3">
+    {primary && (
+      <a
+        class={`${base} bg-brand text-on-brand shadow-sm hover:bg-brand-strong`}
+        href={primary.href}
+        target={primary.external ? "_blank" : undefined}
+        rel={primary.external ? "noopener noreferrer" : undefined}
+        data-action={primary.key}
+      >
+        <Icon name={primary.icon} />
+        {primary.label}
+      </a>
+    )}
+    {!hasDirectContact && (
+      <p class="rounded-xl border border-line bg-brand-soft p-4 text-sm">
+        {t("grupo.noContact")}{" "}
+        <a class="font-semibold underline" href={REGION.web} data-action="region">
+          {t("grupo.contactRegion")}
         </a>
-      </li>
-    ))}
-  </ul>
-</div>
+      </p>
+    )}
+    <ul class="grid grid-cols-2 gap-3">
+      {secondary.map((a) => (
+        <li>
+          <a
+            class={`${base} border border-line bg-surface text-ink hover:border-brand/60 hover:bg-brand-soft`}
+            href={a.href}
+            target={a.external ? "_blank" : undefined}
+            rel={a.external ? "noopener noreferrer" : undefined}
+            data-action={a.key}
+          >
+            <Icon name={a.icon} class="size-5 text-brand" />
+            {a.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}

@@ -20,7 +20,7 @@ const t = translator(lang);
 const lugar = grupo.localidad ? `${grupo.localidad}, ${grupo.municipio}` : grupo.municipio;
 ---
 
-<article class="grid gap-8 md:grid-cols-[1fr_20rem]">
+<article class="grid gap-8 pb-2 md:grid-cols-[1fr_20rem] md:pb-0">
   <div class="grid content-start gap-6">
     <a
       href={pagePath(lang, "home")}
@@ -76,4 +76,7 @@ const lugar = grupo.localidad ? `${grupo.localidad}, ${grupo.municipio}` : grupo
       {t("grupo.updated", { fecha: formatMonth(grupo.actualizado, lang) })}
     </p>
   </aside>
+  <div class="sticky bottom-0 -mx-4 border-t border-line bg-surface/95 px-4 py-3 backdrop-blur md:hidden">
+    <ContactActions grupo={grupo} lang={lang} variant="bar" />
+  </div>
 </article>
