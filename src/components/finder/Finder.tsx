@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "preact/hooks";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "preact/hooks";
 import Filters, { type GeoStatus } from "@/components/finder/Filters";
 import GroupList from "@/components/finder/GroupList";
 import type { Grupo } from "@/data/schema";
@@ -20,8 +20,7 @@ export default function Finder({ grupos, lang, municipios }: Props) {
   const [origin, setOrigin] = useState<LatLng | null>(null);
   const [geoStatus, setGeoStatus] = useState<GeoStatus>("idle");
   const [activeId, setActiveId] = useState<number | null>(null);
-  const [ready, setReady] = useState(false);
-  const hydrated = useRef(false);
+  const skipSync = useRef(true);
 
   // Lee los filtros de la URL una vez, después de hidratar.
   useEffect(() => {
@@ -31,19 +30,26 @@ export default function Finder({ grupos, lang, municipios }: Props) {
         municipios.map((m) => m.slug),
       ),
     );
-    hydrated.current = true;
-    setReady(true);
   }, [municipios]);
 
-  // Refleja los filtros en la URL sin crear entradas de historial.
-  useEffect(() => {
-    if (!hydrated.current) return;
-    history.replaceState(history.state, "", `${location.pathname}${serializeFilters(filters)}`);
+  // Refleja los filtros en la URL sin crear entradas de historial. Es un layout effect
+  // para que la URL cambie en el mismo commit que la lista (una recarga inmediata no pierde estado).
+  useLayoutEffect(() => {
+    if (skipSync.current) {
+      skipSync.current = false;
+      return;
+    }
+    history.replaceState(
+      history.state,
+      "",
+      `${location.pathname}${serializeFilters(filters)}${location.hash}`,
+    );
   }, [filters]);
 
   const results = useMemo(() => buscar(grupos, filters, origin), [grupos, filters, origin]);
 
   const nearMe = () => {
+    if (geoStatus === "locating") return;
     if (geoStatus === "ok") {
       setOrigin(null);
       setGeoStatus("idle");
@@ -75,7 +81,6 @@ export default function Finder({ grupos, lang, municipios }: Props) {
         municipios={municipios}
         geoStatus={geoStatus}
         canClear={hasActiveFilters(filters)}
-        ready={ready}
         onChange={setFilters}
         onNearMe={nearMe}
         onClear={clear}

@@ -12,8 +12,6 @@ interface Props {
   municipios: { slug: string; nombre: string }[];
   geoStatus: GeoStatus;
   canClear: boolean;
-  /** false hasta hidratar: evita perder entradas hechas antes de que haya manejadores. */
-  ready: boolean;
   onChange: (next: FilterState) => void;
   onNearMe: () => void;
   onClear: () => void;
@@ -26,7 +24,6 @@ export default function Filters({
   municipios,
   geoStatus,
   canClear,
-  ready,
   onChange,
   onNearMe,
   onClear,
@@ -47,7 +44,6 @@ export default function Filters({
           type="search"
           value={filters.q}
           maxLength={100}
-          disabled={!ready}
           placeholder={t("finder.searchPlaceholder")}
           onInput={(e) => onChange({ ...filters, q: e.currentTarget.value })}
           class="h-12 rounded-xl border border-line bg-surface px-4 text-base placeholder:text-ink-soft"
@@ -57,7 +53,6 @@ export default function Filters({
         <label class="grid flex-1 gap-1">
           <span class="text-sm font-semibold">{t("finder.municipio")}</span>
           <select
-            disabled={!ready}
             value={filters.municipio ?? ""}
             onChange={(e) => onChange({ ...filters, municipio: e.currentTarget.value || null })}
             class="h-11 rounded-xl border border-line bg-surface px-3"
@@ -74,8 +69,9 @@ export default function Filters({
           type="button"
           onClick={onNearMe}
           aria-pressed={geoStatus === "ok"}
-          disabled={!ready || geoStatus === "locating"}
-          class="h-11 rounded-xl border border-line bg-surface px-4 font-semibold aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:text-on-brand disabled:opacity-60"
+          aria-disabled={geoStatus === "locating"}
+          aria-busy={geoStatus === "locating"}
+          class="h-11 rounded-xl border border-line bg-surface px-4 font-semibold aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:text-on-brand aria-disabled:opacity-60"
         >
           {geoStatus === "locating" ? t("finder.locating") : t("finder.nearMe")}
         </button>
@@ -87,7 +83,6 @@ export default function Filters({
             <button
               key={id}
               type="button"
-              disabled={!ready}
               data-rama={id}
               aria-pressed={filters.ramas.includes(id)}
               onClick={() => toggleRama(id)}

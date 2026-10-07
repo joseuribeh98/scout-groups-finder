@@ -24,10 +24,13 @@ export default function GroupCard({ resultado, lang, t, active, onActivate }: Pr
     <li
       data-grupo-id={grupo.id}
       data-active={active ? "true" : undefined}
-      class="group relative rounded-2xl border border-line bg-surface p-4 transition-shadow hover:shadow-md data-[active=true]:border-brand data-[active=true]:shadow-md"
+      class="group relative rounded-2xl border border-line bg-surface p-4 transition-shadow hover:shadow-md data-[active=true]:border-brand data-[active=true]:shadow-md has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-focus"
       onMouseEnter={() => onActivate(grupo.id)}
       onMouseLeave={() => onActivate(null)}
       onFocusCapture={() => onActivate(grupo.id)}
+      onBlurCapture={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) onActivate(null);
+      }}
     >
       <p class="text-xs font-semibold tracking-wide text-ink-soft uppercase">
         {t("grupo.number", { id: grupo.id })} · {lugar}
@@ -40,7 +43,7 @@ export default function GroupCard({ resultado, lang, t, active, onActivate }: Pr
       <h3 class="mt-1 text-lg font-bold">
         <a
           href={grupoPath(lang, grupo)}
-          class="after:absolute after:inset-0 after:rounded-2xl focus-visible:outline-none group-focus-within:underline"
+          class="after:absolute after:inset-0 after:rounded-2xl group-focus-within:underline"
         >
           {grupo.nombre}
         </a>
