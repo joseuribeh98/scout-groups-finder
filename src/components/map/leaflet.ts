@@ -21,6 +21,17 @@ export function loadLeaflet(): Promise<L> {
   return cargando;
 }
 
+export function prefersReducedMotion(): boolean {
+  return matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+/** Opciones de Leaflet que apagan las animaciones con `prefers-reduced-motion`. */
+export function motionOptions(): Leaflet.MapOptions {
+  return prefersReducedMotion()
+    ? { zoomAnimation: false, markerZoomAnimation: false, fadeAnimation: false }
+    : {};
+}
+
 const TILE_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 
 const ATTRIBUTION =

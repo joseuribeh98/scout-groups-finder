@@ -46,13 +46,25 @@ export default function Finder({ grupos, lang, municipios }: Props) {
     if (showMap) setMapRequested(true);
   }, [showMap]);
 
+  // Grupo cuyo popup está abierto: el resaltado no se apaga por hover/blur de su tarjeta.
+  const focusedId = useRef<number | null>(null);
+  const activate = (id: number | null) => {
+    if (id === null && focusedId.current !== null) return;
+    setActiveId(id);
+  };
+  const onPopupClose = () => {
+    focusedId.current = null;
+  };
+
   const selectFromMap = (id: number) => {
+    focusedId.current = id;
     setActiveId(id);
     setScrollToId(id);
   };
 
   // Clic en una tarjeta: mostrar el grupo en el mapa (en móvil, cambiando a la vista de mapa).
   const focusGroup = (id: number) => {
+    focusedId.current = id;
     setActiveId(id);
     if (!isDesktop) setView("map");
     setFocusRequest((prev) => ({ id, nonce: (prev?.nonce ?? 0) + 1 }));
@@ -83,6 +95,9 @@ export default function Finder({ grupos, lang, municipios }: Props) {
   }, [filters]);
 
   const results = useMemo(() => buscar(grupos, filters, origin), [grupos, filters, origin]);
+  useEffect(() => {
+    focusedId.current = null;
+  }, [results]);
 
   const nearMe = () => {
     if (geoStatus === "locating") return;
@@ -133,7 +148,7 @@ export default function Finder({ grupos, lang, municipios }: Props) {
           results={results}
           activeId={activeId}
           scrollToId={scrollToId}
-          onActivate={setActiveId}
+          onActivate={activate}
           onFocusGroup={focusGroup}
           onClear={clear}
         />
@@ -149,6 +164,7 @@ export default function Finder({ grupos, lang, municipios }: Props) {
             visible={showMap}
             focusRequest={focusRequest}
             onSelect={selectFromMap}
+            onPopupClose={onPopupClose}
           />
         )}
       </div>

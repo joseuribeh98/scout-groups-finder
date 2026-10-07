@@ -1,6 +1,12 @@
 import type * as Leaflet from "leaflet";
 import { useEffect, useRef, useState } from "preact/hooks";
-import { addTiles, loadLeaflet, pinIcon, watchTileFailures } from "@/components/map/leaflet";
+import {
+  addTiles,
+  loadLeaflet,
+  motionOptions,
+  pinIcon,
+  watchTileFailures,
+} from "@/components/map/leaflet";
 
 interface Props {
   lat: number;
@@ -35,6 +41,7 @@ export default function MiniMap({ lat, lng, label, errorText, fallbackHref, fall
           boxZoom: false,
           keyboard: false,
           touchZoom: false,
+          ...motionOptions(),
         });
         watchTileFailures(addTiles(L, map), () => setTilesFailed(true));
         L.marker([lat, lng], {

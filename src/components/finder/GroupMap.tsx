@@ -6,6 +6,8 @@ import {
   addTiles,
   clusterIcon,
   loadLeaflet,
+  motionOptions,
+  prefersReducedMotion,
   pinIcon,
   watchTileFailures,
 } from "@/components/map/leaflet";
@@ -30,6 +32,7 @@ interface Props {
   visible: boolean;
   focusRequest: FocusRequest | null;
   onSelect: (id: number) => void;
+  onPopupClose: () => void;
 }
 
 type L = typeof Leaflet;
@@ -43,6 +46,7 @@ export default function GroupMap({
   visible,
   focusRequest,
   onSelect,
+  onPopupClose,
 }: Props) {
   const container = useRef<HTMLDivElement>(null);
   const leaflet = useRef<L | null>(null);
@@ -56,6 +60,8 @@ export default function GroupMap({
   tRef.current = t;
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
+  const onPopupCloseRef = useRef(onPopupClose);
+  onPopupCloseRef.current = onPopupClose;
   const needsFit = useRef(false);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -71,6 +77,7 @@ export default function GroupMap({
         const m = L.map(container.current, {
           center: [VALLE_CENTER.lat, VALLE_CENTER.lng],
           zoom: VALLE_ZOOM,
+          ...motionOptions(),
         });
         watchTileFailures(addTiles(L, m), () => setTilesFailed(true));
         cluster.current = L.markerClusterGroup({
@@ -83,6 +90,17 @@ export default function GroupMap({
           const close = e.popup.getElement()?.querySelector(".leaflet-popup-close-button");
           close?.setAttribute("aria-label", tRef.current("popup.close"));
           close?.setAttribute("title", tRef.current("popup.close"));
+        });
+        // Abrir otro popup cierra el anterior en la misma tarea: solo se avisa si no queda ninguno.
+        let popupOpen = false;
+        m.on("popupopen", () => {
+          popupOpen = true;
+        });
+        m.on("popupclose", () => {
+          popupOpen = false;
+          queueMicrotask(() => {
+            if (!popupOpen) onPopupCloseRef.current();
+          });
         });
         map.current = m;
         setReady(true);
@@ -116,7 +134,7 @@ export default function GroupMap({
     needsFit.current = false;
     // Un clic en una tarjeta pendiente decide la vista; encuadrar ahora competiría con él.
     if (focusPending()) return;
-    m.fitBounds(bounds, { padding: [40, 40], maxZoom: 15 });
+    m.fitBounds(bounds, { padding: [40, 40], maxZoom: 15, animate: !prefersReducedMotion() });
   };
 
   // Redibujar marcadores cuando cambian los resultados.
@@ -185,11 +203,12 @@ export default function GroupMap({
     const m = map.current;
     const group = cluster.current;
     if (!ready || !visible || !m || !group || !focusRequest || !focusPending()) return;
+    // Se da por atendida antes de buscar el pin: si el grupo ya no está, no debe reaplicarse.
+    handledFocus.current = focusRequest.nonce;
     const marker = markers.current.get(focusRequest.id);
     if (!marker) return;
-    handledFocus.current = focusRequest.nonce;
     m.invalidateSize();
-    const animate = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const animate = !prefersReducedMotion();
     group.zoomToShowLayer(marker, () => {
       m.setView(marker.getLatLng(), Math.max(m.getZoom(), 15), { animate });
       marker.openPopup();
