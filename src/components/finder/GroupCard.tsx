@@ -1,3 +1,4 @@
+import Icon from "@/components/Icon";
 import { ramaLabel } from "@/data/ramas";
 import type { Lang } from "@/i18n/lang";
 import { grupoPath } from "@/i18n/routes";
@@ -13,18 +14,20 @@ interface Props {
   t: Translate;
   active: boolean;
   onActivate: (id: number | null) => void;
+  onFocusGroup: (id: number) => void;
 }
 
-export default function GroupCard({ resultado, lang, t, active, onActivate }: Props) {
+export default function GroupCard({ resultado, lang, t, active, onActivate, onFocusGroup }: Props) {
   const { grupo, distanciaKm } = resultado;
   const lugar = grupo.localidad ? `${grupo.localidad}, ${grupo.municipio}` : grupo.municipio;
   const { whatsapp } = grupo.contacto;
+  const nameId = `grupo-${grupo.id}-nombre`;
 
   return (
     <li
       data-grupo-id={grupo.id}
       data-active={active ? "true" : undefined}
-      class="group relative rounded-2xl border border-line bg-surface p-4 transition-shadow hover:shadow-md data-[active=true]:border-brand data-[active=true]:shadow-md has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-focus"
+      class="relative rounded-2xl border border-line bg-surface p-4 transition-[border-color,background-color,box-shadow] hover:border-brand/50 hover:shadow-md data-[active=true]:border-brand data-[active=true]:bg-brand-soft data-[active=true]:shadow-md"
       onMouseEnter={() => onActivate(grupo.id)}
       onMouseLeave={() => onActivate(null)}
       onFocusCapture={() => onActivate(grupo.id)}
@@ -34,21 +37,21 @@ export default function GroupCard({ resultado, lang, t, active, onActivate }: Pr
     >
       <p class="text-xs font-semibold tracking-wide text-ink-soft uppercase">
         {t("grupo.number", { id: grupo.id })} · {lugar}
-        {distanciaKm !== null && (
-          <span class="ml-1 normal-case tabular-nums">
-            · {t("card.distance", { d: formatDistance(distanciaKm, lang) })}
-          </span>
-        )}
       </p>
-      <h3 class="mt-1 text-lg font-bold">
-        <a
-          href={grupoPath(lang, grupo)}
-          class="after:absolute after:inset-0 after:rounded-2xl group-focus-within:underline"
-        >
-          {grupo.nombre}
-        </a>
+      <h3 id={nameId} class="mt-1 text-lg leading-snug font-bold">
+        {grupo.nombre}
       </h3>
-      <p class="mt-1 text-sm text-ink-soft tabular-nums">{formatReunion(grupo.reunion, lang)}</p>
+      {/* Toda la tarjeta es un botón que muestra el grupo en el mapa; los enlaces van encima. */}
+      <button
+        type="button"
+        class="absolute inset-0 cursor-pointer rounded-2xl"
+        aria-label={t("card.showOnMap", { nombre: grupo.nombre })}
+        onClick={() => onFocusGroup(grupo.id)}
+      />
+      <p class="mt-1 flex items-center gap-1.5 text-sm text-ink-soft tabular-nums">
+        <Icon name="clock" class="size-4" />
+        {formatReunion(grupo.reunion, lang)}
+      </p>
       <ul class="mt-3 flex flex-wrap gap-1.5">
         {grupo.ramas.map((id) => (
           <li key={id} class="rama-chip" data-rama={id}>
@@ -56,20 +59,35 @@ export default function GroupCard({ resultado, lang, t, active, onActivate }: Pr
           </li>
         ))}
       </ul>
-      {whatsapp && (
-        <a
-          href={whatsappUrl(
-            whatsapp,
-            t("grupo.whatsappMsg", { id: grupo.id, nombre: grupo.nombre }),
+      <div class="mt-3 flex items-center justify-between gap-3">
+        <p class="text-sm font-semibold text-ink-soft tabular-nums">
+          {distanciaKm !== null && t("card.distance", { d: formatDistance(distanciaKm, lang) })}
+        </p>
+        <div class="relative z-10 flex items-center gap-2">
+          <a
+            href={grupoPath(lang, grupo)}
+            aria-describedby={nameId}
+            class="inline-flex h-10 items-center gap-1 rounded-full pr-2.5 pl-3.5 text-sm font-semibold text-brand hover:bg-brand-soft hover:underline"
+          >
+            {t("card.details")}
+            <Icon name="chevron-right" class="size-4" />
+          </a>
+          {whatsapp && (
+            <a
+              href={whatsappUrl(
+                whatsapp,
+                t("grupo.whatsappMsg", { id: grupo.id, nombre: grupo.nombre }),
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex size-10 items-center justify-center rounded-full bg-whatsapp text-white dark:text-canvas"
+              aria-label={t("card.whatsapp", { nombre: grupo.nombre })}
+            >
+              <Icon name="whatsapp" class="size-5" />
+            </a>
           )}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="relative z-10 mt-3 inline-flex rounded-full bg-whatsapp px-3 py-1.5 text-sm font-semibold text-white dark:text-canvas"
-          aria-label={t("card.whatsapp", { nombre: grupo.nombre })}
-        >
-          WhatsApp
-        </a>
-      )}
+        </div>
+      </div>
     </li>
   );
 }

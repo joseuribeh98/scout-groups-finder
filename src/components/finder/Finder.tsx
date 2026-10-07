@@ -1,7 +1,8 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "preact/hooks";
 import Filters, { type GeoStatus } from "@/components/finder/Filters";
 import GroupList from "@/components/finder/GroupList";
-import GroupMap from "@/components/finder/GroupMap";
+import GroupMap, { type FocusRequest } from "@/components/finder/GroupMap";
+import Icon from "@/components/Icon";
 import { useMediaQuery } from "@/components/finder/useMediaQuery";
 import { VALLE_BOUNDS } from "@/data/region";
 import type { Grupo } from "@/data/schema";
@@ -39,6 +40,7 @@ export default function Finder({ grupos, lang, municipios }: Props) {
   const [view, setView] = useState<"list" | "map">("list");
   const [mapRequested, setMapRequested] = useState(false);
   const [scrollToId, setScrollToId] = useState<number | null>(null);
+  const [focusRequest, setFocusRequest] = useState<FocusRequest | null>(null);
   const showMap = isDesktop || view === "map";
   useEffect(() => {
     if (showMap) setMapRequested(true);
@@ -47,6 +49,13 @@ export default function Finder({ grupos, lang, municipios }: Props) {
   const selectFromMap = (id: number) => {
     setActiveId(id);
     setScrollToId(id);
+  };
+
+  // Clic en una tarjeta: mostrar el grupo en el mapa (en móvil, cambiando a la vista de mapa).
+  const focusGroup = (id: number) => {
+    setActiveId(id);
+    if (!isDesktop) setView("map");
+    setFocusRequest((prev) => ({ id, nonce: (prev?.nonce ?? 0) + 1 }));
   };
 
   // Lee los filtros de la URL una vez, después de hidratar.
@@ -125,6 +134,7 @@ export default function Finder({ grupos, lang, municipios }: Props) {
           activeId={activeId}
           scrollToId={scrollToId}
           onActivate={setActiveId}
+          onFocusGroup={focusGroup}
           onClear={clear}
         />
       </div>
@@ -137,6 +147,7 @@ export default function Finder({ grupos, lang, municipios }: Props) {
             lang={lang}
             t={t}
             visible={showMap}
+            focusRequest={focusRequest}
             onSelect={selectFromMap}
           />
         )}
@@ -144,8 +155,9 @@ export default function Finder({ grupos, lang, municipios }: Props) {
       <button
         type="button"
         onClick={() => setView(view === "list" ? "map" : "list")}
-        class="fixed bottom-5 left-1/2 z-[1000] -translate-x-1/2 rounded-full bg-brand px-5 py-3 font-semibold text-on-brand shadow-lg lg:hidden"
+        class="fixed bottom-5 left-1/2 z-[1000] inline-flex -translate-x-1/2 items-center gap-2 rounded-full bg-brand px-5 py-3 font-semibold text-on-brand shadow-lg hover:bg-brand-strong lg:hidden"
       >
+        <Icon name={view === "list" ? "map" : "list"} />
         {view === "list" ? t("finder.showMap") : t("finder.showList")}
       </button>
     </div>

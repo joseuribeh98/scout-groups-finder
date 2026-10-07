@@ -1,3 +1,4 @@
+import Icon from "@/components/Icon";
 import { RAMA_IDS, RAMAS, ramaLabel, type RamaId } from "@/data/ramas";
 import type { Lang } from "@/i18n/lang";
 import type { Translate } from "@/i18n/ui";
@@ -51,14 +52,20 @@ export default function Filters({
     <div class="grid gap-3" role="search">
       <label class="grid gap-1">
         <span class="text-sm font-semibold">{t("finder.searchLabel")}</span>
-        <input
-          type="search"
-          value={filters.q}
-          maxLength={100}
-          placeholder={t("finder.searchPlaceholder")}
-          onInput={(e) => onChange({ ...filters, q: e.currentTarget.value })}
-          class="h-12 rounded-xl border border-line bg-surface px-4 text-base placeholder:text-ink-soft"
-        />
+        <span class="relative">
+          <Icon
+            name="search"
+            class="pointer-events-none absolute top-1/2 left-3.5 size-5 -translate-y-1/2 text-ink-soft"
+          />
+          <input
+            type="search"
+            value={filters.q}
+            maxLength={100}
+            placeholder={t("finder.searchPlaceholder")}
+            onInput={(e) => onChange({ ...filters, q: e.currentTarget.value })}
+            class="h-12 w-full rounded-xl border border-line bg-surface pr-4 pl-11 text-base placeholder:text-ink-soft"
+          />
+        </span>
       </label>
       <div class="flex flex-wrap items-end gap-2">
         <label class="grid flex-1 gap-1">
@@ -82,29 +89,34 @@ export default function Filters({
           aria-pressed={geoStatus === "ok"}
           aria-disabled={geoStatus === "locating"}
           aria-busy={geoStatus === "locating"}
-          class="h-11 rounded-xl border border-line bg-surface px-4 font-semibold aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:text-on-brand aria-disabled:opacity-60"
+          class="inline-flex h-11 items-center gap-2 rounded-xl border border-line bg-surface px-4 font-semibold hover:bg-brand-soft aria-disabled:opacity-60 aria-pressed:border-brand aria-pressed:bg-brand aria-pressed:text-on-brand"
         >
+          <Icon name="locate-fixed" />
           {geoStatus === "locating" ? t("finder.locating") : t("finder.nearMe")}
         </button>
       </div>
       <fieldset class="grid gap-2">
         <legend class="text-sm font-semibold">{t("finder.ramas")}</legend>
         <div class="flex flex-wrap gap-2">
-          {RAMA_IDS.map((id) => (
-            <button
-              key={id}
-              type="button"
-              data-rama={id}
-              aria-pressed={filters.ramas.includes(id)}
-              onClick={() => toggleRama(id)}
-              class="rama-chip border-2 border-transparent py-1 aria-pressed:border-[var(--rama)]"
-            >
-              {ramaLabel(id, lang)}
-              <span class="font-normal">
-                {t("finder.ramaAge", { min: RAMAS[id].edadMin, max: RAMAS[id].edadMax })}
-              </span>
-            </button>
-          ))}
+          {RAMA_IDS.map((id) => {
+            const pressed = filters.ramas.includes(id);
+            return (
+              <button
+                key={id}
+                type="button"
+                data-rama={id}
+                aria-pressed={pressed}
+                onClick={() => toggleRama(id)}
+                class="rama-chip min-h-9 py-1 hover:border-brand/60 aria-pressed:border-brand aria-pressed:bg-brand-soft"
+              >
+                {pressed && <Icon name="check" class="-mx-0.5 size-4 text-brand" />}
+                {ramaLabel(id, lang)}
+                <span class="font-normal text-ink-soft">
+                  {t("finder.ramaAge", { min: RAMAS[id].edadMin, max: RAMAS[id].edadMax })}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </fieldset>
       <p role="status" class="rounded-xl bg-brand-soft px-3 py-2 text-sm empty:hidden">
@@ -114,7 +126,7 @@ export default function Filters({
         <button
           type="button"
           onClick={onClear}
-          class="justify-self-start text-sm font-semibold text-brand underline"
+          class="justify-self-start text-sm font-semibold text-brand underline underline-offset-4"
         >
           {t("finder.clear")}
         </button>
