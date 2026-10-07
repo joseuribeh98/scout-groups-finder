@@ -14,6 +14,7 @@ export default defineConfig({
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },
   ],
   webServer: {
+    // --ignore-lock: Astro 7 preview otherwise backgrounds itself and the foreground process exits.
     command: `npm run build && npm run preview -- --port ${PORT} --ignore-lock`,
     url: `http://localhost:${PORT}/`,
     reuseExistingServer: !process.env["CI"],

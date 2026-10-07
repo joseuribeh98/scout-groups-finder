@@ -1,4 +1,6 @@
 import type * as Leaflet from "leaflet";
+import "leaflet/dist/leaflet.css";
+import "leaflet.markercluster/dist/MarkerCluster.css";
 
 type L = typeof Leaflet;
 let cargando: Promise<L> | null = null;
@@ -7,13 +9,9 @@ let cargando: Promise<L> | null = null;
 export function loadLeaflet(): Promise<L> {
   cargando ??= (async () => {
     const mod = await import("leaflet");
-    await import("leaflet/dist/leaflet.css");
     const L = ("default" in mod ? mod.default : mod) as L;
     (window as unknown as { L: L }).L = L;
     await import("leaflet.markercluster");
-    // Astro inlines this stylesheet in the page and drops the file, so Vite's
-    // preload of the emitted asset 404s. The styles are already present; ignore it.
-    await import("leaflet.markercluster/dist/MarkerCluster.css").catch(() => undefined);
     return L;
   })().catch((error: unknown) => {
     cargando = null;
