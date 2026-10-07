@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { grupos } from "@/data/grupos";
+import { grupos, municipiosConGrupos } from "@/data/grupos";
 
 const raw = readFileSync("src/data/grupos.json", "utf8");
 
@@ -36,5 +36,16 @@ describe("datos de grupos", () => {
       inicio: "10:00",
       fin: "12:30",
     });
+  });
+
+  it("lista los municipios con grupos, ordenados", () => {
+    expect(municipiosConGrupos.map((m) => m.slug)).toEqual([
+      "buga",
+      "cali",
+      "candelaria",
+      "cartago",
+      "palmira",
+      "tulua",
+    ]);
   });
 });
