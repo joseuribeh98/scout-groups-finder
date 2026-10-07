@@ -143,7 +143,7 @@ test.describe("mapa del buscador", () => {
     if (isMobile) await page.getByRole("button", { name: "Ver mapa" }).click();
     await expect(page.getByText("No se pudo cargar el mapa")).toBeVisible();
     if (isMobile) await page.getByRole("button", { name: "Ver lista" }).click();
-    await page.getByLabel("Buscar grupo").fill("fenix");
+    await ui(page).getByLabel("Buscar grupo").fill("fenix");
     await expect(page.locator("li[data-grupo-id]")).toHaveCount(1);
   });
 });

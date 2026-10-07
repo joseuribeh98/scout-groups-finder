@@ -55,7 +55,7 @@ test.describe("buscador", () => {
 
   test("estado vacío con acción de limpiar", async ({ page }) => {
     await gotoHydrated(page, "/?q=zzzz");
-    await expect(page.getByText("No encontramos grupos con esos filtros")).toBeVisible();
+    await expect(ui(page).getByText("No encontramos grupos con esos filtros")).toBeVisible();
     await ui(page).getByRole("button", { name: "Limpiar filtros" }).first().click();
     await expect(cards(page)).toHaveCount(22);
     await expect(page).toHaveURL(/\/$/);
@@ -75,7 +75,7 @@ test.describe("buscador", () => {
     await gotoHydrated(page, "/");
     const primero = await cards(page).first().getAttribute("data-grupo-id");
     await ui(page).getByRole("button", { name: "Cerca de mí" }).click();
-    await expect(page.getByText("No pudimos obtener tu ubicación")).toBeVisible();
+    await expect(ui(page).getByText("No pudimos obtener tu ubicación")).toBeVisible();
     await expect(cards(page).first()).toHaveAttribute("data-grupo-id", primero ?? "");
   });
 
@@ -85,13 +85,16 @@ test.describe("buscador", () => {
     await gotoHydrated(page, "/");
     const primero = await cards(page).first().getAttribute("data-grupo-id");
     await ui(page).getByRole("button", { name: "Cerca de mí" }).click();
-    await expect(page.getByText("Parece que estás lejos del Valle del Cauca")).toBeVisible();
+    await expect(ui(page).getByText("Parece que estás lejos del Valle del Cauca")).toBeVisible();
     await expect(cards(page).first()).toHaveAttribute("data-grupo-id", primero ?? "");
   });
 
   test("la tarjeta lleva a la ficha del grupo", async ({ page }) => {
     await gotoHydrated(page, "/?q=815");
-    await page.locator('li[data-grupo-id="815"]').getByRole("link", { name: "Ver ficha" }).click();
+    await ui(page)
+      .locator('li[data-grupo-id="815"]')
+      .getByRole("link", { name: "Ver ficha" })
+      .click();
     await expect(page).toHaveURL(/\/grupos\/815-fenix-escarlata\/$/);
   });
 
@@ -99,7 +102,7 @@ test.describe("buscador", () => {
     await gotoHydrated(page, "/en/");
     await expect(ui(page).locator("[data-count]")).toHaveText("22 groups");
     await expect(
-      page.locator('li[data-grupo-id="815"]').getByRole("link", { name: "View details" }),
+      ui(page).locator('li[data-grupo-id="815"]').getByRole("link", { name: "View details" }),
     ).toHaveAttribute("href", "/en/groups/815-fenix-escarlata/");
   });
 });
