@@ -207,6 +207,8 @@ test.describe("mapa del buscador", () => {
       "href",
       "/grupos/315-aguilas-doradas/",
     );
+    await expect(ui(page)).toHaveAttribute("data-snap", "peek");
+    await expect(card.getByRole("link", { name: "Ver ficha" })).toBeInViewport();
     await expect(page).not.toHaveURL(/\/grupos\//);
     await ui(page).getByRole("button", { name: "Volver a la lista" }).click();
     await expect(cards(page)).toHaveCount(22);

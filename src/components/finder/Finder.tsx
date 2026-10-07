@@ -3,7 +3,7 @@ import FilterChips, { type Municipio } from "@/components/finder/FilterChips";
 import Panel, { PANEL_INSET, PANEL_WIDTH } from "@/components/finder/Panel";
 import ResultList from "@/components/finder/ResultList";
 import SelectedCard from "@/components/finder/SelectedCard";
-import Sheet, { SHEET_PEEK_RATIO, type Snap } from "@/components/finder/Sheet";
+import Sheet, { type Snap } from "@/components/finder/Sheet";
 import GroupMap, { type FitPadding, type FocusRequest } from "@/components/finder/GroupMap";
 import SearchBar, { type GeoStatus } from "@/components/finder/SearchBar";
 import { useMediaQuery } from "@/components/finder/useMediaQuery";
@@ -42,6 +42,7 @@ export default function Finder({ grupos, lang, municipios }: Props) {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const root = useRef<HTMLDivElement>(null);
   const [snap, setSnap] = useState<Snap>("peek");
+  const [peekPx, setPeekPx] = useState(0);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [scrollToId, setScrollToId] = useState<number | null>(null);
   const [focusRequest, setFocusRequest] = useState<FocusRequest | null>(null);
@@ -127,12 +128,11 @@ export default function Finder({ grupos, lang, municipios }: Props) {
     root.current?.style.setProperty("--sheet-offset", offset);
   }, [snap]);
 
-  // La hoja asomada ocupa SHEET_PEEK_RATIO del contenedor (Task 6 medirá la real).
+  // La hoja asomada (medida por la propia hoja) deja libre el borde inferior del mapa.
   const fitPadding = useMemo<FitPadding>(() => {
     if (isDesktop) return { topLeft: [PANEL_WIDTH + PANEL_INSET * 2, 16], bottomRight: [16, 16] };
-    const h = root.current?.clientHeight ?? 0;
-    return { topLeft: [16, 72], bottomRight: [16, Math.round(h * SHEET_PEEK_RATIO) + 16] };
-  }, [isDesktop]);
+    return { topLeft: [16, 72], bottomRight: [16, peekPx + 16] };
+  }, [isDesktop, peekPx]);
 
   const nearMe = () => {
     if (geoStatus === "locating") return;
@@ -261,6 +261,10 @@ export default function Finder({ grupos, lang, municipios }: Props) {
           q={filters.q}
           geoStatus={geoStatus}
           compact
+          onFocus={() => setSnap("full")}
+          onBlur={() => {
+            if (!filters.q.trim()) setSnap("half");
+          }}
           onChange={(q) => setFilters({ ...filters, q })}
           onNearMe={nearMe}
         />
@@ -269,18 +273,21 @@ export default function Finder({ grupos, lang, municipios }: Props) {
         t={t}
         snap={snap}
         onSnap={setSnap}
+        onPeekHeight={setPeekPx}
         header={
-          <div class="grid gap-2 pt-1">
-            <h1 class="text-lg leading-tight font-extrabold text-ink">{t("finder.heading")}</h1>
-            <FilterChips
-              lang={lang}
-              t={t}
-              filters={filters}
-              municipios={municipios}
-              onChange={setFilters}
-            />
-            {status}
-          </div>
+          selected ? null : (
+            <div class="grid gap-2 pt-1">
+              <h1 class="text-lg leading-tight font-extrabold text-ink">{t("finder.heading")}</h1>
+              <FilterChips
+                lang={lang}
+                t={t}
+                filters={filters}
+                municipios={municipios}
+                onChange={setFilters}
+              />
+              {status}
+            </div>
+          )
         }
         body={
           selected ? (
