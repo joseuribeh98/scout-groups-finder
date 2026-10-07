@@ -72,6 +72,25 @@ test.describe("mapa del buscador", () => {
     await expect(page).not.toHaveURL(/\/grupos\//);
   });
 
+  test("en móvil, el pin enfocado queda por encima del centro del mapa", async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(!isMobile, "solo móvil");
+    await gotoHydrated(page, "/");
+    await page.getByRole("button", { name: "Ver Águilas Doradas en el mapa" }).click();
+    const mapBox = page.locator(".leaflet-container");
+    const pin = page.locator(".leaflet-marker-pane .pin--active");
+    await expect(mapBox).toBeVisible();
+    await expect(pin).toBeVisible();
+    await expect(async () => {
+      const m = await mapBox.boundingBox();
+      const p = await pin.boundingBox();
+      expect(m && p).toBeTruthy();
+      expect(p!.y + p!.height / 2).toBeLessThan(m!.y + m!.height / 2 - 4);
+    }).toPass();
+  });
+
   test("el pin con popup abierto conserva el resaltado tras pasar por otra tarjeta", async ({
     page,
     isMobile,

@@ -256,9 +256,14 @@ export default function GroupMap({
     m.invalidateSize();
     const animate = !prefersReducedMotion();
     group.zoomToShowLayer(marker, () => {
-      m.setView(marker.getLatLng(), Math.max(m.getZoom(), 15), { animate });
+      const zoom = Math.max(m.getZoom(), 15);
+      // Sin popup, el centro baja medio padding inferior para que el pin quede sobre la hoja.
+      const off = Math.round(fitPaddingRef.current.bottomRight[1] / 2);
+      const target = popups
+        ? marker.getLatLng()
+        : m.unproject(m.project(marker.getLatLng(), zoom).add([0, off]), zoom);
+      m.setView(target, zoom, { animate });
       if (popups) marker.openPopup();
-      else m.panBy([0, Math.round(fitPaddingRef.current.bottomRight[1] / 2)], { animate: false });
     });
   }, [ready, visible, focusRequest, results]);
 

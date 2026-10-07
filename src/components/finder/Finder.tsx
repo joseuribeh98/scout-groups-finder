@@ -63,6 +63,7 @@ export default function Finder({ grupos, lang, municipios }: Props) {
   const selectFromMap = (id: number) => {
     setActiveId(id);
     setScrollToId(id);
+    if (!isDesktop) focusedId.current = id;
   };
 
   // Clic en una tarjeta: mostrar el grupo en el mapa (en móvil, cambiando a la vista de mapa).

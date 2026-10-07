@@ -56,11 +56,9 @@
 .leaflet-marker-icon.pin {
   background: none;
   border: 0;
-}
-/* Etiqueta con el número del grupo; visible solo con zoom suficiente (clase zoom-labels). */
-.leaflet-marker-icon.pin {
   overflow: visible;
 }
+/* Etiqueta con el número del grupo; visible solo con zoom suficiente (clase zoom-labels). */
 .pin__label {
   position: absolute;
   top: 0.125rem;
