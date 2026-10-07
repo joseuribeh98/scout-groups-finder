@@ -1,14 +1,10 @@
 ---
-import "@/styles/global.css";
+import Base from "@/layouts/Base.astro";
+import { translator } from "@/i18n/ui";
+
+const t = translator("es");
 ---
 
-<html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Buscador de Grupos Scout · Región Valle</title>
-  </head>
-  <body>
-    <h1 class="text-2xl font-bold">Buscador de Grupos Scout</h1>
-  </body>
-</html>
+<Base lang="es" title={t("site.title")} description={t("site.description")} path="/">
+  <h1 class="text-3xl font-bold text-brand">{t("finder.heading")}</h1>
+</Base>
