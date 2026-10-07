@@ -27,7 +27,7 @@ Backend, login, panel de administración, formularios, analítica con cookies y 
 
 | Tema | Decisión |
 |---|---|
-| Framework | Astro 5 (salida estática) + TypeScript estricto |
+| Framework | Astro 7 (salida estática) + TypeScript 6 estricto |
 | Interactividad | Una isla Preact para el buscador y el mapa; el resto es HTML sin JS |
 | Estilos | Tailwind CSS 4 con tokens propios |
 | Mapa | Leaflet + teselas CARTO Positron / Dark Matter + agrupación de pines (`leaflet.markercluster`) |
@@ -38,7 +38,7 @@ Backend, login, panel de administración, formularios, analítica con cookies y 
 | Licencia | MIT para el código. Marca, logos y nombres de Scouts de Colombia excluidos (aviso en README y LICENSE) |
 | Fuente de verdad institucional | `scout.org.co` (nombres de rama, edades, paleta). `vallescout.org.co` está desactualizado |
 | Logo del encabezado | Región Valle |
-| Privacidad | Solo canales institucionales y un WhatsApp autorizado por el grupo. Se eliminan `jefe` y `telefonoAlt`, y se limpia el historial de git |
+| Privacidad | Solo correos `@scout.org.co`, redes del grupo y un WhatsApp autorizado. Se eliminan `jefe`, `telefono`, `telefonoAlt` y los correos personales, y se limpia el historial de git |
 
 ## 3. Información institucional
 
@@ -113,7 +113,7 @@ src/
     ramas.ts           ramas, edades, colores, orden oficial
     region.ts          contacto de la Región, límites geográficos del Valle
   i18n/
-    es.json, en.json   textos de interfaz
+    ui.ts              textos de interfaz es/en tipados (una clave faltante es error de compilación)
     index.ts           t(), helpers de rutas por idioma
   lib/                 funciones puras y testeables
     search.ts          normalización y filtrado
@@ -174,7 +174,7 @@ Cada módulo de `lib/` es puro y no depende de Astro ni de Preact. La isla `Find
 - `ubicacion` dentro del rectángulo del Valle del Cauca (lat 3.0–5.1, lng −77.6 a −75.6, aprox.).
 - `dia` ∈ lunes…domingo; `inicio`/`fin` en `HH:mm`, con `fin > inicio`.
 - `ramas` sin vacíos ni repetidos, todas válidas; se ordenan según el orden oficial.
-- `email` válido; `instagram`, `facebook` y `web` deben ser URLs `https://`; `whatsapp` debe cumplir `^57\d{10}$`.
+- `email` nullable y solo `@scout.org.co`; `instagram`, `facebook` y `web` deben ser URLs `https://`; `whatsapp` debe cumplir `^57\d{10}$`.
 - Cualquier campo extra (`jefe`, `telefonoAlt`, …) **rechaza** el build (`.strict()`), para evitar que vuelvan a entrar datos personales por error.
 - Los mensajes de error identifican el grupo: `grupo 815 (Fénix Escarlata): ubicacion.lat fuera del Valle`.
 
@@ -185,6 +185,9 @@ Un script de una sola vez (no se versiona, o se guarda en `scripts/` con fecha) 
 - Ramas: equivalencias de la sección 3.
 - Horarios: texto libre → `reunion`. Se revisan a mano los 22 casos.
 - `telefono` y `telefonoAlt` se descartan. `whatsapp` queda `null` hasta que el mantenedor confirme qué números están autorizados.
+- Correos que no son `@scout.org.co` (12 de 22, personales) se descartan.
+- Valores de `facebook` que no son URL (p. ej. "Grupo scout 808 Delfines") → `null`.
+- Nombres en mayúsculas se normalizan: ZIMBABUE → Zimbabue, SAMAGUARE → Samaguare, LEON DORADO → León Dorado.
 - `jefe` se descarta.
 - Rozo → `municipio: "Palmira"`, `localidad: "Rozo"`.
 - URLs vacías → `null`.
@@ -207,6 +210,7 @@ Un script de una sola vez (no se versiona, o se guarda en `scripts/` con fecha) 
 | JS deshabilitado | El buscador muestra la lista completa renderizada en el servidor; las fichas funcionan |
 | Geolocalización negada o con error | Toast breve; se mantiene el orden por defecto |
 | Grupo sin WhatsApp o sin redes | No se muestran esos botones |
+| Grupo sin ningún canal directo | Se muestra "Contacta a la Región Valle" con enlace a vallescout.org.co |
 | Parámetro de URL inválido | Se ignora en silencio |
 
 ## 9. Calidad y pruebas
@@ -239,6 +243,6 @@ Es el **último paso** y solo se hace con confirmación explícita del mantenedo
 ## 12. Pendientes del mantenedor
 
 - Logo de la Región Valle en SVG o PNG de alta resolución (provisional: `logo_scoutvalle_new.png` de vallescout.org.co).
-- Números de WhatsApp autorizados por cada grupo.
+- Números de WhatsApp autorizados por cada grupo y correos `@scout.org.co` de los 12 grupos que hoy solo tienen correo personal.
 - Contacto general de la Región para el estado vacío y el pie de página.
 - Solicitar el registro CNAME al administrador DNS.
