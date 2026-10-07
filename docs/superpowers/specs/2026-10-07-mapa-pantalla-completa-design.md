@@ -90,8 +90,8 @@ Cambios de datos, nuevas páginas, analítica, y rediseño profundo de "¿Qué e
   - La hoja es `role="region"` con `aria-label` "Resultados". El contenido existe en el DOM en todas las posiciones.
   - Con `prefers-reduced-motion`, no hay animación de arrastre: salta a la posición.
 - **Búsqueda:** píldora flotante arriba del mapa (margen 12 px) con la lupa y el botón "Cerca de mí" (solo icono, con `aria-label`). Al enfocar el campo, la hoja sube a **completa** para ver los resultados mientras se escribe; al limpiar y desenfocar vuelve a **media**.
-- **Tocar un pin:** la hoja pasa a **asomada** y muestra, en lugar de la lista, la **tarjeta del grupo** (el mismo contenido del popup, con una X para volver a la lista). El mapa centra ese pin. No se usan popups de Leaflet en móvil.
-- **Tocar un resultado:** igual que tocar su pin.
+- **Tocar un pin:** la hoja pasa a **media** y muestra, en lugar de la lista, la **tarjeta del grupo** (el mismo contenido del popup, con una X para volver a la lista). El mapa centra ese pin. No se usan popups de Leaflet en móvil.
+- **Tocar un resultado:** igual que tocar su pin. (La hoja sube a media altura y no a asomada porque la tarjeta, con su botón "Ver ficha", no cabe en el 30 %.)
 - Desaparecen el botón flotante "Ver mapa / Ver lista" y la vista por pestañas.
 - El `body` no hace scroll en la portada; solo la lista dentro de la hoja.
 

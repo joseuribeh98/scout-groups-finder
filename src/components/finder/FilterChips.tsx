@@ -19,7 +19,7 @@ interface Props {
 }
 
 const chip =
-  "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full border border-line bg-surface px-3 text-sm font-semibold whitespace-nowrap hover:border-brand/60 aria-pressed:border-brand aria-pressed:bg-brand-soft";
+  "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full lg:h-7 lg:px-2.5 lg:text-xs border border-line bg-surface px-3 text-sm font-semibold whitespace-nowrap hover:border-brand/60 aria-pressed:border-brand aria-pressed:bg-brand-soft";
 
 export default function FilterChips({ lang, t, filters, municipios, onChange }: Props) {
   const toggleRama = (id: RamaId) =>
@@ -34,7 +34,7 @@ export default function FilterChips({ lang, t, filters, municipios, onChange }: 
     <div class="grid gap-2" aria-label={t("finder.filters")} role="group">
       {/* Municipio: selección única; la fila hace scroll horizontal si no cabe. */}
       <div
-        class="-mx-4 -my-1.5 flex gap-2 overflow-x-auto px-4 py-1.5 [scrollbar-width:none] lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0"
+        class="-mx-4 -my-1.5 flex gap-2 lg:gap-1.5 overflow-x-auto px-4 py-1.5 [scrollbar-width:none] lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0"
         role="group"
         aria-label={t("finder.municipio")}
       >
@@ -62,7 +62,7 @@ export default function FilterChips({ lang, t, filters, municipios, onChange }: 
       </div>
       {/* Ramas: multiselección; el color oficial va solo en el punto. */}
       <div
-        class="-mx-4 -my-1.5 flex gap-2 overflow-x-auto px-4 py-1.5 [scrollbar-width:none] lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0"
+        class="-mx-4 -my-1.5 flex gap-2 lg:gap-1.5 overflow-x-auto px-4 py-1.5 [scrollbar-width:none] lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0"
         role="group"
         aria-label={t("finder.ramas")}
       >
@@ -76,7 +76,7 @@ export default function FilterChips({ lang, t, filters, municipios, onChange }: 
               data-rama={id}
               aria-pressed={pressed}
               onClick={() => toggleRama(id)}
-              class="rama-chip h-8 shrink-0 whitespace-nowrap hover:border-brand/60 aria-pressed:border-brand aria-pressed:bg-brand-soft"
+              class="rama-chip h-8 shrink-0 lg:h-7 lg:px-2.5 lg:text-xs whitespace-nowrap hover:border-brand/60 aria-pressed:border-brand aria-pressed:bg-brand-soft"
             >
               {pressed && <Icon name="check" class="-mx-0.5 size-4 text-brand" />}
               {ramaLabel(id, lang)}

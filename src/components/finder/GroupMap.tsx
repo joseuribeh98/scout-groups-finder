@@ -36,6 +36,8 @@ interface Props {
   lang: Lang;
   t: Translate;
   fitPadding: FitPadding;
+  /** Móvil: alto de relleno inferior con la tarjeta abierta (hoja a media altura); sustituye al de fitPadding al enfocar. */
+  focusBottomPad?: number;
   /** Escritorio: popups de Leaflet. Móvil: la ficha se muestra en la hoja (sin popups). */
   popups: boolean;
   focusRequest: FocusRequest | null;
@@ -53,6 +55,7 @@ export default function GroupMap({
   lang,
   t,
   fitPadding,
+  focusBottomPad,
   popups,
   focusRequest,
   onSelect,
@@ -77,6 +80,8 @@ export default function GroupMap({
   onPopupCloseRef.current = onPopupClose;
   const fitPaddingRef = useRef(fitPadding);
   fitPaddingRef.current = fitPadding;
+  const focusBottomPadRef = useRef(focusBottomPad);
+  focusBottomPadRef.current = focusBottomPad;
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const [tilesFailed, setTilesFailed] = useState(false);
@@ -256,7 +261,9 @@ export default function GroupMap({
     group.zoomToShowLayer(marker, () => {
       const zoom = Math.max(m.getZoom(), 15);
       // Sin popup, el centro baja medio padding inferior para que el pin quede sobre la hoja.
-      const off = Math.round(fitPaddingRef.current.bottomRight[1] / 2);
+      const off = Math.round(
+        (focusBottomPadRef.current ?? fitPaddingRef.current.bottomRight[1]) / 2,
+      );
       const target = popups
         ? marker.getLatLng()
         : m.unproject(m.project(marker.getLatLng(), zoom).add([0, off]), zoom);

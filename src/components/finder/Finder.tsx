@@ -6,7 +6,7 @@ import SelectedCard from "@/components/finder/SelectedCard";
 import Sheet, { type Snap } from "@/components/finder/Sheet";
 import GroupMap, { type FitPadding, type FocusRequest } from "@/components/finder/GroupMap";
 import SearchBar, { type GeoStatus } from "@/components/finder/SearchBar";
-import { SNAP_OFFSET } from "@/components/finder/useSheet";
+import { HALF, PEEK, SNAP_OFFSET } from "@/components/finder/useSheet";
 import { useMediaQuery } from "@/components/finder/useMediaQuery";
 import { VALLE_BOUNDS } from "@/data/region";
 import type { Grupo } from "@/data/schema";
@@ -67,7 +67,7 @@ export default function Finder({ grupos, lang, municipios }: Props) {
     if (!isDesktop) {
       focusedId.current = id;
       setSelectedId(id);
-      setSnap("peek");
+      setSnap("half");
     }
   };
 
@@ -78,7 +78,7 @@ export default function Finder({ grupos, lang, municipios }: Props) {
       // Sin popup que lo retenga, el resaltado se conserva aunque la tarjeta pierda hover/foco.
       focusedId.current = id;
       setSelectedId(id);
-      setSnap("peek");
+      setSnap("half");
     }
     setFocusRequest((prev) => ({ id, nonce: (prev?.nonce ?? 0) + 1 }));
   };
@@ -223,6 +223,7 @@ export default function Finder({ grupos, lang, municipios }: Props) {
           lang={lang}
           t={t}
           fitPadding={fitPadding}
+          focusBottomPad={Math.round((peekPx / PEEK) * HALF) + 16}
           popups={isDesktop}
           focusRequest={focusRequest}
           onSelect={selectFromMap}
