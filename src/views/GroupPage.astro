@@ -26,6 +26,7 @@ const site = Astro.site ?? new URL("https://buscador.vallescout.org.co");
   description={t("grupo.metaDescription", vars)}
   ogImage={`/og/${grupoSlug(grupo)}.png`}
   jsonLd={buildGrupoJsonLd(grupo, new URL(path, site).href)}
+  mapPage
 >
   <GroupDetail grupo={grupo} lang={lang} />
 </Base>

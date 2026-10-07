@@ -18,6 +18,12 @@ import type { Translate } from "@/i18n/ui";
 import type { LatLng } from "@/lib/geo";
 import type { Resultado } from "@/lib/search";
 
+// Arranca la descarga de Leaflet en cuanto el navegador evalúa la isla, en paralelo con la
+// hidratación. Si falla, el componente lo reintenta y muestra el aviso; aquí solo se ignora.
+if (typeof window !== "undefined") {
+  void loadLeaflet().catch(() => undefined);
+}
+
 export interface FocusRequest {
   id: number;
   /** Cambia en cada clic para que repetir la misma tarjeta vuelva a enfocar el pin. */
@@ -89,7 +95,7 @@ export default function GroupMap({
   const [failed, setFailed] = useState(false);
   const [tilesFailed, setTilesFailed] = useState(false);
 
-  // Crear el mapa una sola vez.
+  // Crear el mapa una sola vez. La descarga de Leaflet ya arrancó al evaluar este módulo.
   useEffect(() => {
     let cancelled = false;
     const start = () => {
@@ -145,14 +151,11 @@ export default function GroupMap({
           if (!cancelled) setFailed(true);
         });
     };
-    const idle =
-      "requestIdleCallback" in window
-        ? window.requestIdleCallback(start, { timeout: 1500 })
-        : setTimeout(start, 1);
+    // Sin espera a tiempo ocioso: el mapa es el contenido principal (LCP) y cada salto de la
+    // cadena Finder → Leaflet → teselas cuesta un viaje de red en móvil.
+    start();
     return () => {
       cancelled = true;
-      if ("cancelIdleCallback" in window) window.cancelIdleCallback(idle as number);
-      else clearTimeout(idle as number);
       unmountPopups();
       map.current?.remove();
       map.current = null;
