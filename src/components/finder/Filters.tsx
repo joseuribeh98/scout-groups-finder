@@ -2,9 +2,8 @@ import Icon from "@/components/Icon";
 import { RAMA_IDS, RAMAS, ramaLabel, type RamaId } from "@/data/ramas";
 import type { Lang } from "@/i18n/lang";
 import type { Translate } from "@/i18n/ui";
+import type { GeoStatus } from "@/components/finder/SearchBar";
 import type { Filters as FilterState } from "@/lib/search";
-
-export type GeoStatus = "idle" | "locating" | "ok" | "error" | "far";
 
 interface Props {
   lang: Lang;

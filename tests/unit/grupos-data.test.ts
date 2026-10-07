@@ -55,14 +55,14 @@ describe("datos de grupos", () => {
     });
   });
 
-  it("lista los municipios con grupos, ordenados", () => {
-    expect(municipiosConGrupos.map((m) => m.slug)).toEqual([
-      "buga",
-      "cali",
-      "candelaria",
-      "cartago",
-      "palmira",
-      "tulua",
+  it("lista los municipios con grupos, ordenados y con conteo", () => {
+    expect(municipiosConGrupos).toEqual([
+      { slug: "buga", nombre: "Buga", count: 1 },
+      { slug: "cali", nombre: "Cali", count: 14 },
+      { slug: "candelaria", nombre: "Candelaria", count: 1 },
+      { slug: "cartago", nombre: "Cartago", count: 1 },
+      { slug: "palmira", nombre: "Palmira", count: 4 },
+      { slug: "tulua", nombre: "Tuluá", count: 1 },
     ]);
   });
 });

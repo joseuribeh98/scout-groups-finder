@@ -14,3 +14,7 @@ export async function reloadHydrated(page: Page) {
   await page.reload();
   await waitHydrated(page);
 }
+
+/** Interfaz visible del buscador: el panel (escritorio) o la hoja (móvil). Hasta Task 5 es la única. */
+export const ui = (page: Page) => page.locator("[data-finder-ui]:visible");
+export const cards = (page: Page) => ui(page).locator("li[data-grupo-id]");

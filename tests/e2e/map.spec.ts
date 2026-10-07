@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { gotoHydrated } from "./helpers";
+import { gotoHydrated, ui } from "./helpers";
 
 test.describe("mapa del buscador", () => {
   test("en escritorio el mapa se muestra junto a la lista", async ({ page, isMobile }) => {
@@ -131,7 +131,7 @@ test.describe("mapa del buscador", () => {
     await page.getByRole("button", { name: "Ver mapa" }).click();
     await expect(page.locator(".leaflet-container")).toBeVisible();
     await page.getByRole("button", { name: "Ver lista" }).click();
-    await page.getByLabel("Municipio").selectOption("buga");
+    await ui(page).getByRole("button", { name: /^Buga/ }).click();
     await page.getByRole("button", { name: "Ver mapa" }).click();
     await expect(page.locator(".leaflet-marker-pane .pin")).toHaveCount(1);
     await expect(page.locator(".leaflet-marker-pane .pin")).toBeVisible();

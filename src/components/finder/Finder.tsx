@@ -1,7 +1,8 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "preact/hooks";
-import Filters, { type GeoStatus } from "@/components/finder/Filters";
+import FilterChips, { type Municipio } from "@/components/finder/FilterChips";
 import GroupList from "@/components/finder/GroupList";
 import GroupMap, { type FocusRequest } from "@/components/finder/GroupMap";
+import SearchBar, { type GeoStatus } from "@/components/finder/SearchBar";
 import Icon from "@/components/Icon";
 import { useMediaQuery } from "@/components/finder/useMediaQuery";
 import { VALLE_BOUNDS } from "@/data/region";
@@ -15,7 +16,7 @@ import { parseFilters, serializeFilters } from "@/lib/url-state";
 interface Props {
   grupos: Grupo[];
   lang: Lang;
-  municipios: { slug: string; nombre: string }[];
+  municipios: Municipio[];
 }
 
 const FAR_MARGIN_DEG = 0.5;
@@ -129,20 +130,48 @@ export default function Finder({ grupos, lang, municipios }: Props) {
 
   const clear = () => setFilters(EMPTY_FILTERS);
 
+  const geoMessage =
+    geoStatus === "error"
+      ? t("finder.geoError")
+      : geoStatus === "far"
+        ? t("finder.geoFar")
+        : geoStatus === "ok"
+          ? t("finder.nearMeActive")
+          : geoStatus === "locating"
+            ? t("finder.locating")
+            : "";
+
   return (
     <div class="grid gap-6 lg:grid-cols-[minmax(0,26rem)_1fr] lg:items-start">
-      <div class={view === "map" ? "hidden lg:grid lg:gap-6" : "grid gap-6"}>
-        <Filters
-          lang={lang}
-          t={t}
-          filters={filters}
-          municipios={municipios}
-          geoStatus={geoStatus}
-          canClear={hasActiveFilters(filters)}
-          onChange={setFilters}
-          onNearMe={nearMe}
-          onClear={clear}
-        />
+      <div data-finder-ui class={view === "map" ? "hidden lg:grid lg:gap-6" : "grid gap-6"}>
+        <div class="grid gap-3">
+          <SearchBar
+            t={t}
+            q={filters.q}
+            geoStatus={geoStatus}
+            onChange={(q) => setFilters({ ...filters, q })}
+            onNearMe={nearMe}
+          />
+          <FilterChips
+            lang={lang}
+            t={t}
+            filters={filters}
+            municipios={municipios}
+            onChange={setFilters}
+          />
+          <p role="status" class="rounded-xl bg-brand-soft px-3 py-2 text-sm empty:hidden">
+            {geoMessage || null}
+          </p>
+          {hasActiveFilters(filters) && (
+            <button
+              type="button"
+              onClick={clear}
+              class="justify-self-start text-sm font-semibold text-brand underline underline-offset-4"
+            >
+              {t("finder.clear")}
+            </button>
+          )}
+        </div>
         <GroupList
           lang={lang}
           t={t}
