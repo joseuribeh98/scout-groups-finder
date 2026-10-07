@@ -32,6 +32,7 @@ interface Props {
   visible: boolean;
   focusRequest: FocusRequest | null;
   onSelect: (id: number) => void;
+  onPopupOpen: (id: number) => void;
   onPopupClose: () => void;
 }
 
@@ -46,6 +47,7 @@ export default function GroupMap({
   visible,
   focusRequest,
   onSelect,
+  onPopupOpen,
   onPopupClose,
 }: Props) {
   const container = useRef<HTMLDivElement>(null);
@@ -60,6 +62,8 @@ export default function GroupMap({
   tRef.current = t;
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
+  const onPopupOpenRef = useRef(onPopupOpen);
+  onPopupOpenRef.current = onPopupOpen;
   const onPopupCloseRef = useRef(onPopupClose);
   onPopupCloseRef.current = onPopupClose;
   const needsFit = useRef(false);
@@ -93,8 +97,12 @@ export default function GroupMap({
         });
         // Abrir otro popup cierra el anterior en la misma tarea: solo se avisa si no queda ninguno.
         let popupOpen = false;
-        m.on("popupopen", () => {
+        m.on("popupopen", (e) => {
           popupOpen = true;
+          const source = (e.popup as unknown as { _source?: Leaflet.Layer })._source;
+          for (const [id, marker] of markers.current) {
+            if (marker === source) onPopupOpenRef.current(id);
+          }
         });
         m.on("popupclose", () => {
           popupOpen = false;

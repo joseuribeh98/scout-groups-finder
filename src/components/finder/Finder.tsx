@@ -49,22 +49,23 @@ export default function Finder({ grupos, lang, municipios }: Props) {
   // Grupo cuyo popup está abierto: el resaltado no se apaga por hover/blur de su tarjeta.
   const focusedId = useRef<number | null>(null);
   const activate = (id: number | null) => {
-    if (id === null && focusedId.current !== null) return;
-    setActiveId(id);
+    // Sin hover, vuelve al grupo cuyo popup está abierto (si lo hay).
+    setActiveId(id ?? focusedId.current);
+  };
+  const onPopupOpen = (id: number) => {
+    focusedId.current = id;
   };
   const onPopupClose = () => {
     focusedId.current = null;
   };
 
   const selectFromMap = (id: number) => {
-    focusedId.current = id;
     setActiveId(id);
     setScrollToId(id);
   };
 
   // Clic en una tarjeta: mostrar el grupo en el mapa (en móvil, cambiando a la vista de mapa).
   const focusGroup = (id: number) => {
-    focusedId.current = id;
     setActiveId(id);
     if (!isDesktop) setView("map");
     setFocusRequest((prev) => ({ id, nonce: (prev?.nonce ?? 0) + 1 }));
@@ -164,6 +165,7 @@ export default function Finder({ grupos, lang, municipios }: Props) {
             visible={showMap}
             focusRequest={focusRequest}
             onSelect={selectFromMap}
+            onPopupOpen={onPopupOpen}
             onPopupClose={onPopupClose}
           />
         )}
