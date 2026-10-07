@@ -10,6 +10,7 @@ import {
   prefersReducedMotion,
   pinIcon,
   watchTileFailures,
+  watchZoomLabels,
 } from "@/components/map/leaflet";
 import { VALLE_CENTER, VALLE_ZOOM } from "@/data/region";
 import type { Lang } from "@/i18n/lang";
@@ -23,6 +24,11 @@ export interface FocusRequest {
   nonce: number;
 }
 
+export interface FitPadding {
+  topLeft: [number, number];
+  bottomRight: [number, number];
+}
+
 interface Props {
   results: Resultado[];
   activeId: number | null;
@@ -30,6 +36,9 @@ interface Props {
   lang: Lang;
   t: Translate;
   visible: boolean;
+  fitPadding: FitPadding;
+  /** Escritorio: popups de Leaflet. Móvil: la ficha se muestra en la hoja (sin popups). */
+  popups: boolean;
   focusRequest: FocusRequest | null;
   onSelect: (id: number) => void;
   onPopupOpen: (id: number) => void;
@@ -45,6 +54,8 @@ export default function GroupMap({
   lang,
   t,
   visible,
+  fitPadding,
+  popups,
   focusRequest,
   onSelect,
   onPopupOpen,
@@ -55,7 +66,7 @@ export default function GroupMap({
   const map = useRef<Leaflet.Map | null>(null);
   const cluster = useRef<Leaflet.MarkerClusterGroup | null>(null);
   const markers = useRef(new Map<number, Leaflet.Marker>());
-  const popups = useRef<HTMLDivElement[]>([]);
+  const popupNodes = useRef<HTMLDivElement[]>([]);
   const youMarker = useRef<Leaflet.Marker | null>(null);
   const handledFocus = useRef<number | null>(null);
   const tRef = useRef(t);
@@ -66,6 +77,8 @@ export default function GroupMap({
   onPopupOpenRef.current = onPopupOpen;
   const onPopupCloseRef = useRef(onPopupClose);
   onPopupCloseRef.current = onPopupClose;
+  const fitPaddingRef = useRef(fitPadding);
+  fitPaddingRef.current = fitPadding;
   const needsFit = useRef(false);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -74,50 +87,67 @@ export default function GroupMap({
   // Crear el mapa una sola vez.
   useEffect(() => {
     let cancelled = false;
-    loadLeaflet()
-      .then((L) => {
-        if (cancelled || !container.current) return;
-        leaflet.current = L;
-        const m = L.map(container.current, {
-          center: [VALLE_CENTER.lat, VALLE_CENTER.lng],
-          zoom: VALLE_ZOOM,
-          ...motionOptions(),
-        });
-        watchTileFailures(addTiles(L, m), () => setTilesFailed(true));
-        cluster.current = L.markerClusterGroup({
-          showCoverageOnHover: false,
-          maxClusterRadius: 40,
-          iconCreateFunction: (c) => clusterIcon(L, c.getChildCount()),
-        }).addTo(m);
-        // Leaflet etiqueta el botón de cerrar en inglés; se traduce al abrir cada popup.
-        m.on("popupopen", (e) => {
-          const close = e.popup.getElement()?.querySelector(".leaflet-popup-close-button");
-          close?.setAttribute("aria-label", tRef.current("popup.close"));
-          close?.setAttribute("title", tRef.current("popup.close"));
-        });
-        // Abrir otro popup cierra el anterior en la misma tarea: solo se avisa si no queda ninguno.
-        let popupOpen = false;
-        m.on("popupopen", (e) => {
-          popupOpen = true;
-          const source = (e.popup as unknown as { _source?: Leaflet.Layer })._source;
-          for (const [id, marker] of markers.current) {
-            if (marker === source) onPopupOpenRef.current(id);
-          }
-        });
-        m.on("popupclose", () => {
-          popupOpen = false;
-          queueMicrotask(() => {
-            if (!popupOpen) onPopupCloseRef.current();
+    const start = () => {
+      loadLeaflet()
+        .then((L) => {
+          if (cancelled || !container.current) return;
+          leaflet.current = L;
+          const m = L.map(container.current, {
+            center: [VALLE_CENTER.lat, VALLE_CENTER.lng],
+            zoom: VALLE_ZOOM,
+            zoomControl: false,
+            ...motionOptions(),
           });
+          L.control
+            .zoom({
+              position: "bottomright",
+              zoomInTitle: tRef.current("map.zoomIn"),
+              zoomOutTitle: tRef.current("map.zoomOut"),
+            })
+            .addTo(m);
+          watchZoomLabels(m);
+          watchTileFailures(addTiles(L, m), () => setTilesFailed(true));
+          cluster.current = L.markerClusterGroup({
+            showCoverageOnHover: false,
+            maxClusterRadius: 40,
+            iconCreateFunction: (c) => clusterIcon(L, c.getChildCount()),
+          }).addTo(m);
+          // Leaflet etiqueta el botón de cerrar en inglés; se traduce al abrir cada popup.
+          m.on("popupopen", (e) => {
+            const close = e.popup.getElement()?.querySelector(".leaflet-popup-close-button");
+            close?.setAttribute("aria-label", tRef.current("popup.close"));
+            close?.setAttribute("title", tRef.current("popup.close"));
+          });
+          // Abrir otro popup cierra el anterior en la misma tarea: solo se avisa si no queda ninguno.
+          let popupOpen = false;
+          m.on("popupopen", (e) => {
+            popupOpen = true;
+            const source = (e.popup as unknown as { _source?: Leaflet.Layer })._source;
+            for (const [id, marker] of markers.current) {
+              if (marker === source) onPopupOpenRef.current(id);
+            }
+          });
+          m.on("popupclose", () => {
+            popupOpen = false;
+            queueMicrotask(() => {
+              if (!popupOpen) onPopupCloseRef.current();
+            });
+          });
+          map.current = m;
+          setReady(true);
+        })
+        .catch(() => {
+          if (!cancelled) setFailed(true);
         });
-        map.current = m;
-        setReady(true);
-      })
-      .catch(() => {
-        if (!cancelled) setFailed(true);
-      });
+    };
+    const idle =
+      "requestIdleCallback" in window
+        ? window.requestIdleCallback(start, { timeout: 1500 })
+        : setTimeout(start, 1);
     return () => {
       cancelled = true;
+      if ("cancelIdleCallback" in window) window.cancelIdleCallback(idle as number);
+      else clearTimeout(idle as number);
       unmountPopups();
       map.current?.remove();
       map.current = null;
@@ -125,8 +155,8 @@ export default function GroupMap({
   }, []);
 
   function unmountPopups() {
-    for (const div of popups.current) render(null, div);
-    popups.current = [];
+    for (const div of popupNodes.current) render(null, div);
+    popupNodes.current = [];
   }
 
   const focusPending = () => focusRequest !== null && handledFocus.current !== focusRequest.nonce;
@@ -142,7 +172,13 @@ export default function GroupMap({
     needsFit.current = false;
     // Un clic en una tarjeta pendiente decide la vista; encuadrar ahora competiría con él.
     if (focusPending()) return;
-    m.fitBounds(bounds, { padding: [40, 40], maxZoom: 15, animate: !prefersReducedMotion() });
+    const p = fitPaddingRef.current;
+    m.fitBounds(bounds, {
+      paddingTopLeft: p.topLeft,
+      paddingBottomRight: p.bottomRight,
+      maxZoom: 15,
+      animate: !prefersReducedMotion(),
+    });
   };
 
   // Redibujar marcadores cuando cambian los resultados.
@@ -157,13 +193,15 @@ export default function GroupMap({
     unmountPopups();
     for (const { grupo, distanciaKm } of results) {
       const marker = L.marker([grupo.ubicacion.lat, grupo.ubicacion.lng], {
-        icon: pinIcon(L),
+        icon: pinIcon(L, "default", grupo.id),
         title: grupo.nombre,
       });
-      const popup = document.createElement("div");
-      render(<MapPopup grupo={grupo} distanciaKm={distanciaKm} lang={lang} t={t} />, popup);
-      popups.current.push(popup);
-      marker.bindPopup(popup, { maxWidth: 300, minWidth: 240 });
+      if (popups) {
+        const popup = document.createElement("div");
+        render(<MapPopup grupo={grupo} distanciaKm={distanciaKm} lang={lang} t={t} />, popup);
+        popupNodes.current.push(popup);
+        marker.bindPopup(popup, { maxWidth: 300, minWidth: 240 });
+      }
       marker.on("click", () => onSelectRef.current(grupo.id));
       markers.current.set(grupo.id, marker);
       group.addLayer(marker);
@@ -171,7 +209,7 @@ export default function GroupMap({
 
     if (visible) fitToResults();
     else needsFit.current = true;
-  }, [ready, results, origin, lang, t]);
+  }, [ready, results, origin, lang, t, popups]);
 
   // Marcador "tu ubicación".
   useEffect(() => {
@@ -193,7 +231,7 @@ export default function GroupMap({
     const L = leaflet.current;
     if (!ready || !L) return;
     for (const [id, marker] of markers.current) {
-      marker.setIcon(pinIcon(L, id === activeId ? "active" : "default"));
+      marker.setIcon(pinIcon(L, id === activeId ? "active" : "default", id));
       marker.setZIndexOffset(id === activeId ? 1000 : 0);
     }
   }, [ready, activeId, results]);
@@ -219,7 +257,8 @@ export default function GroupMap({
     const animate = !prefersReducedMotion();
     group.zoomToShowLayer(marker, () => {
       m.setView(marker.getLatLng(), Math.max(m.getZoom(), 15), { animate });
-      marker.openPopup();
+      if (popups) marker.openPopup();
+      else m.panBy([0, Math.round(fitPaddingRef.current.bottomRight[1] / 2)], { animate: false });
     });
   }, [ready, visible, focusRequest, results]);
 
@@ -242,13 +281,8 @@ export default function GroupMap({
     );
   }
   return (
-    <div class="relative h-full min-h-[60dvh] w-full">
-      <div
-        ref={container}
-        role="region"
-        aria-label={t("map.label")}
-        class="h-full min-h-[60dvh] w-full overflow-hidden rounded-2xl border border-line"
-      />
+    <div class="relative h-full w-full">
+      <div ref={container} role="region" aria-label={t("map.label")} class="h-full w-full" />
       {tilesFailed && (
         <p
           role="status"

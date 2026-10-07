@@ -68,7 +68,11 @@ export default function Finder({ grupos, lang, municipios }: Props) {
   // Clic en una tarjeta: mostrar el grupo en el mapa (en móvil, cambiando a la vista de mapa).
   const focusGroup = (id: number) => {
     setActiveId(id);
-    if (!isDesktop) setView("map");
+    if (!isDesktop) {
+      // Sin popup que lo retenga, el resaltado se conserva aunque la tarjeta pierda hover/foco.
+      focusedId.current = id;
+      setView("map");
+    }
     setFocusRequest((prev) => ({ id, nonce: (prev?.nonce ?? 0) + 1 }));
   };
 
@@ -192,6 +196,8 @@ export default function Finder({ grupos, lang, municipios }: Props) {
             lang={lang}
             t={t}
             visible={showMap}
+            fitPadding={{ topLeft: [16, 16], bottomRight: [16, 16] }}
+            popups={isDesktop}
             focusRequest={focusRequest}
             onSelect={selectFromMap}
             onPopupOpen={onPopupOpen}

@@ -59,7 +59,7 @@ test.describe("mapa del buscador", () => {
     await expect(page).not.toHaveURL(/\/grupos\//);
   });
 
-  test("en móvil, clic en la tarjeta cambia al mapa y abre el popup", async ({
+  test("en móvil, clic en la tarjeta cambia al mapa y activa el grupo", async ({
     page,
     isMobile,
   }) => {
@@ -67,9 +67,8 @@ test.describe("mapa del buscador", () => {
     await gotoHydrated(page, "/");
     await page.getByRole("button", { name: "Ver Águilas Doradas en el mapa" }).click();
     await expect(page.locator(".leaflet-container")).toBeVisible();
-    const popup = page.locator(".leaflet-popup");
-    await expect(popup).toBeVisible();
-    await expect(popup).toContainText("Águilas Doradas");
+    // La lista queda oculta en la vista de mapa: `ui(page)` (solo visibles) no la encontraría.
+    await expect(page.locator('li[data-grupo-id="315"]')).toHaveAttribute("data-active", "true");
     await expect(page).not.toHaveURL(/\/grupos\//);
   });
 
@@ -113,6 +112,24 @@ test.describe("mapa del buscador", () => {
     });
     expect(offset.dx).toBeLessThanOrEqual(2);
     expect(offset.dy).toBeLessThanOrEqual(2);
+  });
+
+  test("al acercar, los pines muestran el número del grupo", async ({ page, isMobile }) => {
+    test.skip(isMobile, "solo escritorio");
+    await gotoHydrated(page, "/?municipio=buga"); // un solo grupo: fitBounds llega a zoom 15
+    const label = page.locator(".leaflet-marker-pane .pin .pin__label");
+    await expect(label).toHaveText("315");
+    await expect(label).toBeVisible();
+  });
+
+  test("los controles de zoom están abajo a la derecha y traducidos", async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(isMobile, "solo escritorio");
+    await gotoHydrated(page, "/");
+    const zoomIn = page.locator(".leaflet-bottom.leaflet-right .leaflet-control-zoom-in");
+    await expect(zoomIn).toHaveAttribute("aria-label", "Acercar");
   });
 
   test("los pines son SVG", async ({ page, isMobile }) => {

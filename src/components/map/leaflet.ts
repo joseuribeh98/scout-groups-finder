@@ -74,14 +74,16 @@ const PIN_SIZES: Record<Exclude<PinVariant, "you">, [number, number]> = {
   active: [36, 46],
 };
 
-export function pinIcon(L: L, variant: PinVariant = "default"): Leaflet.DivIcon {
+export function pinIcon(L: L, variant: PinVariant = "default", label?: number): Leaflet.DivIcon {
   if (variant === "you") {
     return L.divIcon({ className: "pin pin--you", html: "", iconSize: [16, 16] });
   }
   const [w, h] = PIN_SIZES[variant];
+  // `label` es un número (id del grupo): no hay datos de usuario en este HTML.
+  const html = label === undefined ? PIN_SVG : `${PIN_SVG}<span class="pin__label">${label}</span>`;
   return L.divIcon({
     className: `pin pin--${variant}`,
-    html: PIN_SVG,
+    html,
     iconSize: [w, h],
     // La punta de la gota toca la coordenada; el popup se abre justo encima del pin.
     iconAnchor: [w / 2, h],
@@ -97,4 +99,11 @@ export function clusterIcon(L: L, count: number): Leaflet.DivIcon {
     html: `<span>${count}</span>`,
     iconSize: [size, size],
   });
+}
+
+/** Alterna la clase que muestra las etiquetas de los pines a partir de `minZoom`. */
+export function watchZoomLabels(map: Leaflet.Map, minZoom = 12): void {
+  const update = () => map.getContainer().classList.toggle("zoom-labels", map.getZoom() >= minZoom);
+  map.on("zoomend", update);
+  update();
 }
