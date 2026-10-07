@@ -18,8 +18,9 @@ export function distanceKm(a: LatLng, b: LatLng): number {
 }
 
 export function formatDistance(km: number, lang: Lang): string {
-  if (km < 1) return `${Math.round((km * 1000) / 10) * 10} m`;
-  const digits = km < 10 ? 1 : 0;
+  const meters = Math.round((km * 1000) / 10) * 10;
+  if (meters < 1000) return `${meters} m`;
+  const digits = Math.round(km * 10) / 10 < 10 ? 1 : 0;
   const n = new Intl.NumberFormat(LOCALE[lang], {
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,

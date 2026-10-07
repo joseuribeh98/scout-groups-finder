@@ -18,4 +18,11 @@ describe("geo", () => {
     expect(formatDistance(2.345, "en")).toBe("2.3 km");
     expect(formatDistance(23.4, "es")).toBe("23 km");
   });
+
+  it("redondea antes de elegir unidad y decimales", () => {
+    expect(formatDistance(0.996, "es")).toBe("1,0 km");
+    expect(formatDistance(0.9949, "es")).toBe("990 m");
+    expect(formatDistance(9.96, "es")).toBe("10 km");
+    expect(formatDistance(9.94, "es")).toBe("9,9 km");
+  });
 });

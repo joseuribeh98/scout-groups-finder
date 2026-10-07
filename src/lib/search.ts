@@ -2,6 +2,7 @@ import type { RamaId } from "@/data/ramas";
 import type { Grupo } from "@/data/schema";
 import { distanceKm, type LatLng } from "@/lib/geo";
 import { slugify } from "@/lib/slug";
+import { stripDiacritics } from "@/lib/text";
 
 export interface Filters {
   q: string;
@@ -17,7 +18,7 @@ export function hasActiveFilters(f: Filters): boolean {
 }
 
 export function normalize(text: string): string {
-  return text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+  return stripDiacritics(text).toLowerCase().replace(/\s+/g, " ").trim();
 }
 
 export function matchesFilters(grupo: Grupo, f: Filters): boolean {

@@ -14,6 +14,23 @@ describe("datos de grupos", () => {
     for (const dominio of ["@gmail.", "@hotmail.", "@yahoo."]) expect(raw).not.toContain(dominio);
   });
 
+  it("solo contiene canales de contacto permitidos", () => {
+    const emails: string[] = [];
+    for (const g of grupos) {
+      const c = g.contacto;
+      if (c.email !== null) {
+        expect(c.email).toMatch(/^[^@\s]+@scout\.org\.co$/i);
+        emails.push(c.email);
+      }
+      for (const url of [c.instagram, c.facebook, c.web]) {
+        if (url !== null) expect(url).toMatch(/^https:\/\//);
+      }
+      if (c.whatsapp !== null) expect(c.whatsapp).toMatch(/^57\d{10}$/);
+    }
+    const sinCorreos = emails.reduce((acc, e) => acc.replace(e, ""), raw);
+    expect(sinCorreos).not.toContain("@");
+  });
+
   it("Rozo es localidad de Palmira", () => {
     const g = grupos.find((x) => x.id === 607);
     expect(g?.municipio).toBe("Palmira");
