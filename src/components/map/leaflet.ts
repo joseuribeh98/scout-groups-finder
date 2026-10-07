@@ -1,6 +1,7 @@
 import type * as Leaflet from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
+import "@/styles/map.css";
 
 type L = typeof Leaflet;
 let cargando: Promise<L> | null = null;
@@ -48,14 +49,32 @@ export function watchTileFailures(layer: Leaflet.TileLayer, onFail: () => void):
   });
 }
 
-export function pinIcon(L: L, variant: "default" | "active" | "you" = "default"): Leaflet.DivIcon {
-  const className = variant === "default" ? "pin" : `pin pin--${variant}`;
-  const size = variant === "you" ? 16 : 22;
+/** Gota de mapa constante (sin datos): el relleno sale de `.pin__body` en map.css. */
+const PIN_SVG =
+  '<svg viewBox="0 0 28 36" aria-hidden="true" focusable="false">' +
+  '<path class="pin__body" d="M14 1.5C7.4 1.5 2 6.8 2 13.4c0 8.6 10.1 19.4 11 20.4a1.4 1.4 0 0 0 2 0c.9-1 11-11.8 11-20.4C26 6.8 20.6 1.5 14 1.5z"/>' +
+  '<circle class="pin__dot" cx="14" cy="13.5" r="4.5"/>' +
+  "</svg>";
+
+type PinVariant = "default" | "active" | "you";
+
+const PIN_SIZES: Record<Exclude<PinVariant, "you">, [number, number]> = {
+  default: [28, 36],
+  active: [36, 46],
+};
+
+export function pinIcon(L: L, variant: PinVariant = "default"): Leaflet.DivIcon {
+  if (variant === "you") {
+    return L.divIcon({ className: "pin pin--you", html: "", iconSize: [16, 16] });
+  }
+  const [w, h] = PIN_SIZES[variant];
   return L.divIcon({
-    className,
-    html: "",
-    iconSize: [size, size],
-    iconAnchor: variant === "you" ? [size / 2, size / 2] : [size / 2, size],
+    className: `pin pin--${variant}`,
+    html: PIN_SVG,
+    iconSize: [w, h],
+    // La punta de la gota toca la coordenada; el popup se abre justo encima del pin.
+    iconAnchor: [w / 2, h],
+    popupAnchor: [0, -h + 2],
   });
 }
 
@@ -63,7 +82,8 @@ export function clusterIcon(L: L, count: number): Leaflet.DivIcon {
   const size = count < 10 ? 36 : 44;
   return L.divIcon({
     className: "marker-cluster-brand",
-    html: String(count),
+    // `count` es un número: no hay datos de usuario en este HTML.
+    html: `<span>${count}</span>`,
     iconSize: [size, size],
   });
 }
