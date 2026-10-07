@@ -1,0 +1,22 @@
+---
+import { ICONS, iconAttrs, type IconName } from "@/lib/icons";
+
+interface Props {
+  name: IconName;
+  class?: string;
+}
+const { name, class: className = "size-5" } = Astro.props;
+const def = ICONS[name];
+---
+
+<svg
+  aria-hidden="true"
+  focusable="false"
+  class:list={["shrink-0", className]}
+  viewBox={def.viewBox}
+  {...iconAttrs(def)}
+>
+  {def.paths.map((d) => (
+    <path d={d} />
+  ))}
+</svg>
