@@ -36,7 +36,7 @@
 
 ## Review Focus
 
-1. **Búsqueda con tildes, mayúsculas y espacios** ("fenix", "  FÉNIX ", "815", "pance"): debe encontrar el grupo. Lo cubre Task 6 (`search.test.ts`).
+1. **Búsqueda con tildes, mayúsculas y espacios** ("fenix", " FÉNIX ", "815", "pance"): debe encontrar el grupo. Lo cubre Task 6 (`search.test.ts`).
 2. **URL manipulada** (`?rama=foo&municipio=bogota&q=<script>…`): se ignora lo inválido, no hay errores y no se inyecta HTML. Lo cubren Task 6 (`url-state.test.ts`) y Task 11 (e2e).
 3. **El JS de Leaflet o las teselas no cargan**: la lista sigue completa y usable y aparece el aviso del mapa. Lo cubre Task 12 (e2e con `page.route` abortando).
 4. **Geolocalización negada, o usuario lejos del Valle**: aparece un mensaje y el orden queda por municipio; si se concede, se ordena por distancia. Lo cubre Task 11 (e2e con permisos de Playwright).
@@ -110,12 +110,14 @@ README.md, LICENSE, docs/actualizar-grupos.md
 ### Task 1: Base del proyecto Astro (reemplaza la SPA)
 
 **Files:**
+
 - Delete: `index.html`, `vite.config.js`, `tailwind.config.js`, `postcss.config.js`, `eslint.config.js`, `src/App.jsx`, `src/App.css`, `src/index.css`, `src/main.jsx`, `src/components/GroupInfo.jsx`, `src/components/GroupList.jsx`, `src/components/Map.jsx`, `src/assets/react.svg`, `public/vite.svg`
 - Keep (se migra en Task 4): `public/grupos.json`
 - Replace: `package.json`, `.gitignore`, `.husky/pre-commit`
 - Create: `astro.config.mjs`, `tsconfig.json`, `vitest.config.ts`, `eslint.config.js`, `.prettierrc.json`, `.prettierignore`, `src/styles/global.css`, `src/pages/index.astro`, `src/env.d.ts` (si `astro sync` no lo genera)
 
 **Interfaces:**
+
 - Produces: alias `@/*` → `src/*` (en Astro y en Vitest); scripts npm `dev`, `build`, `preview`, `check`, `lint`, `format`, `format:check`, `test`, `test:e2e`.
 
 - [ ] **Step 1: Borrar la app vieja**
@@ -261,7 +263,14 @@ import tseslint from "typescript-eslint";
 
 export default defineConfig([
   {
-    ignores: ["dist/", ".astro/", ".vercel/", "node_modules/", "playwright-report/", "test-results/"],
+    ignores: [
+      "dist/",
+      ".astro/",
+      ".vercel/",
+      "node_modules/",
+      "playwright-report/",
+      "test-results/",
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -334,10 +343,12 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 2: Ramas, municipios e idioma (constantes de dominio)
 
 **Files:**
+
 - Create: `src/data/ramas.ts`, `src/data/region.ts`, `src/i18n/lang.ts`
 - Test: `tests/unit/ramas.test.ts`, `tests/unit/region.test.ts`
 
 **Interfaces:**
+
 - Produces:
   - `src/i18n/lang.ts`: `LANGS = ["es","en"] as const`, `type Lang`, `LOCALE: Record<Lang,string>` (`es-CO`, `en-US`), `isLang(v: string): v is Lang`.
   - `src/data/ramas.ts`: `RAMA_IDS`, `type RamaId`, `interface Rama { id; nombre; nombreEn; edadMin; edadMax }`, `RAMAS: Record<RamaId, Rama>`, `isRamaId(v: string): v is RamaId`, `sortRamas(ids: readonly RamaId[]): RamaId[]`, `ramaLabel(id: RamaId, lang: Lang): string`.
@@ -459,7 +470,13 @@ export const RAMAS: Record<RamaId, Rama> = {
   cachorros: { id: "cachorros", nombre: "Cachorros", nombreEn: "Beavers", edadMin: 5, edadMax: 6 },
   lobatos: { id: "lobatos", nombre: "Lobatos", nombreEn: "Cub Scouts", edadMin: 7, edadMax: 10 },
   scouts: { id: "scouts", nombre: "Scouts", nombreEn: "Scouts", edadMin: 11, edadMax: 14 },
-  nomadas: { id: "nomadas", nombre: "Nómadas Scout", nombreEn: "Venturers", edadMin: 15, edadMax: 17 },
+  nomadas: {
+    id: "nomadas",
+    nombre: "Nómadas Scout",
+    nombreEn: "Venturers",
+    edadMin: 15,
+    edadMax: 17,
+  },
   rovers: { id: "rovers", nombre: "Rovers", nombreEn: "Rovers", edadMin: 18, edadMax: 20 },
 };
 
@@ -484,12 +501,48 @@ export function ramaLabel(id: RamaId, lang: Lang): string {
 ```ts
 /** Los 42 municipios del Valle del Cauca. */
 export const MUNICIPIOS = [
-  "Alcalá", "Andalucía", "Ansermanuevo", "Argelia", "Bolívar", "Buenaventura", "Buga",
-  "Bugalagrande", "Caicedonia", "Cali", "Calima", "Candelaria", "Cartago", "Dagua",
-  "El Águila", "El Cairo", "El Cerrito", "El Dovio", "Florida", "Ginebra", "Guacarí",
-  "Jamundí", "La Cumbre", "La Unión", "La Victoria", "Obando", "Palmira", "Pradera",
-  "Restrepo", "Riofrío", "Roldanillo", "San Pedro", "Sevilla", "Toro", "Trujillo", "Tuluá",
-  "Ulloa", "Versalles", "Vijes", "Yotoco", "Yumbo", "Zarzal",
+  "Alcalá",
+  "Andalucía",
+  "Ansermanuevo",
+  "Argelia",
+  "Bolívar",
+  "Buenaventura",
+  "Buga",
+  "Bugalagrande",
+  "Caicedonia",
+  "Cali",
+  "Calima",
+  "Candelaria",
+  "Cartago",
+  "Dagua",
+  "El Águila",
+  "El Cairo",
+  "El Cerrito",
+  "El Dovio",
+  "Florida",
+  "Ginebra",
+  "Guacarí",
+  "Jamundí",
+  "La Cumbre",
+  "La Unión",
+  "La Victoria",
+  "Obando",
+  "Palmira",
+  "Pradera",
+  "Restrepo",
+  "Riofrío",
+  "Roldanillo",
+  "San Pedro",
+  "Sevilla",
+  "Toro",
+  "Trujillo",
+  "Tuluá",
+  "Ulloa",
+  "Versalles",
+  "Vijes",
+  "Yotoco",
+  "Yumbo",
+  "Zarzal",
 ] as const;
 export type Municipio = (typeof MUNICIPIOS)[number];
 
@@ -528,10 +581,12 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 3: Esquema de datos con Zod y errores legibles
 
 **Files:**
+
 - Create: `src/data/schema.ts`
 - Test: `tests/unit/schema.test.ts`
 
 **Interfaces:**
+
 - Consumes: `RAMA_IDS`, `sortRamas` (Task 2); `MUNICIPIOS`, `VALLE_BOUNDS` (Task 2).
 - Produces: `DIAS`, `type Dia`, `reunionSchema`, `type Reunion = { dia: Dia; inicio: string; fin: string | null }`, `grupoSchema`, `type Grupo`, `parseGrupos(raw: unknown): Grupo[]` (lanza `Error` con un mensaje multilínea).
 
@@ -606,9 +661,9 @@ describe("parseGrupos", () => {
   });
 
   it("rechaza campos extra dentro de contacto", () => {
-    expect(errorOf([grupo({ contacto: { ...grupo().contacto, telefonoAlt: "3000000000" } })])).toContain(
-      "telefonoAlt",
-    );
+    expect(
+      errorOf([grupo({ contacto: { ...grupo().contacto, telefonoAlt: "3000000000" } })]),
+    ).toContain("telefonoAlt");
   });
 
   it("rechaza coordenadas fuera del Valle", () => {
@@ -626,9 +681,9 @@ describe("parseGrupos", () => {
   });
 
   it("rechaza WhatsApp que no sea colombiano en formato 57XXXXXXXXXX", () => {
-    expect(errorOf([grupo({ contacto: { ...grupo().contacto, whatsapp: "3001234567" } })])).toContain(
-      "contacto.whatsapp",
-    );
+    expect(
+      errorOf([grupo({ contacto: { ...grupo().contacto, whatsapp: "3001234567" } })]),
+    ).toContain("contacto.whatsapp");
   });
 
   it("rechaza URLs sin https", () => {
@@ -638,9 +693,9 @@ describe("parseGrupos", () => {
   });
 
   it("rechaza hora de fin anterior al inicio", () => {
-    expect(errorOf([grupo({ reunion: { dia: "sabado", inicio: "18:00", fin: "14:00" } })])).toContain(
-      "reunion.fin",
-    );
+    expect(
+      errorOf([grupo({ reunion: { dia: "sabado", inicio: "18:00", fin: "14:00" } })]),
+    ).toContain("reunion.fin");
   });
 
   it("rechaza ramas vacías, repetidas o desconocidas", () => {
@@ -677,7 +732,15 @@ import { z } from "zod";
 import { RAMA_IDS, sortRamas } from "@/data/ramas";
 import { MUNICIPIOS, VALLE_BOUNDS } from "@/data/region";
 
-export const DIAS = ["lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo"] as const;
+export const DIAS = [
+  "lunes",
+  "martes",
+  "miercoles",
+  "jueves",
+  "viernes",
+  "sabado",
+  "domingo",
+] as const;
 export type Dia = (typeof DIAS)[number];
 
 const hora = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "debe tener formato HH:mm (24 h)");
@@ -779,12 +842,14 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 4: Migrar los datos al nuevo formato (y sacar los datos personales)
 
 **Files:**
+
 - Create (temporal, no se commitea): `scripts/migrate-2026-10.mjs`
 - Create: `src/data/grupos.json`, `src/data/grupos.ts`
 - Delete: `public/grupos.json`
 - Test: `tests/unit/grupos-data.test.ts`
 
 **Interfaces:**
+
 - Consumes: `parseGrupos`, `type Grupo` (Task 3).
 - Produces: `src/data/grupos.ts` exporta `grupos: readonly Grupo[]` y `municipiosConGrupos: { slug: string; nombre: Municipio }[]` (ordenados por nombre, solo municipios con al menos un grupo).
 
@@ -851,17 +916,37 @@ import { readFileSync, writeFileSync } from "node:fs";
 const [, , origen, destino, actualizado] = process.argv;
 const viejos = JSON.parse(readFileSync(origen, "utf8"));
 
-const RAMAS = { Cachorros: "cachorros", Manada: "lobatos", Tropa: "scouts", Comunidad: "nomadas", Clan: "rovers" };
+const RAMAS = {
+  Cachorros: "cachorros",
+  Manada: "lobatos",
+  Tropa: "scouts",
+  Comunidad: "nomadas",
+  Clan: "rovers",
+};
 
 // Horarios revisados a mano desde el texto libre original.
 const REUNION = {
-  815: ["sabado", "14:00", "18:00"], 662: ["sabado", "14:00", "18:00"], 928: ["sabado", "14:00", null],
-  823: ["sabado", "15:00", "18:30"], 938: ["sabado", "14:00", "17:00"], 901: ["sabado", "14:30", "17:30"],
-  315: ["sabado", "14:00", null], 808: ["sabado", "15:00", "18:00"], 904: ["sabado", "14:30", "18:00"],
-  208: ["sabado", "15:00", null], 607: ["sabado", "14:00", "17:30"], 828: ["sabado", "14:30", "17:30"],
-  117: ["sabado", "15:00", null], 123: ["sabado", "15:00", "18:00"], 411: ["sabado", "14:30", null],
-  601: ["sabado", "14:30", null], 841: ["sabado", "14:30", null], 840: ["sabado", "14:00", "18:00"],
-  816: ["sabado", "14:30", "18:00"], 909: ["domingo", "10:00", "12:30"], 605: ["sabado", "14:00", "17:30"],
+  815: ["sabado", "14:00", "18:00"],
+  662: ["sabado", "14:00", "18:00"],
+  928: ["sabado", "14:00", null],
+  823: ["sabado", "15:00", "18:30"],
+  938: ["sabado", "14:00", "17:00"],
+  901: ["sabado", "14:30", "17:30"],
+  315: ["sabado", "14:00", null],
+  808: ["sabado", "15:00", "18:00"],
+  904: ["sabado", "14:30", "18:00"],
+  208: ["sabado", "15:00", null],
+  607: ["sabado", "14:00", "17:30"],
+  828: ["sabado", "14:30", "17:30"],
+  117: ["sabado", "15:00", null],
+  123: ["sabado", "15:00", "18:00"],
+  411: ["sabado", "14:30", null],
+  601: ["sabado", "14:30", null],
+  841: ["sabado", "14:30", null],
+  840: ["sabado", "14:00", "18:00"],
+  816: ["sabado", "14:30", "18:00"],
+  909: ["domingo", "10:00", "12:30"],
+  605: ["sabado", "14:00", "17:30"],
   809: ["sabado", "14:00", "18:00"],
 };
 
@@ -951,10 +1036,12 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 5: Utilidades puras: slug, distancia, horario y enlaces de contacto
 
 **Files:**
+
 - Create: `src/lib/slug.ts`, `src/lib/geo.ts`, `src/lib/schedule.ts`, `src/lib/contact.ts`
 - Test: `tests/unit/slug.test.ts`, `tests/unit/geo.test.ts`, `tests/unit/schedule.test.ts`, `tests/unit/contact.test.ts`
 
 **Interfaces:**
+
 - Consumes: `type Lang`, `LOCALE` (Task 2); `type Reunion`, `type Dia`, `type Grupo` (Task 3).
 - Produces:
   - `slugify(text: string): string`; `grupoSlug(g: { id: number; nombre: string }): string`
@@ -1117,7 +1204,8 @@ const rad = (deg: number) => (deg * Math.PI) / 180;
 export function distanceKm(a: LatLng, b: LatLng): number {
   const dLat = rad(b.lat - a.lat);
   const dLng = rad(b.lng - a.lng);
-  const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLng / 2) ** 2;
+  const h =
+    Math.sin(dLat / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLng / 2) ** 2;
   return 2 * RADIO_TIERRA_KM * Math.asin(Math.sqrt(h));
 }
 
@@ -1140,12 +1228,22 @@ import type { Dia, Reunion } from "@/data/schema";
 
 const DIAS_PLURAL: Record<Lang, Record<Dia, string>> = {
   es: {
-    lunes: "Lunes", martes: "Martes", miercoles: "Miércoles", jueves: "Jueves",
-    viernes: "Viernes", sabado: "Sábados", domingo: "Domingos",
+    lunes: "Lunes",
+    martes: "Martes",
+    miercoles: "Miércoles",
+    jueves: "Jueves",
+    viernes: "Viernes",
+    sabado: "Sábados",
+    domingo: "Domingos",
   },
   en: {
-    lunes: "Mondays", martes: "Tuesdays", miercoles: "Wednesdays", jueves: "Thursdays",
-    viernes: "Fridays", sabado: "Saturdays", domingo: "Sundays",
+    lunes: "Mondays",
+    martes: "Tuesdays",
+    miercoles: "Wednesdays",
+    jueves: "Thursdays",
+    viernes: "Fridays",
+    sabado: "Saturdays",
+    domingo: "Sundays",
   },
 };
 
@@ -1160,7 +1258,8 @@ export function formatHora(hhmm: string, lang: Lang): string {
 export function formatReunion(reunion: Reunion, lang: Lang): string {
   const dia = DIAS_PLURAL[lang][reunion.dia];
   const inicio = formatHora(reunion.inicio, lang);
-  if (reunion.fin === null) return lang === "es" ? `${dia}, desde las ${inicio}` : `${dia}, from ${inicio}`;
+  if (reunion.fin === null)
+    return lang === "es" ? `${dia}, desde las ${inicio}` : `${dia}, from ${inicio}`;
   return `${dia}, ${inicio} – ${formatHora(reunion.fin, lang)}`;
 }
 ```
@@ -1212,11 +1311,13 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 6: Búsqueda, filtros y estado en la URL
 
 **Files:**
+
 - Create: `src/lib/search.ts`, `src/lib/url-state.ts`
 - Modify: `src/data/grupos.ts` (agregar `municipiosConGrupos`)
 - Test: `tests/unit/search.test.ts`, `tests/unit/url-state.test.ts`
 
 **Interfaces:**
+
 - Consumes: `Grupo` (Task 3); `RamaId`, `isRamaId`, `sortRamas` (Task 2); `slugify` (Task 5); `distanceKm`, `LatLng` (Task 5).
 - Produces:
   - `interface Filters { q: string; municipio: string | null /* slug */; ramas: RamaId[] }`, `EMPTY_FILTERS: Filters`, `hasActiveFilters(f: Filters): boolean`
@@ -1237,7 +1338,12 @@ import { describe, expect, it } from "vitest";
 import type { Grupo } from "@/data/schema";
 import { EMPTY_FILTERS, buscar, hasActiveFilters, matchesFilters, normalize } from "@/lib/search";
 
-function g(id: number, nombre: string, municipio: Grupo["municipio"], extra: Partial<Grupo> = {}): Grupo {
+function g(
+  id: number,
+  nombre: string,
+  municipio: Grupo["municipio"],
+  extra: Partial<Grupo> = {},
+): Grupo {
   return {
     id,
     nombre,
@@ -1253,8 +1359,13 @@ function g(id: number, nombre: string, municipio: Grupo["municipio"], extra: Par
   };
 }
 
-const fenix = g(815, "Fénix Escarlata", "Cali", { ramas: ["lobatos", "scouts", "nomadas", "rovers"] });
-const rozo = g(607, "Zimbabue", "Palmira", { localidad: "Rozo", ubicacion: { lat: 3.609, lng: -76.388 } });
+const fenix = g(815, "Fénix Escarlata", "Cali", {
+  ramas: ["lobatos", "scouts", "nomadas", "rovers"],
+});
+const rozo = g(607, "Zimbabue", "Palmira", {
+  localidad: "Rozo",
+  ubicacion: { lat: 3.609, lng: -76.388 },
+});
 const buga = g(315, "Águilas Doradas", "Buga", { ubicacion: { lat: 3.8918, lng: -76.29 } });
 const todos = [fenix, rozo, buga];
 
@@ -1397,12 +1508,7 @@ export function hasActiveFilters(f: Filters): boolean {
 }
 
 export function normalize(text: string): string {
-  return text
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase()
-    .replace(/\s+/g, " ")
-    .trim();
+  return text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
 }
 
 export function matchesFilters(grupo: Grupo, f: Filters): boolean {
@@ -1412,7 +1518,9 @@ export function matchesFilters(grupo: Grupo, f: Filters): boolean {
   const q = normalize(f.q);
   if (q === "") return true;
   const texto = normalize(
-    [grupo.nombre, String(grupo.id), grupo.municipio, grupo.localidad ?? "", grupo.direccion].join(" "),
+    [grupo.nombre, String(grupo.id), grupo.municipio, grupo.localidad ?? "", grupo.direccion].join(
+      " ",
+    ),
   );
   return q.split(" ").every((palabra) => texto.includes(palabra));
 }
@@ -1521,10 +1629,12 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 7: Textos de interfaz, rutas por idioma y formato de fecha
 
 **Files:**
+
 - Create: `src/i18n/ui.ts`, `src/i18n/routes.ts`, `src/i18n/format.ts`
 - Test: `tests/unit/i18n.test.ts`
 
 **Interfaces:**
+
 - Consumes: `Lang`, `LOCALE` (Task 2); `grupoSlug` (Task 5).
 - Produces:
   - `type UiKey`; `translator(lang: Lang): (key: UiKey, vars?: Record<string, string | number>) => string`
@@ -1547,7 +1657,8 @@ describe("ui", () => {
   });
 
   it("ningún texto está vacío", () => {
-    for (const dict of [ui.es, ui.en]) for (const v of Object.values(dict)) expect(v.trim()).not.toBe("");
+    for (const dict of [ui.es, ui.en])
+      for (const v of Object.values(dict)) expect(v.trim()).not.toBe("");
   });
 
   it("interpola variables", () => {
@@ -1567,8 +1678,12 @@ describe("routes", () => {
   });
 
   it("traduce rutas al otro idioma", () => {
-    expect(alternatePath("/grupos/815-fenix-escarlata/", "en")).toBe("/en/groups/815-fenix-escarlata/");
-    expect(alternatePath("/en/groups/815-fenix-escarlata/", "es")).toBe("/grupos/815-fenix-escarlata/");
+    expect(alternatePath("/grupos/815-fenix-escarlata/", "en")).toBe(
+      "/en/groups/815-fenix-escarlata/",
+    );
+    expect(alternatePath("/en/groups/815-fenix-escarlata/", "es")).toBe(
+      "/grupos/815-fenix-escarlata/",
+    );
     expect(alternatePath("/que-es-ser-scout/", "en")).toBe("/en/what-is-scouting/");
     expect(alternatePath("/en/", "es")).toBe("/");
     expect(alternatePath("/ruta-desconocida/", "en")).toBe("/en/");
@@ -1806,9 +1921,11 @@ import { LOCALE, type Lang } from "@/i18n/lang";
 /** "2025-05" → "mayo de 2025" / "May 2025" */
 export function formatMonth(ym: string, lang: Lang): string {
   const [year = 1970, month = 1] = ym.split("-").map(Number);
-  return new Intl.DateTimeFormat(LOCALE[lang], { month: "long", year: "numeric", timeZone: "UTC" }).format(
-    new Date(Date.UTC(year, month - 1, 1)),
-  );
+  return new Intl.DateTimeFormat(LOCALE[lang], {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(Date.UTC(year, month - 1, 1)));
 }
 ```
 
@@ -1831,10 +1948,12 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 8: Tokens visuales, layout base, encabezado y pie
 
 **Files:**
+
 - Modify: `src/styles/global.css`, `src/pages/index.astro`
 - Create: `src/layouts/Base.astro`, `src/components/Header.astro`, `src/components/Footer.astro`, `src/components/LangSwitch.astro`, `src/components/ThemeToggle.astro`, `src/assets/logo-region-valle.png`, `src/assets/logo-region-valle-white.png`, `public/favicon.png`, `public/apple-touch-icon.png`
 
 **Interfaces:**
+
 - Consumes: `translator`, `alternatePath`, `pagePath` (Task 7); `REGION`, `REPO_URL` (Task 2).
 - Produces: `Base.astro` con props `{ lang: Lang; title: string; description: string; path: string; ogImage?: string; jsonLd?: Record<string, unknown>; fullBleed?: boolean }`. `path` es la ruta canónica del idioma actual con `/` final. Por defecto `ogImage = "/og/default.png"`; esa imagen la crea Task 14 y hasta entonces el enlace queda roto, lo cual es esperado. `fullBleed` quita el ancho máximo del `<main>` (lo usa el buscador).
 - CSS: clases `.rama-chip` con `data-rama="<id>"`; `.pin`, `.pin--active`, `.pin--you`; tokens `--color-*`; variante `dark:` ligada a `[data-theme="dark"]`.
@@ -1947,11 +2066,26 @@ Expected: cuatro archivos "PNG image data". Abre los dos logos y confirma que so
     border-radius: 999px;
     background: var(--rama);
   }
-  [data-rama="cachorros"] { --rama: var(--color-rama-cachorros); --rama-ink: var(--color-rama-cachorros-ink); }
-  [data-rama="lobatos"] { --rama: var(--color-rama-lobatos); --rama-ink: var(--color-rama-lobatos-ink); }
-  [data-rama="scouts"] { --rama: var(--color-rama-scouts); --rama-ink: var(--color-rama-scouts-ink); }
-  [data-rama="nomadas"] { --rama: var(--color-rama-nomadas); --rama-ink: var(--color-rama-nomadas-ink); }
-  [data-rama="rovers"] { --rama: var(--color-rama-rovers); --rama-ink: var(--color-rama-rovers-ink); }
+  [data-rama="cachorros"] {
+    --rama: var(--color-rama-cachorros);
+    --rama-ink: var(--color-rama-cachorros-ink);
+  }
+  [data-rama="lobatos"] {
+    --rama: var(--color-rama-lobatos);
+    --rama-ink: var(--color-rama-lobatos-ink);
+  }
+  [data-rama="scouts"] {
+    --rama: var(--color-rama-scouts);
+    --rama-ink: var(--color-rama-scouts-ink);
+  }
+  [data-rama="nomadas"] {
+    --rama: var(--color-rama-nomadas);
+    --rama-ink: var(--color-rama-nomadas-ink);
+  }
+  [data-rama="rovers"] {
+    --rama: var(--color-rama-rovers);
+    --rama-ink: var(--color-rama-rovers-ink);
+  }
 
   /* Pines del mapa (L.divIcon con className "pin") */
   .pin {
@@ -2008,10 +2142,24 @@ const t = translator(Astro.props.lang);
   aria-label={t("theme.toggle")}
   title={t("theme.toggle")}
 >
-  <svg class="size-5 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+  <svg
+    class="size-5 dark:hidden"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    aria-hidden="true"
+  >
     <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"></path>
   </svg>
-  <svg class="hidden size-5 dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+  <svg
+    class="hidden size-5 dark:block"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    aria-hidden="true"
+  >
     <circle cx="12" cy="12" r="4"></circle>
     <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
   </svg>
@@ -2086,7 +2234,13 @@ const about = pagePath(lang, "about");
   <div class="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4">
     <a href={pagePath(lang, "home")} aria-label={t("nav.home")} class="shrink-0">
       <Image src={logo} alt="" height={40} class="h-10 w-auto dark:hidden" loading="eager" />
-      <Image src={logoWhite} alt="" height={40} class="hidden h-10 w-auto dark:block" loading="eager" />
+      <Image
+        src={logoWhite}
+        alt=""
+        height={40}
+        class="hidden h-10 w-auto dark:block"
+        loading="eager"
+      />
     </a>
     <nav class="ml-auto flex items-center gap-1" aria-label="Principal">
       <a
@@ -2124,10 +2278,26 @@ const link = "underline decoration-line underline-offset-4 hover:text-ink hover:
   <div class="mx-auto grid max-w-7xl gap-3 px-4 py-8 text-sm text-ink-soft">
     <p>{t("footer.about")}</p>
     <ul class="flex flex-wrap gap-x-5 gap-y-2">
-      <li><a class={link} href={pagePath(lang, "about")}>{t("nav.about")}</a></li>
-      <li><a class={link} href={REGION.web}>{t("footer.region")}</a></li>
-      <li><a class={link} href={REGION.nacional}>{t("footer.national")}</a></li>
-      <li><a class={link} href={REPO_URL}>{t("footer.source")}</a></li>
+      <li>
+        <a class={link} href={pagePath(lang, "about")}>
+          {t("nav.about")}
+        </a>
+      </li>
+      <li>
+        <a class={link} href={REGION.web}>
+          {t("footer.region")}
+        </a>
+      </li>
+      <li>
+        <a class={link} href={REGION.nacional}>
+          {t("footer.national")}
+        </a>
+      </li>
+      <li>
+        <a class={link} href={REPO_URL}>
+          {t("footer.source")}
+        </a>
+      </li>
     </ul>
     <p class="text-xs">{t("footer.trademark")}</p>
   </div>
@@ -2156,7 +2326,15 @@ interface Props {
   fullBleed?: boolean;
 }
 
-const { lang, title, description, path, ogImage = "/og/default.png", jsonLd, fullBleed = false } = Astro.props;
+const {
+  lang,
+  title,
+  description,
+  path,
+  ogImage = "/og/default.png",
+  jsonLd,
+  fullBleed = false,
+} = Astro.props;
 const t = translator(lang);
 const site = Astro.site ?? new URL("https://buscador.vallescout.org.co");
 const url = (p: string) => new URL(p, site).href;
@@ -2264,9 +2442,11 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 9: Base del mapa (Leaflet diferido) y mini mapa
 
 **Files:**
+
 - Create: `src/components/map/leaflet.ts`, `src/components/map/MiniMap.tsx`
 
 **Interfaces:**
+
 - Consumes: clases CSS `.pin`, `.pin--active`, `.pin--you`, `.marker-cluster-brand` (Task 8).
 - Produces:
   - `loadLeaflet(): Promise<typeof Leaflet>`: carga Leaflet, su CSS y markercluster una sola vez; si falla, permite reintentar.
@@ -2313,7 +2493,9 @@ function currentTheme(): keyof typeof TILES {
 }
 
 export function addThemedTiles(L: L, map: Leaflet.Map): () => void {
-  const layer = L.tileLayer(TILES[currentTheme()], { attribution: ATTRIBUTION, maxZoom: 19 }).addTo(map);
+  const layer = L.tileLayer(TILES[currentTheme()], { attribution: ATTRIBUTION, maxZoom: 19 }).addTo(
+    map,
+  );
   const observer = new MutationObserver(() => layer.setUrl(TILES[currentTheme()]));
   observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
   return () => observer.disconnect();
@@ -2332,7 +2514,11 @@ export function pinIcon(L: L, variant: "default" | "active" | "you" = "default")
 
 export function clusterIcon(L: L, count: number): Leaflet.DivIcon {
   const size = count < 10 ? 36 : 44;
-  return L.divIcon({ className: "marker-cluster-brand", html: String(count), iconSize: [size, size] });
+  return L.divIcon({
+    className: "marker-cluster-brand",
+    html: String(count),
+    iconSize: [size, size],
+  });
 }
 ```
 
@@ -2376,7 +2562,11 @@ export default function MiniMap({ lat, lng, label, errorText, fallbackHref, fall
           touchZoom: false,
         });
         stopTiles = addThemedTiles(L, map);
-        L.marker([lat, lng], { icon: pinIcon(L, "active"), interactive: false, keyboard: false }).addTo(map);
+        L.marker([lat, lng], {
+          icon: pinIcon(L, "active"),
+          interactive: false,
+          keyboard: false,
+        }).addTo(map);
       })
       .catch(() => {
         if (!cancelled) setFailed(true);
@@ -2399,7 +2589,14 @@ export default function MiniMap({ lat, lng, label, errorText, fallbackHref, fall
       </p>
     );
   }
-  return <div ref={ref} role="img" aria-label={label} class="h-56 w-full overflow-hidden rounded-xl border border-line" />;
+  return (
+    <div
+      ref={ref}
+      role="img"
+      aria-label={label}
+      class="h-56 w-full overflow-hidden rounded-xl border border-line"
+    />
+  );
 }
 ```
 
@@ -2428,10 +2625,12 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 10: Ficha de grupo (ES/EN) con contacto, JSON-LD y e2e
 
 **Files:**
+
 - Create: `src/lib/jsonld.ts`, `src/components/RamaChip.astro`, `src/components/ContactActions.astro`, `src/components/GroupDetail.astro`, `src/views/GroupPage.astro`, `src/pages/grupos/[slug].astro`, `src/pages/en/groups/[slug].astro`, `playwright.config.ts`
 - Test: `tests/unit/jsonld.test.ts`, `tests/e2e/grupo.spec.ts`
 
 **Interfaces:**
+
 - Consumes: `grupos` (Task 6), `Grupo` (Task 3), `RAMAS`, `ramaLabel` (Task 2), `formatReunion` (Task 5), contacto (Task 5), `translator`, `grupoPath`, `pagePath`, `formatMonth` (Task 7), `Base.astro` (Task 8), `MiniMap` (Task 9), `REGION` (Task 2).
 - Produces:
   - `buildGrupoJsonLd(g: Grupo, url: string): Record<string, unknown>`
@@ -2451,12 +2650,20 @@ describe("buildGrupoJsonLd", () => {
   it("describe el grupo como organización con dirección y geo", () => {
     const g = grupos.find((x) => x.id === 815);
     if (!g) throw new Error("falta el grupo 815");
-    const ld = buildGrupoJsonLd(g, "https://buscador.vallescout.org.co/grupos/815-fenix-escarlata/");
+    const ld = buildGrupoJsonLd(
+      g,
+      "https://buscador.vallescout.org.co/grupos/815-fenix-escarlata/",
+    );
     expect(ld).toMatchObject({
       "@context": "https://schema.org",
       "@type": "Organization",
       name: "Grupo Scout 815 Fénix Escarlata",
-      address: { "@type": "PostalAddress", addressLocality: "Cali", addressRegion: "Valle del Cauca", addressCountry: "CO" },
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Cali",
+        addressRegion: "Valle del Cauca",
+        addressCountry: "CO",
+      },
       geo: { "@type": "GeoCoordinates", latitude: 3.493053, longitude: -76.520585 },
       parentOrganization: { name: "Asociación Scouts de Colombia" },
     });
@@ -2492,7 +2699,11 @@ export function buildGrupoJsonLd(g: Grupo, url: string): Record<string, unknown>
     },
     geo: { "@type": "GeoCoordinates", latitude: g.ubicacion.lat, longitude: g.ubicacion.lng },
     ...(sameAs.length > 0 ? { sameAs } : {}),
-    parentOrganization: { "@type": "Organization", name: "Asociación Scouts de Colombia", url: REGION.nacional },
+    parentOrganization: {
+      "@type": "Organization",
+      name: "Asociación Scouts de Colombia",
+      url: REGION.nacional,
+    },
   };
 }
 ```
@@ -2521,7 +2732,11 @@ const rama = RAMAS[id];
 
 <span class="rama-chip" data-rama={id}>
   {ramaLabel(id, lang)}
-  {showAge && <span class="font-normal opacity-80">· {t("finder.ramaAge", { min: rama.edadMin, max: rama.edadMax })}</span>}
+  {showAge && (
+    <span class="font-normal opacity-80">
+      · {t("finder.ramaAge", { min: rama.edadMin, max: rama.edadMax })}
+    </span>
+  )}
 </span>
 ```
 
@@ -2549,43 +2764,97 @@ const secondary = `${primary} border border-line bg-surface hover:bg-brand-soft`
 ---
 
 <div class="grid gap-3">
-  {
-    whatsapp && (
-      <a class={`${primary} bg-whatsapp text-white dark:text-canvas`} href={whatsappUrl(whatsapp, t("grupo.whatsappMsg", vars))} target="_blank" rel="noopener noreferrer" data-action="whatsapp">
-        {t("grupo.whatsapp")}
+  {whatsapp && (
+    <a
+      class={`${primary} bg-whatsapp text-white dark:text-canvas`}
+      href={whatsappUrl(whatsapp, t("grupo.whatsappMsg", vars))}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-action="whatsapp"
+    >
+      {t("grupo.whatsapp")}
+    </a>
+  )}
+  {email && (
+    <a
+      class={`${primary} bg-brand text-on-brand`}
+      href={mailtoUrl(email, t("grupo.emailSubject", vars))}
+      data-action="email"
+    >
+      {t("grupo.email")}
+    </a>
+  )}
+  {!hasDirectContact && (
+    <p class="rounded-xl bg-brand-soft p-4 text-sm">
+      {t("grupo.noContact")}{" "}
+      <a class="font-semibold underline" href={REGION.web} data-action="region">
+        {t("grupo.contactRegion")}
       </a>
-    )
-  }
-  {
-    email && (
-      <a class={`${primary} bg-brand text-on-brand`} href={mailtoUrl(email, t("grupo.emailSubject", vars))} data-action="email">
-        {t("grupo.email")}
-      </a>
-    )
-  }
-  {
-    !hasDirectContact && (
-      <p class="rounded-xl bg-brand-soft p-4 text-sm">
-        {t("grupo.noContact")}{" "}
-        <a class="font-semibold underline" href={REGION.web} data-action="region">
-          {t("grupo.contactRegion")}
-        </a>
-      </p>
-    )
-  }
+    </p>
+  )}
   <div class="grid grid-cols-2 gap-3">
-    <a class={secondary} href={directionsUrl(grupo.ubicacion)} target="_blank" rel="noopener noreferrer" data-action="directions">{t("grupo.directions")}</a>
-    <a class={secondary} href={wazeUrl(grupo.ubicacion)} target="_blank" rel="noopener noreferrer" data-action="waze">{t("grupo.waze")}</a>
+    <a
+      class={secondary}
+      href={directionsUrl(grupo.ubicacion)}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-action="directions"
+    >
+      {t("grupo.directions")}
+    </a>
+    <a
+      class={secondary}
+      href={wazeUrl(grupo.ubicacion)}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-action="waze"
+    >
+      {t("grupo.waze")}
+    </a>
   </div>
-  {
-    (instagram || facebook || web) && (
-      <ul class="flex flex-wrap gap-2">
-        {instagram && <li><a class={secondary} href={instagram} target="_blank" rel="noopener noreferrer" data-action="instagram">{t("grupo.instagram")}</a></li>}
-        {facebook && <li><a class={secondary} href={facebook} target="_blank" rel="noopener noreferrer" data-action="facebook">{t("grupo.facebook")}</a></li>}
-        {web && <li><a class={secondary} href={web} target="_blank" rel="noopener noreferrer" data-action="web">{t("grupo.web")}</a></li>}
-      </ul>
-    )
-  }
+  {(instagram || facebook || web) && (
+    <ul class="flex flex-wrap gap-2">
+      {instagram && (
+        <li>
+          <a
+            class={secondary}
+            href={instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-action="instagram"
+          >
+            {t("grupo.instagram")}
+          </a>
+        </li>
+      )}
+      {facebook && (
+        <li>
+          <a
+            class={secondary}
+            href={facebook}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-action="facebook"
+          >
+            {t("grupo.facebook")}
+          </a>
+        </li>
+      )}
+      {web && (
+        <li>
+          <a
+            class={secondary}
+            href={web}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-action="web"
+          >
+            {t("grupo.web")}
+          </a>
+        </li>
+      )}
+    </ul>
+  )}
 </div>
 ```
 
@@ -2615,9 +2884,13 @@ const lugar = grupo.localidad ? `${grupo.localidad}, ${grupo.municipio}` : grupo
 
 <article class="grid gap-8 md:grid-cols-[1fr_20rem]">
   <div class="grid content-start gap-6">
-    <a href={pagePath(lang, "home")} class="text-sm font-semibold text-brand hover:underline">← {t("grupo.back")}</a>
+    <a href={pagePath(lang, "home")} class="text-sm font-semibold text-brand hover:underline">
+      ← {t("grupo.back")}
+    </a>
     <header>
-      <p class="text-sm font-semibold tracking-wide text-ink-soft uppercase">{t("grupo.number", { id: grupo.id })} · {lugar}</p>
+      <p class="text-sm font-semibold tracking-wide text-ink-soft uppercase">
+        {t("grupo.number", { id: grupo.id })} · {lugar}
+      </p>
       <h1 class="mt-1 text-4xl font-extrabold text-balance text-brand">{grupo.nombre}</h1>
     </header>
     <dl class="grid gap-4">
@@ -2631,7 +2904,11 @@ const lugar = grupo.localidad ? `${grupo.localidad}, ${grupo.municipio}` : grupo
       </div>
       <div>
         <dt class="text-sm font-semibold text-ink-soft">{t("grupo.ramas")}</dt>
-        <dd class="mt-2 flex flex-wrap gap-2">{grupo.ramas.map((id) => <RamaChip id={id} lang={lang} showAge />)}</dd>
+        <dd class="mt-2 flex flex-wrap gap-2">
+          {grupo.ramas.map((id) => (
+            <RamaChip id={id} lang={lang} showAge />
+          ))}
+        </dd>
       </div>
     </dl>
     <MiniMap
@@ -2647,7 +2924,9 @@ const lugar = grupo.localidad ? `${grupo.localidad}, ${grupo.municipio}` : grupo
   <aside class="grid content-start gap-4">
     <h2 class="text-lg font-bold">{t("grupo.contact")}</h2>
     <ContactActions grupo={grupo} lang={lang} />
-    <p class="text-xs text-ink-soft">{t("grupo.updated", { fecha: formatMonth(grupo.actualizado, lang) })}</p>
+    <p class="text-xs text-ink-soft">
+      {t("grupo.updated", { fecha: formatMonth(grupo.actualizado, lang) })}
+    </p>
   </aside>
 </article>
 ```
@@ -2698,7 +2977,10 @@ import { grupoSlug } from "@/lib/slug";
 import GroupPage from "@/views/GroupPage.astro";
 
 export const getStaticPaths = (() =>
-  grupos.map((grupo) => ({ params: { slug: grupoSlug(grupo) }, props: { grupo } }))) satisfies GetStaticPaths;
+  grupos.map((grupo) => ({
+    params: { slug: grupoSlug(grupo) },
+    props: { grupo },
+  }))) satisfies GetStaticPaths;
 
 const { grupo } = Astro.props;
 ---
@@ -2757,7 +3039,10 @@ test.describe("ficha de grupo", () => {
       "href",
       /^mailto:valle\.grupo815@scout\.org\.co\?subject=/,
     );
-    await expect(page.locator('[data-action="directions"]')).toHaveAttribute("href", /destination=3\.493053/);
+    await expect(page.locator('[data-action="directions"]')).toHaveAttribute(
+      "href",
+      /destination=3\.493053/,
+    );
     await expect(page.locator('[data-action="instagram"]')).toHaveAttribute(
       "href",
       "https://www.instagram.com/fenix_escarlata_815",
@@ -2775,7 +3060,10 @@ test.describe("ficha de grupo", () => {
 
   test("grupo sin canales directos ofrece contactar a la Región", async ({ page }) => {
     await page.goto("/grupos/816-san-luis-gonzaga/");
-    await expect(page.locator('[data-action="region"]')).toHaveAttribute("href", "https://vallescout.org.co/");
+    await expect(page.locator('[data-action="region"]')).toHaveAttribute(
+      "href",
+      "https://vallescout.org.co/",
+    );
   });
 
   test("versión en inglés", async ({ page }) => {
@@ -2818,11 +3106,13 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 11: Buscador (isla Preact): lista, filtros, URL y "cerca de mí"
 
 **Files:**
+
 - Create: `src/components/finder/Finder.tsx`, `src/components/finder/Filters.tsx`, `src/components/finder/GroupList.tsx`, `src/components/finder/GroupCard.tsx`, `src/views/HomePage.astro`, `src/pages/en/index.astro`
 - Modify: `src/pages/index.astro`
 - Test: `tests/e2e/finder.spec.ts`
 
 **Interfaces:**
+
 - Consumes: `grupos`, `municipiosConGrupos` (Task 6); `buscar`, `EMPTY_FILTERS`, `hasActiveFilters`, `Filters`, `Resultado` (Task 6); `parseFilters`, `serializeFilters` (Task 6); `translator`, `grupoPath` (Task 7); `RAMAS`, `RAMA_IDS`, `ramaLabel` (Task 2); `formatReunion` (Task 5); `formatDistance` (Task 5); `whatsappUrl` (Task 5); `REGION` (Task 2).
 - Produces:
   - `<Finder grupos lang municipios client:load />` con props `{ grupos: Grupo[]; lang: Lang; municipios: { slug: string; nombre: string }[] }`.
@@ -2861,7 +3151,10 @@ test.describe("buscador", () => {
     await page.reload();
     await expect(cards(page)).toHaveCount(n);
     await expect(page.getByLabel("Municipio")).toHaveValue("palmira");
-    await expect(page.getByRole("button", { name: /Rovers/ })).toHaveAttribute("aria-pressed", "true");
+    await expect(page.getByRole("button", { name: /Rovers/ })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
   });
 
   test("ignora parámetros inválidos y no inyecta HTML", async ({ page }) => {
@@ -2956,11 +3249,16 @@ export default function GroupCard({ resultado, lang, t, active, onActivate }: Pr
       <p class="text-xs font-semibold tracking-wide text-ink-soft uppercase">
         {t("grupo.number", { id: grupo.id })} · {lugar}
         {distanciaKm !== null && (
-          <span class="ml-1 normal-case tabular-nums">· {t("card.distance", { d: formatDistance(distanciaKm, lang) })}</span>
+          <span class="ml-1 normal-case tabular-nums">
+            · {t("card.distance", { d: formatDistance(distanciaKm, lang) })}
+          </span>
         )}
       </p>
       <h3 class="mt-1 text-lg font-bold">
-        <a href={grupoPath(lang, grupo)} class="after:absolute after:inset-0 after:rounded-2xl focus-visible:outline-none group-focus-within:underline">
+        <a
+          href={grupoPath(lang, grupo)}
+          class="after:absolute after:inset-0 after:rounded-2xl focus-visible:outline-none group-focus-within:underline"
+        >
           {grupo.nombre}
         </a>
       </h3>
@@ -2974,7 +3272,10 @@ export default function GroupCard({ resultado, lang, t, active, onActivate }: Pr
       </ul>
       {whatsapp && (
         <a
-          href={whatsappUrl(whatsapp, t("grupo.whatsappMsg", { id: grupo.id, nombre: grupo.nombre }))}
+          href={whatsappUrl(
+            whatsapp,
+            t("grupo.whatsappMsg", { id: grupo.id, nombre: grupo.nombre }),
+          )}
           target="_blank"
           rel="noopener noreferrer"
           class="relative z-10 mt-3 inline-flex rounded-full bg-whatsapp px-3 py-1.5 text-sm font-semibold text-white dark:text-canvas"
@@ -3010,11 +3311,23 @@ interface Props {
   onClear: () => void;
 }
 
-export default function Filters({ lang, t, filters, municipios, geoStatus, canClear, onChange, onNearMe, onClear }: Props) {
+export default function Filters({
+  lang,
+  t,
+  filters,
+  municipios,
+  geoStatus,
+  canClear,
+  onChange,
+  onNearMe,
+  onClear,
+}: Props) {
   const toggleRama = (id: RamaId) =>
     onChange({
       ...filters,
-      ramas: filters.ramas.includes(id) ? filters.ramas.filter((r) => r !== id) : RAMA_IDS.filter((r) => r === id || filters.ramas.includes(r)),
+      ramas: filters.ramas.includes(id)
+        ? filters.ramas.filter((r) => r !== id)
+        : RAMA_IDS.filter((r) => r === id || filters.ramas.includes(r)),
     });
 
   return (
@@ -3069,7 +3382,9 @@ export default function Filters({ lang, t, filters, municipios, geoStatus, canCl
               class="rama-chip border-2 border-transparent py-1 aria-pressed:border-[var(--rama)]"
             >
               {ramaLabel(id, lang)}
-              <span class="font-normal opacity-80">{t("finder.ramaAge", { min: RAMAS[id].edadMin, max: RAMAS[id].edadMax })}</span>
+              <span class="font-normal opacity-80">
+                {t("finder.ramaAge", { min: RAMAS[id].edadMin, max: RAMAS[id].edadMax })}
+              </span>
             </button>
           ))}
         </div>
@@ -3080,7 +3395,11 @@ export default function Filters({ lang, t, filters, municipios, geoStatus, canCl
         </p>
       )}
       {canClear && (
-        <button type="button" onClick={onClear} class="justify-self-start text-sm font-semibold text-brand underline">
+        <button
+          type="button"
+          onClick={onClear}
+          class="justify-self-start text-sm font-semibold text-brand underline"
+        >
           {t("finder.clear")}
         </button>
       )}
@@ -3108,7 +3427,8 @@ interface Props {
 }
 
 export default function GroupList({ lang, t, results, activeId, onActivate, onClear }: Props) {
-  const count = results.length === 1 ? t("finder.count.one") : t("finder.count.other", { n: results.length });
+  const count =
+    results.length === 1 ? t("finder.count.one") : t("finder.count.other", { n: results.length });
   return (
     <section class="grid gap-3">
       <p data-count aria-live="polite" class="text-sm font-semibold text-ink-soft">
@@ -3119,7 +3439,11 @@ export default function GroupList({ lang, t, results, activeId, onActivate, onCl
           <p class="font-bold">{t("finder.empty.title")}</p>
           <p class="mt-1 text-sm text-ink-soft">{t("finder.empty.body")}</p>
           <div class="mt-4 flex flex-wrap justify-center gap-3">
-            <button type="button" onClick={onClear} class="rounded-xl bg-brand px-4 py-2 font-semibold text-on-brand">
+            <button
+              type="button"
+              onClick={onClear}
+              class="rounded-xl bg-brand px-4 py-2 font-semibold text-on-brand"
+            >
               {t("finder.clear")}
             </button>
             <a href={REGION.web} class="rounded-xl border border-line px-4 py-2 font-semibold">
@@ -3130,7 +3454,14 @@ export default function GroupList({ lang, t, results, activeId, onActivate, onCl
       ) : (
         <ul class="grid gap-3">
           {results.map((r) => (
-            <GroupCard key={r.grupo.id} resultado={r} lang={lang} t={t} active={r.grupo.id === activeId} onActivate={onActivate} />
+            <GroupCard
+              key={r.grupo.id}
+              resultado={r}
+              lang={lang}
+              t={t}
+              active={r.grupo.id === activeId}
+              onActivate={onActivate}
+            />
           ))}
         </ul>
       )}
@@ -3168,7 +3499,12 @@ export default function Finder({ grupos, lang, municipios }: Props) {
 
   // Lee los filtros de la URL una vez, después de hidratar.
   useEffect(() => {
-    setFilters(parseFilters(new URLSearchParams(location.search), municipios.map((m) => m.slug)));
+    setFilters(
+      parseFilters(
+        new URLSearchParams(location.search),
+        municipios.map((m) => m.slug),
+      ),
+    );
     hydrated.current = true;
   }, [municipios]);
 
@@ -3216,7 +3552,14 @@ export default function Finder({ grupos, lang, municipios }: Props) {
         onNearMe={nearMe}
         onClear={clear}
       />
-      <GroupList lang={lang} t={t} results={results} activeId={activeId} onActivate={setActiveId} onClear={clear} />
+      <GroupList
+        lang={lang}
+        t={t}
+        results={results}
+        activeId={activeId}
+        onActivate={setActiveId}
+        onClear={clear}
+      />
     </div>
   );
 }
@@ -3242,9 +3585,17 @@ const { lang } = Astro.props;
 const t = translator(lang);
 ---
 
-<Base lang={lang} path={pagePath(lang, "home")} title={t("site.title")} description={t("site.description")} fullBleed>
+<Base
+  lang={lang}
+  path={pagePath(lang, "home")}
+  title={t("site.title")}
+  description={t("site.description")}
+  fullBleed
+>
   <div class="mx-auto w-full max-w-7xl px-4 pt-6 pb-4">
-    <h1 class="text-3xl font-extrabold text-balance text-brand sm:text-4xl">{t("finder.heading")}</h1>
+    <h1 class="text-3xl font-extrabold text-balance text-brand sm:text-4xl">
+      {t("finder.heading")}
+    </h1>
     <p class="mt-2 text-ink-soft">{t("finder.lead", { n: grupos.length })}</p>
   </div>
   <div class="mx-auto w-full max-w-7xl px-4 pb-10">
@@ -3284,11 +3635,13 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 12: Mapa del buscador sincronizado con la lista
 
 **Files:**
+
 - Create: `src/components/finder/GroupMap.tsx`, `src/components/finder/useMediaQuery.ts`
 - Modify: `src/components/finder/Finder.tsx`, `src/components/finder/GroupList.tsx`
 - Test: `tests/e2e/map.spec.ts`
 
 **Interfaces:**
+
 - Consumes: `loadLeaflet`, `addThemedTiles`, `pinIcon`, `clusterIcon` (Task 9); `Resultado` (Task 6); `VALLE_CENTER`, `VALLE_ZOOM` (Task 2); `grupoPath` (Task 7).
 - Produces: `<GroupMap results activeId origin lang t visible onSelect />`; `useMediaQuery(query: string): boolean`. En `GroupList`, nueva prop `scrollToId: number | null`.
 
@@ -3409,7 +3762,10 @@ export default function GroupMap({ results, activeId, origin, lang, t, visible, 
       .then((L) => {
         if (cancelled || !container.current) return;
         leaflet.current = L;
-        const m = L.map(container.current, { center: [VALLE_CENTER.lat, VALLE_CENTER.lng], zoom: VALLE_ZOOM });
+        const m = L.map(container.current, {
+          center: [VALLE_CENTER.lat, VALLE_CENTER.lng],
+          zoom: VALLE_ZOOM,
+        });
         stopTiles = addThemedTiles(L, m);
         cluster.current = L.markerClusterGroup({
           showCoverageOnHover: false,
@@ -3440,7 +3796,10 @@ export default function GroupMap({ results, activeId, origin, lang, t, visible, 
     group.clearLayers();
     markers.current.clear();
     for (const { grupo } of results) {
-      const marker = L.marker([grupo.ubicacion.lat, grupo.ubicacion.lng], { icon: pinIcon(L), title: grupo.nombre });
+      const marker = L.marker([grupo.ubicacion.lat, grupo.ubicacion.lng], {
+        icon: pinIcon(L),
+        title: grupo.nombre,
+      });
       const popup = document.createElement("div");
       const strong = document.createElement("strong");
       strong.textContent = grupo.nombre;
@@ -3455,7 +3814,9 @@ export default function GroupMap({ results, activeId, origin, lang, t, visible, 
     }
 
     if (results.length > 0) {
-      const bounds = L.latLngBounds(results.map(({ grupo }) => [grupo.ubicacion.lat, grupo.ubicacion.lng]));
+      const bounds = L.latLngBounds(
+        results.map(({ grupo }) => [grupo.ubicacion.lat, grupo.ubicacion.lng]),
+      );
       if (origin) bounds.extend([origin.lat, origin.lng]);
       m.fitBounds(bounds, { padding: [40, 40], maxZoom: 15 });
     }
@@ -3468,7 +3829,11 @@ export default function GroupMap({ results, activeId, origin, lang, t, visible, 
     if (!ready || !L || !m) return;
     youMarker.current?.remove();
     youMarker.current = origin
-      ? L.marker([origin.lat, origin.lng], { icon: pinIcon(L, "you"), title: t("map.you"), keyboard: false }).addTo(m)
+      ? L.marker([origin.lat, origin.lng], {
+          icon: pinIcon(L, "you"),
+          title: t("map.you"),
+          keyboard: false,
+        }).addTo(m)
       : null;
   }, [ready, origin, t]);
 
@@ -3489,17 +3854,30 @@ export default function GroupMap({ results, activeId, origin, lang, t, visible, 
 
   if (failed) {
     return (
-      <div class="grid h-full place-items-center rounded-2xl border border-line bg-brand-soft p-6 text-center" data-map-error>
+      <div
+        class="grid h-full place-items-center rounded-2xl border border-line bg-brand-soft p-6 text-center"
+        data-map-error
+      >
         <p>
           {t("map.error")}{" "}
-          <a class="font-semibold underline" href={`https://www.google.com/maps/@${VALLE_CENTER.lat},${VALLE_CENTER.lng},${VALLE_ZOOM}z`}>
+          <a
+            class="font-semibold underline"
+            href={`https://www.google.com/maps/@${VALLE_CENTER.lat},${VALLE_CENTER.lng},${VALLE_ZOOM}z`}
+          >
             {t("map.openGoogle")}
           </a>
         </p>
       </div>
     );
   }
-  return <div ref={container} role="region" aria-label={t("map.label")} class="h-full min-h-[60dvh] w-full overflow-hidden rounded-2xl border border-line" />;
+  return (
+    <div
+      ref={container}
+      role="region"
+      aria-label={t("map.label")}
+      class="h-full min-h-[60dvh] w-full overflow-hidden rounded-2xl border border-line"
+    />
+  );
 }
 ```
 
@@ -3545,11 +3923,27 @@ return (
         onNearMe={nearMe}
         onClear={clear}
       />
-      <GroupList lang={lang} t={t} results={results} activeId={activeId} scrollToId={scrollToId} onActivate={setActiveId} onClear={clear} />
+      <GroupList
+        lang={lang}
+        t={t}
+        results={results}
+        activeId={activeId}
+        scrollToId={scrollToId}
+        onActivate={setActiveId}
+        onClear={clear}
+      />
     </div>
     <div class={showMap ? "h-[70dvh] lg:sticky lg:top-20 lg:h-[calc(100dvh-6rem)]" : "hidden"}>
       {mapRequested && (
-        <GroupMap results={results} activeId={activeId} origin={origin} lang={lang} t={t} visible={showMap} onSelect={selectFromMap} />
+        <GroupMap
+          results={results}
+          activeId={activeId}
+          origin={origin}
+          lang={lang}
+          t={t}
+          visible={showMap}
+          onSelect={selectFromMap}
+        />
       )}
     </div>
     <button
@@ -3596,10 +3990,12 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 13: Página "¿Qué es ser scout?" y 404
 
 **Files:**
+
 - Create: `src/components/AboutEs.astro`, `src/components/AboutEn.astro`, `src/views/AboutPage.astro`, `src/pages/que-es-ser-scout.astro`, `src/pages/en/what-is-scouting.astro`, `src/pages/404.astro`
 - Test: `tests/e2e/pages.spec.ts`
 
 **Interfaces:**
+
 - Consumes: `Base.astro`, `RamaChip.astro`, `RAMA_IDS`, `RAMAS`, `REGION`, `pagePath`, `translator`.
 
 - [ ] **Step 1: e2e que falla**
@@ -3659,42 +4055,59 @@ const descripcion = {
   <header class="grid gap-3">
     <h1 class="text-4xl font-extrabold text-brand">¿Qué es ser scout?</h1>
     <p class="text-lg text-ink-soft">
-      El Movimiento Scout es un movimiento educativo para niños, niñas y jóvenes. A través del juego, la vida al aire
-      libre y el servicio, les ayuda a crecer como personas autónomas, solidarias y comprometidas con su comunidad. En
-      Colombia lo lidera la Asociación Scouts de Colombia; en el Valle del Cauca, la Región Valle.
+      El Movimiento Scout es un movimiento educativo para niños, niñas y jóvenes. A través del
+      juego, la vida al aire libre y el servicio, les ayuda a crecer como personas autónomas,
+      solidarias y comprometidas con su comunidad. En Colombia lo lidera la Asociación Scouts de
+      Colombia; en el Valle del Cauca, la Región Valle.
     </p>
   </header>
   <section class="grid gap-4">
     <h2 class="text-2xl font-bold">Las ramas por edad</h2>
     <ul class="grid gap-4 sm:grid-cols-2">
-      {
-        RAMA_IDS.map((id) => (
-          <li class="rounded-2xl border border-line bg-surface p-5">
-            <h3 class="text-xl font-bold">{RAMAS[id].nombre}</h3>
-            <p class="mt-1"><RamaChip id={id} lang="es" showAge /></p>
-            <p class="mt-3 text-ink-soft">{descripcion[id]}</p>
-          </li>
-        ))
-      }
+      {RAMA_IDS.map((id) => (
+        <li class="rounded-2xl border border-line bg-surface p-5">
+          <h3 class="text-xl font-bold">{RAMAS[id].nombre}</h3>
+          <p class="mt-1">
+            <RamaChip id={id} lang="es" showAge />
+          </p>
+          <p class="mt-3 text-ink-soft">{descripcion[id]}</p>
+        </li>
+      ))}
     </ul>
-    <p class="text-sm text-ink-soft">Los adultos también pueden sumarse como voluntarios en los grupos.</p>
+    <p class="text-sm text-ink-soft">
+      Los adultos también pueden sumarse como voluntarios en los grupos.
+    </p>
   </section>
   <section class="grid gap-3">
     <h2 class="text-2xl font-bold">¿Cómo inscribirse?</h2>
     <ol class="grid list-decimal gap-2 pl-6">
-      <li>Encuentra un grupo cerca de tu casa en el <a class="font-semibold text-brand underline" href={pagePath("es", "home")}>buscador</a>.</li>
+      <li>
+        Encuentra un grupo cerca de tu casa en el{" "}
+        <a class="font-semibold text-brand underline" href={pagePath("es", "home")}>
+          buscador
+        </a>
+        .
+      </li>
       <li>Escríbele al grupo y pregunta si puedes asistir a una reunión para conocerlo.</li>
       <li>El grupo te orientará sobre el registro en la Asociación Scouts de Colombia.</li>
     </ol>
   </section>
   <p class="text-sm text-ink-soft">
-    Más información en <a class="underline" href={REGION.nacional}>scout.org.co</a> y
-    <a class="underline" href={REGION.web}>vallescout.org.co</a>.
+    Más información en{" "}
+    <a class="underline" href={REGION.nacional}>
+      scout.org.co
+    </a>{" "}
+    y
+    <a class="underline" href={REGION.web}>
+      vallescout.org.co
+    </a>
+    .
   </p>
 </div>
 ```
 
 `src/components/AboutEn.astro`: misma estructura con este texto:
+
 - h1 "What is Scouting?"
 - intro: "Scouting is an educational movement for children and young people. Through play, outdoor life and service, it helps them grow into independent, caring people committed to their community. In Colombia it is led by the Scouts of Colombia Association (Asociación Scouts de Colombia); in Valle del Cauca, by the Valle Region."
 - h2 "Sections by age"; descripciones: cachorros "They discover the world through play and exploration, guided by adult volunteers." · lobatos "They live adventures as a Pack, inspired by The Jungle Book." · scouts "They learn outdoors in patrols to look after themselves, others and nature." · nomadas "They take on personal challenges and run projects with their community." · rovers "They focus on service and on building their life plan."
@@ -3721,7 +4134,12 @@ const { lang } = Astro.props;
 const t = translator(lang);
 ---
 
-<Base lang={lang} path={pagePath(lang, "about")} title={t("about.metaTitle")} description={t("about.metaDescription")}>
+<Base
+  lang={lang}
+  path={pagePath(lang, "about")}
+  title={t("about.metaTitle")}
+  description={t("about.metaDescription")}
+>
   {lang === "es" ? <AboutEs /> : <AboutEn />}
 </Base>
 ```
@@ -3739,17 +4157,32 @@ const es = translator("es");
 const en = translator("en");
 ---
 
-<Base lang="es" path="/404/" title={`${es("notFound.title")} · ${en("notFound.title")}`} description={es("notFound.body")}>
+<Base
+  lang="es"
+  path="/404/"
+  title={`${es("notFound.title")} · ${en("notFound.title")}`}
+  description={es("notFound.body")}
+>
   <div class="grid gap-10 py-10 text-center">
     <section class="grid gap-3">
       <h1 class="text-4xl font-extrabold text-brand">{es("notFound.title")}</h1>
       <p class="text-ink-soft">{es("notFound.body")}</p>
-      <a href="/" class="justify-self-center rounded-xl bg-brand px-5 py-3 font-semibold text-on-brand">{es("notFound.cta")}</a>
+      <a
+        href="/"
+        class="justify-self-center rounded-xl bg-brand px-5 py-3 font-semibold text-on-brand"
+      >
+        {es("notFound.cta")}
+      </a>
     </section>
     <section class="grid gap-3" lang="en">
       <h2 class="text-2xl font-bold">{en("notFound.title")}</h2>
       <p class="text-ink-soft">{en("notFound.body")}</p>
-      <a href="/en/" class="justify-self-center rounded-xl border border-line px-5 py-3 font-semibold">{en("notFound.cta")}</a>
+      <a
+        href="/en/"
+        class="justify-self-center rounded-xl border border-line px-5 py-3 font-semibold"
+      >
+        {en("notFound.cta")}
+      </a>
     </section>
   </div>
 </Base>
@@ -3776,11 +4209,13 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 14: SEO, imágenes OG, CSP y configuración de Vercel
 
 **Files:**
+
 - Create: `src/lib/og.ts`, `src/pages/og/[slug].png.ts`, `public/robots.txt`, `vercel.json`
 - Modify: `astro.config.mjs`
 - Test: `tests/unit/og.test.ts`
 
 **Interfaces:**
+
 - Consumes: `grupos` (Task 6), `grupoSlug` (Task 5).
 - Produces: `renderOg(props: { titulo: string; subtitulo: string }): Promise<Uint8Array>`; rutas `/og/<slug>.png` y `/og/default.png`; `sitemap-index.xml`; meta CSP en cada página.
 
@@ -3815,7 +4250,9 @@ import satori from "satori";
 
 const root = process.cwd();
 const font = (weight: 400 | 800) =>
-  readFile(join(root, `node_modules/@fontsource/figtree/files/figtree-latin-${weight}-normal.woff`));
+  readFile(
+    join(root, `node_modules/@fontsource/figtree/files/figtree-latin-${weight}-normal.woff`),
+  );
 
 let assets: Promise<{ regular: Buffer; bold: Buffer; logo: string }> | null = null;
 function loadAssets() {
@@ -3823,23 +4260,45 @@ function loadAssets() {
     font(400),
     font(800),
     readFile(join(root, "src/assets/logo-region-valle-white.png")),
-  ]).then(([regular, bold, logo]) => ({ regular, bold, logo: `data:image/png;base64,${logo.toString("base64")}` }));
+  ]).then(([regular, bold, logo]) => ({
+    regular,
+    bold,
+    logo: `data:image/png;base64,${logo.toString("base64")}`,
+  }));
   return assets;
 }
 
 type Node = { type: string; props: Record<string, unknown> };
-const el = (type: string, style: Record<string, unknown>, children?: unknown, extra: Record<string, unknown> = {}): Node => ({
+const el = (
+  type: string,
+  style: Record<string, unknown>,
+  children?: unknown,
+  extra: Record<string, unknown> = {},
+): Node => ({
   type,
   props: { style, children, ...extra },
 });
 
-export async function renderOg({ titulo, subtitulo }: { titulo: string; subtitulo: string }): Promise<Uint8Array> {
+export async function renderOg({
+  titulo,
+  subtitulo,
+}: {
+  titulo: string;
+  subtitulo: string;
+}): Promise<Uint8Array> {
   const { regular, bold, logo } = await loadAssets();
   const tree = el(
     "div",
     {
-      width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between",
-      padding: "72px", background: "#4d006e", color: "#ffffff", fontFamily: "Figtree",
+      width: "100%",
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+      padding: "72px",
+      background: "#4d006e",
+      color: "#ffffff",
+      fontFamily: "Figtree",
     },
     [
       el("img", { height: 96 }, undefined, { src: logo, height: 96 }),
@@ -3877,7 +4336,10 @@ import { renderOg } from "@/lib/og";
 import { grupoSlug } from "@/lib/slug";
 
 export const getStaticPaths = (() => [
-  { params: { slug: "default" }, props: { titulo: "Encuentra tu grupo scout", subtitulo: "Región Valle del Cauca" } },
+  {
+    params: { slug: "default" },
+    props: { titulo: "Encuentra tu grupo scout", subtitulo: "Región Valle del Cauca" },
+  },
   ...grupos.map((g) => ({
     params: { slug: grupoSlug(g) },
     props: { titulo: g.nombre, subtitulo: `Grupo ${g.id} · ${g.localidad ?? g.municipio}` },
@@ -3945,7 +4407,10 @@ Sitemap: https://buscador.vallescout.org.co/sitemap-index.xml
         { "key": "X-Content-Type-Options", "value": "nosniff" },
         { "key": "X-Frame-Options", "value": "DENY" },
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy", "value": "geolocation=(self), camera=(), microphone=(), payment=()" }
+        {
+          "key": "Permissions-Policy",
+          "value": "geolocation=(self), camera=(), microphone=(), payment=()"
+        }
       ]
     },
     {
@@ -3983,6 +4448,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 15: Accesibilidad, CSP e idioma en e2e + CI
 
 **Files:**
+
 - Create: `tests/e2e/a11y.spec.ts`, `tests/e2e/csp.spec.ts`, `tests/e2e/i18n.spec.ts`, `.github/workflows/ci.yml`
 
 - [ ] **Step 1: Tests**
@@ -4013,7 +4479,14 @@ for (const theme of ["light", "dark"] as const) {
         .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
         .analyze();
       const serias = violations.filter((v) => v.impact === "serious" || v.impact === "critical");
-      expect(serias, JSON.stringify(serias.map((v) => [v.id, v.nodes.map((n) => n.target)]), null, 2)).toEqual([]);
+      expect(
+        serias,
+        JSON.stringify(
+          serias.map((v) => [v.id, v.nodes.map((n) => n.target)]),
+          null,
+          2,
+        ),
+      ).toEqual([]);
     });
   }
 }
@@ -4140,6 +4613,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ### Task 16: Documentación, licencia y presentación del repo
 
 **Files:**
+
 - Replace: `README.md`, `LICENSE`
 - Create: `docs/actualizar-grupos.md`, `docs/screenshot.png`
 - Modify: `docs/superpowers/specs/2026-10-07-buscador-refactor-design.md` (solo si algún detalle cambió durante la implementación)
@@ -4273,19 +4747,19 @@ Todos los datos viven en `src/data/grupos.json`. Cada grupo es un objeto así:
 
 ## Reglas
 
-| Campo | Formato |
-|---|---|
-| `id` | Número del grupo. Único. |
-| `municipio` | Uno de los 42 municipios del Valle, escrito igual que en `src/data/region.ts`. |
-| `localidad` | Corregimiento o barrio relevante (p. ej. `"Rozo"`), o `null`. |
-| `ubicacion` | Coordenadas decimales (clic derecho en Google Maps → copiar). Deben caer dentro del Valle. |
-| `reunion.dia` | `lunes`, `martes`, `miercoles`, `jueves`, `viernes`, `sabado` o `domingo`. |
-| `reunion.inicio` / `fin` | Formato 24 h `HH:mm`. `fin` puede ser `null`. |
-| `ramas` | Cualquier combinación de `cachorros`, `lobatos`, `scouts`, `nomadas`, `rovers`. |
-| `contacto.email` | Solo correos `@scout.org.co`, o `null`. |
-| `contacto.whatsapp` | `57` + 10 dígitos, sin `+` ni espacios (p. ej. `"573001234567"`). **Solo con autorización del grupo.** |
-| `instagram` / `facebook` / `web` | URL completa con `https://`, o `null`. |
-| `actualizado` | Mes de la última verificación, `YYYY-MM`. |
+| Campo                            | Formato                                                                                                |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `id`                             | Número del grupo. Único.                                                                               |
+| `municipio`                      | Uno de los 42 municipios del Valle, escrito igual que en `src/data/region.ts`.                         |
+| `localidad`                      | Corregimiento o barrio relevante (p. ej. `"Rozo"`), o `null`.                                          |
+| `ubicacion`                      | Coordenadas decimales (clic derecho en Google Maps → copiar). Deben caer dentro del Valle.             |
+| `reunion.dia`                    | `lunes`, `martes`, `miercoles`, `jueves`, `viernes`, `sabado` o `domingo`.                             |
+| `reunion.inicio` / `fin`         | Formato 24 h `HH:mm`. `fin` puede ser `null`.                                                          |
+| `ramas`                          | Cualquier combinación de `cachorros`, `lobatos`, `scouts`, `nomadas`, `rovers`.                        |
+| `contacto.email`                 | Solo correos `@scout.org.co`, o `null`.                                                                |
+| `contacto.whatsapp`              | `57` + 10 dígitos, sin `+` ni espacios (p. ej. `"573001234567"`). **Solo con autorización del grupo.** |
+| `instagram` / `facebook` / `web` | URL completa con `https://`, o `null`.                                                                 |
+| `actualizado`                    | Mes de la última verificación, `YYYY-MM`.                                                              |
 
 No agregues otros campos (nombres de dirigentes, teléfonos personales…): el build los rechaza.
 
@@ -4339,11 +4813,11 @@ gh pr create --title "Refactor: Astro, bilingual, accessible, no personal data" 
 El mantenedor revisa la vista previa de Vercel (Step 2) y fusiona.
 
 - [ ] **Step 2: Vercel** (lo hace el mantenedor en vercel.com)
-  1. *Add New → Project →* importar `joseuribeh98/scout-groups-finder`. Framework: Astro (autodetectado). Sin variables de entorno.
-  2. *Settings → Domains →* agregar `buscador.vallescout.org.co`.
+  1. _Add New → Project →_ importar `joseuribeh98/scout-groups-finder`. Framework: Astro (autodetectado). Sin variables de entorno.
+  2. _Settings → Domains →_ agregar `buscador.vallescout.org.co`.
   3. Pedir al administrador DNS de `vallescout.org.co`: **registro CNAME, nombre `buscador`, valor `cname.vercel-dns.com`**.
   4. Verificar: `curl -sI https://buscador.vallescout.org.co | grep -iE "^(HTTP|strict-transport)"`.
-  5. Desactivar GitHub Pages en *Settings → Pages* del repo y borrar la rama `gh-pages` si existe.
+  5. Desactivar GitHub Pages en _Settings → Pages_ del repo y borrar la rama `gh-pages` si existe.
 
 - [ ] **Step 3: Lighthouse en producción**
 

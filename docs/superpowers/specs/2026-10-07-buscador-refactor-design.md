@@ -25,32 +25,32 @@ Backend, login, panel de administración, formularios, analítica con cookies y 
 
 ## 2. Decisiones tomadas
 
-| Tema | Decisión |
-|---|---|
-| Framework | Astro 7 (salida estática) + TypeScript 6 estricto |
-| Interactividad | Una isla Preact para el buscador y el mapa; el resto es HTML sin JS |
-| Estilos | Tailwind CSS 4 con tokens propios |
-| Mapa | Leaflet + teselas CARTO Positron / Dark Matter + agrupación de pines (`leaflet.markercluster`) |
-| Datos | `src/data/grupos.json`, validado con Zod al compilar |
-| Actualización | Solo el mantenedor, vía commit |
-| Idiomas | ES (por defecto, sin prefijo) y EN (`/en/...`) con i18n nativo de Astro |
-| Hosting | Vercel, plan Hobby |
-| Licencia | MIT para el código. Marca, logos y nombres de Scouts de Colombia excluidos (aviso en README y LICENSE) |
-| Fuente de verdad institucional | `scout.org.co` (nombres de rama, edades, paleta). `vallescout.org.co` está desactualizado |
-| Logo del encabezado | Región Valle |
-| Privacidad | Solo correos `@scout.org.co`, redes del grupo y un WhatsApp autorizado. Se eliminan `jefe`, `telefono`, `telefonoAlt` y los correos personales, y se limpia el historial de git |
+| Tema                           | Decisión                                                                                                                                                                        |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework                      | Astro 7 (salida estática) + TypeScript 6 estricto                                                                                                                               |
+| Interactividad                 | Una isla Preact para el buscador y el mapa; el resto es HTML sin JS                                                                                                             |
+| Estilos                        | Tailwind CSS 4 con tokens propios                                                                                                                                               |
+| Mapa                           | Leaflet + teselas CARTO Positron / Dark Matter + agrupación de pines (`leaflet.markercluster`)                                                                                  |
+| Datos                          | `src/data/grupos.json`, validado con Zod al compilar                                                                                                                            |
+| Actualización                  | Solo el mantenedor, vía commit                                                                                                                                                  |
+| Idiomas                        | ES (por defecto, sin prefijo) y EN (`/en/...`) con i18n nativo de Astro                                                                                                         |
+| Hosting                        | Vercel, plan Hobby                                                                                                                                                              |
+| Licencia                       | MIT para el código. Marca, logos y nombres de Scouts de Colombia excluidos (aviso en README y LICENSE)                                                                          |
+| Fuente de verdad institucional | `scout.org.co` (nombres de rama, edades, paleta). `vallescout.org.co` está desactualizado                                                                                       |
+| Logo del encabezado            | Región Valle                                                                                                                                                                    |
+| Privacidad                     | Solo correos `@scout.org.co`, redes del grupo y un WhatsApp autorizado. Se eliminan `jefe`, `telefono`, `telefonoAlt` y los correos personales, y se limpia el historial de git |
 
 ## 3. Información institucional
 
 ### Ramas (fuente: scout.org.co, octubre de 2026)
 
-| id | Nombre ES | Nombre EN | Edad | Color | Texto sobre claro |
-|---|---|---|---|---|---|
-| `cachorros` | Cachorros | Beavers | 5–6 años | `#f0592b` | `#c23600` |
-| `lobatos` | Lobatos | Cub Scouts | 7–10 años | `#ffd00f` | `#8a5a00` |
-| `scouts` | Scouts | Scouts | 11–14 años | `#016937` | `#016937` |
-| `nomadas` | Nómadas Scout | Venturers | 15–17 años | `#233f96` | `#233f96` |
-| `rovers` | Rovers | Rovers | 18–20 años | `#be2026` | `#be2026` |
+| id          | Nombre ES     | Nombre EN  | Edad       | Color     | Texto sobre claro |
+| ----------- | ------------- | ---------- | ---------- | --------- | ----------------- |
+| `cachorros` | Cachorros     | Beavers    | 5–6 años   | `#f0592b` | `#c23600`         |
+| `lobatos`   | Lobatos       | Cub Scouts | 7–10 años  | `#ffd00f` | `#8a5a00`         |
+| `scouts`    | Scouts        | Scouts     | 11–14 años | `#016937` | `#016937`         |
+| `nomadas`   | Nómadas Scout | Venturers  | 15–17 años | `#233f96` | `#233f96`         |
+| `rovers`    | Rovers        | Rovers     | 18–20 años | `#be2026` | `#be2026`         |
 
 El orden de la tabla es el orden oficial. La equivalencia con los datos actuales es: Cachorros→`cachorros`, Manada→`lobatos`, Tropa→`scouts`, Comunidad→`nomadas`, Clan→`rovers`.
 
@@ -68,12 +68,12 @@ Los nombres en inglés son aproximaciones descriptivas. En la interfaz EN se mue
 
 ### Páginas
 
-| Ruta ES | Ruta EN | Contenido |
-|---|---|---|
-| `/` | `/en/` | Buscador: lista + mapa |
-| `/grupos/[slug]` | `/en/groups/[slug]` | Ficha del grupo |
+| Ruta ES             | Ruta EN                | Contenido                                                                    |
+| ------------------- | ---------------------- | ---------------------------------------------------------------------------- |
+| `/`                 | `/en/`                 | Buscador: lista + mapa                                                       |
+| `/grupos/[slug]`    | `/en/groups/[slug]`    | Ficha del grupo                                                              |
 | `/que-es-ser-scout` | `/en/what-is-scouting` | Ramas por edad, cómo inscribirse, enlaces a scout.org.co y vallescout.org.co |
-| `404` | `404` | Página bilingüe con regreso al buscador |
+| `404`               | `404`                  | Página bilingüe con regreso al buscador                                      |
 
 Formato del slug: `815-fenix-escarlata`.
 
@@ -151,19 +151,19 @@ Cada módulo de `lib/` es puro y no depende de Astro ni de Preact. La isla `Find
   "id": 815,
   "nombre": "Fénix Escarlata",
   "municipio": "Cali",
-  "localidad": null,                    // p. ej. "Rozo" (Palmira)
+  "localidad": null, // p. ej. "Rozo" (Palmira)
   "direccion": "Parque del Amor, Avenida 6 con Calle 70",
   "ubicacion": { "lat": 3.493053, "lng": -76.520585 },
   "reunion": { "dia": "sabado", "inicio": "14:00", "fin": "18:00" }, // fin opcional
   "ramas": ["lobatos", "scouts", "nomadas", "rovers"],
   "contacto": {
     "email": "valle.grupo815@scout.org.co",
-    "whatsapp": null,                   // E.164 sin "+", p. ej. "573001234567"; solo si el grupo lo autoriza
+    "whatsapp": null, // E.164 sin "+", p. ej. "573001234567"; solo si el grupo lo autoriza
     "instagram": "https://www.instagram.com/fenix_escarlata_815",
     "facebook": null,
-    "web": null
+    "web": null,
   },
-  "actualizado": "2026-10"
+  "actualizado": "2026-10",
 }
 ```
 
@@ -203,15 +203,15 @@ Un script de una sola vez (no se versiona, o se guarda en `scripts/` con fecha) 
 
 ## 8. Manejo de errores
 
-| Situación | Comportamiento |
-|---|---|
-| Datos inválidos | Falla el build con un mensaje que identifica el grupo y el campo |
-| Teselas o Leaflet no cargan | La lista sigue funcionando; el panel del mapa muestra un aviso y un enlace a Google Maps |
-| JS deshabilitado | El buscador muestra la lista completa renderizada en el servidor; las fichas funcionan |
-| Geolocalización negada o con error | Toast breve; se mantiene el orden por defecto |
-| Grupo sin WhatsApp o sin redes | No se muestran esos botones |
-| Grupo sin ningún canal directo | Se muestra "Contacta a la Región Valle" con enlace a vallescout.org.co |
-| Parámetro de URL inválido | Se ignora en silencio |
+| Situación                          | Comportamiento                                                                           |
+| ---------------------------------- | ---------------------------------------------------------------------------------------- |
+| Datos inválidos                    | Falla el build con un mensaje que identifica el grupo y el campo                         |
+| Teselas o Leaflet no cargan        | La lista sigue funcionando; el panel del mapa muestra un aviso y un enlace a Google Maps |
+| JS deshabilitado                   | El buscador muestra la lista completa renderizada en el servidor; las fichas funcionan   |
+| Geolocalización negada o con error | Toast breve; se mantiene el orden por defecto                                            |
+| Grupo sin WhatsApp o sin redes     | No se muestran esos botones                                                              |
+| Grupo sin ningún canal directo     | Se muestra "Contacta a la Región Valle" con enlace a vallescout.org.co                   |
+| Parámetro de URL inválido          | Se ignora en silencio                                                                    |
 
 ## 9. Calidad y pruebas
 
