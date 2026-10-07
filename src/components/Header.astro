@@ -29,7 +29,7 @@ const about = pagePath(lang, "about");
         loading="eager"
       />
     </a>
-    <nav class="ml-auto flex items-center gap-1" aria-label="Principal">
+    <nav class="ml-auto flex items-center gap-1" aria-label={t("nav.main")}>
       <a
         href={about}
         aria-current={path === about ? "page" : undefined}
