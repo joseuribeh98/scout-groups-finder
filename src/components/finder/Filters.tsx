@@ -89,7 +89,7 @@ export default function Filters({
               class="rama-chip border-2 border-transparent py-1 aria-pressed:border-[var(--rama)]"
             >
               {ramaLabel(id, lang)}
-              <span class="font-normal opacity-80">
+              <span class="font-normal">
                 {t("finder.ramaAge", { min: RAMAS[id].edadMin, max: RAMAS[id].edadMax })}
               </span>
             </button>
