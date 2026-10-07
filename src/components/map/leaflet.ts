@@ -5,11 +5,14 @@ import "@/styles/map.css";
 
 type L = typeof Leaflet;
 let cargando: Promise<L> | null = null;
+/** Se asigna al cargar el chunk dinámico (el JSON del límite viaja con él, no en la isla). */
+export let addValleHighlight: (map: Leaflet.Map) => void = () => undefined;
 
 /** Carga Leaflet + markercluster bajo demanda. markercluster espera `window.L`. */
 export function loadLeaflet(): Promise<L> {
   cargando ??= (async () => {
     const mod = await import("@/components/map/leaflet-bundle");
+    addValleHighlight = mod.addValleHighlight;
     return mod.default;
   })().catch((error: unknown) => {
     cargando = null;

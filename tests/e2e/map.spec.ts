@@ -9,6 +9,20 @@ test.describe("mapa del buscador", () => {
     await expect(page.locator(".pin, .marker-cluster-brand").first()).toBeVisible();
   });
 
+  test("el Valle se resalta con una máscara que desatura el exterior", async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(isMobile, "solo escritorio");
+    await gotoHydrated(page, "/");
+    await expect(page.locator(".valle-mask")).toBeAttached();
+    await expect(page.locator(".valle-outline")).toBeAttached();
+    const blend = await page.evaluate(
+      () => getComputedStyle(document.querySelector(".leaflet-overlay-pane")!).mixBlendMode,
+    );
+    expect(blend).toBe("saturation");
+  });
+
   test("filtrar por municipio deja solo sus pines", async ({ page, isMobile }) => {
     test.skip(isMobile, "solo escritorio");
     await gotoHydrated(page, "/?municipio=buga");

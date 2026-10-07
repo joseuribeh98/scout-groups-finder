@@ -198,3 +198,23 @@
 .leaflet-popup-content .map-popup a {
   white-space: nowrap;
 }
+
+/* Fuera del Valle: la máscara gris con blend "saturation" quita el color a las teselas de debajo.
+   El pane de overlays es hermano del de teselas dentro del map-pane, así que el blend aplica. */
+.leaflet-overlay-pane {
+  mix-blend-mode: saturation;
+}
+.valle-mask {
+  fill: #808080;
+}
+.valle-outline {
+  stroke: var(--color-brand);
+  stroke-opacity: 0.55;
+}
+/* En oscuro las teselas ya son grises: en vez de desaturar, se oscurece un poco el exterior. */
+[data-theme="dark"] .leaflet-overlay-pane {
+  mix-blend-mode: multiply;
+}
+[data-theme="dark"] .valle-mask {
+  fill: #a9a9a9;
+}

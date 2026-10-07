@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import MapPopup from "@/components/finder/MapPopup";
 import {
   addTiles,
+  addValleHighlight,
   clusterIcon,
   loadLeaflet,
   motionOptions,
@@ -123,6 +124,7 @@ export default function GroupMap({
             .addTo(m);
           watchZoomLabels(m);
           watchTileFailures(addTiles(L, m), () => setTilesFailed(true));
+          addValleHighlight(m);
           cluster.current = L.markerClusterGroup({
             showCoverageOnHover: false,
             maxClusterRadius: 40,

@@ -42,6 +42,8 @@ npm run build        # sitio estático en dist/
 
 Todos los datos están en [`src/data/grupos.json`](src/data/grupos.json). Edita, haz commit y push: CI valida los datos y Vercel publica. Guía paso a paso: [`docs/actualizar-grupos.md`](docs/actualizar-grupos.md).
 
+Límite del Valle del Cauca: [Natural Earth](https://www.naturalearthdata.com) (dominio público).
+
 Por privacidad, el sitio solo publica canales institucionales (correos `@scout.org.co`), redes del grupo y números de WhatsApp autorizados por cada grupo. El esquema rechaza cualquier otro campo.
 
 ## English
