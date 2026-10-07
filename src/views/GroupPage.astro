@@ -1,0 +1,31 @@
+---
+import GroupDetail from "@/components/GroupDetail.astro";
+import type { Grupo } from "@/data/schema";
+import type { Lang } from "@/i18n/lang";
+import { grupoPath } from "@/i18n/routes";
+import { translator } from "@/i18n/ui";
+import Base from "@/layouts/Base.astro";
+import { buildGrupoJsonLd } from "@/lib/jsonld";
+import { grupoSlug } from "@/lib/slug";
+
+interface Props {
+  grupo: Grupo;
+  lang: Lang;
+}
+const { grupo, lang } = Astro.props;
+const t = translator(lang);
+const path = grupoPath(lang, grupo);
+const vars = { id: grupo.id, nombre: grupo.nombre, municipio: grupo.municipio };
+const site = Astro.site ?? new URL("https://buscador.vallescout.org.co");
+---
+
+<Base
+  lang={lang}
+  path={path}
+  title={t("grupo.metaTitle", vars)}
+  description={t("grupo.metaDescription", vars)}
+  ogImage={`/og/${grupoSlug(grupo)}.png`}
+  jsonLd={buildGrupoJsonLd(grupo, new URL(path, site).href)}
+>
+  <GroupDetail grupo={grupo} lang={lang} />
+</Base>

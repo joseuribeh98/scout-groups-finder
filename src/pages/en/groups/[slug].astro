@@ -1,0 +1,16 @@
+---
+import type { GetStaticPaths } from "astro";
+import { grupos } from "@/data/grupos";
+import { grupoSlug } from "@/lib/slug";
+import GroupPage from "@/views/GroupPage.astro";
+
+export const getStaticPaths = (() =>
+  grupos.map((grupo) => ({
+    params: { slug: grupoSlug(grupo) },
+    props: { grupo },
+  }))) satisfies GetStaticPaths;
+
+const { grupo } = Astro.props;
+---
+
+<GroupPage grupo={grupo} lang="en" />

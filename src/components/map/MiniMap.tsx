@@ -19,6 +19,7 @@ export default function MiniMap({ lat, lng, label, errorText, fallbackHref, fall
     let map: Leaflet.Map | undefined;
     let stopTiles: (() => void) | undefined;
     let cancelled = false;
+    setFailed(false);
 
     loadLeaflet()
       .then((L) => {
@@ -65,7 +66,7 @@ export default function MiniMap({ lat, lng, label, errorText, fallbackHref, fall
   return (
     <div
       ref={ref}
-      role="img"
+      role="region"
       aria-label={label}
       class="h-56 w-full overflow-hidden rounded-xl border border-line"
     />
