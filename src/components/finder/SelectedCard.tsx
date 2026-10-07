@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "preact/hooks";
 import Icon from "@/components/Icon";
 import MapPopup from "@/components/finder/MapPopup";
 import type { Lang } from "@/i18n/lang";
@@ -13,8 +14,19 @@ interface Props {
 
 /** Ficha resumida del grupo seleccionado, dentro de la hoja (móvil). Reutiliza el contenido del popup. */
 export default function SelectedCard({ resultado, lang, t, onClose }: Props) {
+  const root = useRef<HTMLDivElement>(null);
+  // Al abrirse la ficha, el foco pasa a ella para que el lector de pantalla la anuncie.
+  useEffect(() => {
+    root.current?.focus({ preventScroll: true });
+  }, []);
   return (
-    <div data-selected-card class="relative rounded-2xl border border-line bg-surface p-4">
+    <div
+      ref={root}
+      tabIndex={-1}
+      data-selected-card
+      class="relative rounded-2xl border border-line bg-surface p-4 outline-none"
+    >
+      <h2 class="sr-only">{resultado.grupo.nombre}</h2>
       <button
         type="button"
         onClick={onClose}

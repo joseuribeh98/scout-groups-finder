@@ -8,8 +8,11 @@ export const HALF = 0.55;
 export const SNAP_OFFSET: Record<Snap, string> = {
   peek: "30%",
   half: "55%",
-  full: "calc(100% - 0.5rem)",
+  // Con la hoja completa los controles quedan fuera de pantalla (bajo la búsqueda flotante no serían tocables).
+  full: "100%",
 };
+/** 4.5rem: espacio para la búsqueda flotante; sincronizado con `.sheet[data-snap="full"]` en global.css. */
+const FULL_GAP = 72;
 const TAP_PX = 8;
 const FLICK_PX = 60;
 
@@ -28,7 +31,11 @@ export function useSheet({ snap, onSnap, onPeekHeight }: Options) {
   const bounds = () => {
     const parent = ref.current?.parentElement;
     const total = parent?.clientHeight ?? 0;
-    return { peek: Math.round(total * PEEK), half: Math.round(total * HALF), full: total - 8 };
+    return {
+      peek: Math.round(total * PEEK),
+      half: Math.round(total * HALF),
+      full: total - FULL_GAP,
+    };
   };
 
   useEffect(() => {
@@ -107,9 +114,10 @@ export function useSheet({ snap, onSnap, onPeekHeight }: Options) {
       if (settled !== snap) onSnap(settled);
     },
     onPointerCancel: () => endDrag(),
-    onLostPointerCapture: () => {
-      // Si la captura se pierde sin pointerup, abandona el arrastre en curso.
-      if (drag.current) endDrag();
+    onLostPointerCapture: (e: PointerEvent) => {
+      // Si el asa pierde la captura sin pointerup, abandona el arrastre en curso. En táctil, al capturar en el
+      // asa se suelta la captura implícita del botón hijo: ese evento (que burbujea hasta aquí) se ignora.
+      if (drag.current && e.target === e.currentTarget) endDrag();
     },
   };
 

@@ -46,6 +46,7 @@ export default function Finder({ grupos, lang, municipios }: Props) {
   const [peekPx, setPeekPx] = useState(0);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [scrollToId, setScrollToId] = useState<number | null>(null);
+  const lastSelectedId = useRef<number | null>(null);
   const [focusRequest, setFocusRequest] = useState<FocusRequest | null>(null);
 
   // Grupo cuyo popup está abierto: el resaltado no se apaga por hover/blur de su tarjeta.
@@ -111,17 +112,41 @@ export default function Finder({ grupos, lang, municipios }: Props) {
   useEffect(() => {
     focusedId.current = null;
     setSelectedId(null);
+    setActiveId(null);
   }, [results]);
+
+  // En escritorio no hay ficha seleccionada: al pasar a él se descarta.
+  useEffect(() => {
+    if (isDesktop) setSelectedId(null);
+  }, [isDesktop]);
   const selected = useMemo(
     () => results.find((r) => r.grupo.id === selectedId) ?? null,
     [results, selectedId],
   );
   const closeSelected = () => {
+    lastSelectedId.current = selectedId;
     focusedId.current = null;
     setActiveId(null);
     setSelectedId(null);
     setSnap("half");
   };
+
+  // Al cerrar la ficha, el foco vuelve al botón del grupo en la lista (o al asa si ya no está).
+  useEffect(() => {
+    const id = lastSelectedId.current;
+    if (selected !== null || id === null) return;
+    lastSelectedId.current = null;
+    const raf = requestAnimationFrame(() => {
+      const visible = Array.from(document.querySelectorAll<HTMLElement>("[data-finder-ui]")).find(
+        (el) => el.offsetParent !== null,
+      );
+      const target =
+        visible?.querySelector<HTMLElement>(`li[data-grupo-id="${id}"] button`) ??
+        visible?.querySelector<HTMLElement>("[data-sheet-grip] button");
+      target?.focus();
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [selected]);
 
   // Los controles del mapa suben con la hoja; Task 6 lo actualizará en vivo durante el arrastre.
   useEffect(() => {
@@ -256,7 +281,7 @@ export default function Finder({ grupos, lang, municipios }: Props) {
         list={list}
       />
       {/* Móvil: búsqueda flotante sobre el mapa + hoja */}
-      <div class="p-4 lg:hidden js:absolute js:inset-x-3 js:top-3 js:z-10 js:p-0">
+      <div class="p-4 lg:hidden js:absolute js:inset-x-3 js:top-3 js:z-20 js:p-0">
         <SearchBar
           t={t}
           q={filters.q}
@@ -290,10 +315,10 @@ export default function Finder({ grupos, lang, municipios }: Props) {
                 municipios={municipios}
                 onChange={setFilters}
               />
-              {status}
             </div>
           )
         }
+        status={<div class="grid gap-2">{status}</div>}
         body={
           selected ? (
             <SelectedCard resultado={selected} lang={lang} t={t} onClose={closeSelected} />

@@ -78,6 +78,9 @@ export default function GroupMap({
   onPopupOpenRef.current = onPopupOpen;
   const onPopupCloseRef = useRef(onPopupClose);
   onPopupCloseRef.current = onPopupClose;
+  const paddingSeen = useRef(false);
+  const activeIdRef = useRef(activeId);
+  activeIdRef.current = activeId;
   const fitPaddingRef = useRef(fitPadding);
   fitPaddingRef.current = fitPadding;
   const focusBottomPadRef = useRef(focusBottomPad);
@@ -213,7 +216,13 @@ export default function GroupMap({
 
   // Reencuadrar cuando cambia el relleno (p. ej. al medir la altura asomada de la hoja).
   useEffect(() => {
-    if (ready) fitToResults();
+    // La primera ejecución ya la cubre el efecto de resultados; con una selección en pantalla no se mueve la vista.
+    if (!ready) return;
+    if (!paddingSeen.current) {
+      paddingSeen.current = true;
+      return;
+    }
+    if (activeIdRef.current === null) fitToResults();
   }, [
     ready,
     fitPadding.topLeft[0],

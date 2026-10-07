@@ -31,10 +31,42 @@ test.describe("hoja inferior (móvil)", () => {
     await expect(ui(page)).toHaveAttribute("data-snap", "full");
   });
 
+  test("arrastrar el asa con eventos táctiles reales expande la hoja", async ({ page }) => {
+    await gotoHydrated(page, "/");
+    // El asa en sí: el centro del bloque cae sobre los chips, que tienen su propio scroll táctil.
+    const grip = ui(page).getByRole("button", { name: "Expandir lista" });
+    const box = (await grip.boundingBox())!;
+    const x = box.x + box.width / 2,
+      y = box.y + box.height / 2;
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x, y }] });
+    for (let i = 1; i <= 10; i++) {
+      await cdp.send("Input.dispatchTouchEvent", {
+        type: "touchMove",
+        touchPoints: [{ x, y: y - i * 40 }],
+      });
+    }
+    await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+    await expect(ui(page)).toHaveAttribute("data-snap", "full");
+  });
+
   test("enfocar la búsqueda sube la hoja a completa", async ({ page }) => {
     await gotoHydrated(page, "/");
     await searchBox(page).focus();
     await expect(ui(page)).toHaveAttribute("data-snap", "full");
+    // La hoja completa no tapa la búsqueda flotante.
+    await ui(page).evaluate((el) => Promise.all(el.getAnimations().map((a) => a.finished)));
+    const input = searchBox(page);
+    const box = (await input.boundingBox())!;
+    const tag = await page.evaluate(
+      ([x, y]) =>
+        document.elementFromPoint(x!, y!)?.closest('[role="search"]') ? "search" : "other",
+      [box.x + box.width / 2, box.y + box.height / 2],
+    );
+    expect(tag).toBe("search");
+    const bar = (await page.locator('[role="search"]:visible').boundingBox())!;
+    const sheet = (await ui(page).boundingBox())!;
+    expect(sheet.y).toBeGreaterThanOrEqual(bar.y + bar.height);
     await searchBox(page).fill("fenix");
     await expect(cards(page)).toHaveCount(1);
   });

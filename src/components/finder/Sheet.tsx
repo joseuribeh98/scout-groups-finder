@@ -10,11 +10,13 @@ interface Props {
   onSnap: (next: Snap) => void;
   onPeekHeight?: (px: number) => void;
   header: ComponentChildren;
+  /** Siempre montado (región en vivo), también con una ficha abierta. */
+  status?: ComponentChildren;
   body: ComponentChildren;
 }
 
 /** Hoja inferior móvil. Sin JS es una columna estática; con JS, `.sheet[data-snap]` fija el alto. */
-export default function Sheet({ t, snap, onSnap, onPeekHeight, header, body }: Props) {
+export default function Sheet({ t, snap, onSnap, onPeekHeight, header, status, body }: Props) {
   const expanded = snap === "full";
   const { ref, gripProps, onGripKeyDown } = useSheet({ snap, onSnap, onPeekHeight });
   return (
@@ -36,6 +38,7 @@ export default function Sheet({ t, snap, onSnap, onPeekHeight, header, body }: P
           class="mx-auto block h-6 w-16 rounded-full before:mx-auto before:mt-2 before:block before:h-1.5 before:w-10 before:rounded-full before:bg-line"
         />
         {header}
+        {status}
       </div>
       <div class="min-h-0 flex-1 overflow-y-auto px-4 pb-4">{body}</div>
     </section>

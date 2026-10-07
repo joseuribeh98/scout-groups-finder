@@ -203,6 +203,7 @@ test.describe("mapa del buscador", () => {
     await ui(page).getByRole("button", { name: "Ver Águilas Doradas en el mapa" }).click();
     const card = ui(page).locator("[data-selected-card]");
     await expect(card).toContainText("Águilas Doradas");
+    await expect(card).toBeFocused();
     await expect(card.getByRole("link", { name: "Ver ficha" })).toHaveAttribute(
       "href",
       "/grupos/315-aguilas-doradas/",
@@ -212,6 +213,9 @@ test.describe("mapa del buscador", () => {
     await expect(page).not.toHaveURL(/\/grupos\//);
     await ui(page).getByRole("button", { name: "Volver a la lista" }).click();
     await expect(cards(page)).toHaveCount(22);
+    await expect(
+      ui(page).getByRole("button", { name: "Ver Águilas Doradas en el mapa" }),
+    ).toBeFocused();
   });
 
   test("móvil: tocar un pin muestra su tarjeta en la hoja", async ({ page, isMobile }) => {

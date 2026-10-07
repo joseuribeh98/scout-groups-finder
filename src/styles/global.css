@@ -141,7 +141,8 @@
     height: 55%;
   }
   .js .sheet[data-snap="full"] {
-    height: calc(100% - 0.5rem);
+    /* Deja libre la búsqueda flotante: sincronizado con bounds() y SNAP_OFFSET en useSheet.ts. */
+    height: calc(100% - 4.5rem);
   }
   .js .sheet.is-dragging {
     height: var(--sheet-h);

@@ -1,4 +1,4 @@
-import { useEffect } from "preact/hooks";
+import { useEffect, useRef } from "preact/hooks";
 import { REGION } from "@/data/region";
 import type { Lang } from "@/i18n/lang";
 import type { Translate } from "@/i18n/ui";
@@ -26,18 +26,20 @@ export default function ResultList({
   onFocusGroup,
   onClear,
 }: Props) {
+  const section = useRef<HTMLElement>(null);
   useEffect(() => {
     if (scrollToId === null) return;
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    document
-      .querySelector(`li[data-grupo-id="${scrollToId}"]`)
+    // Cada instancia (panel y hoja) desplaza solo su propio ítem; la oculta no hace nada visible.
+    section.current
+      ?.querySelector(`li[data-grupo-id="${scrollToId}"]`)
       ?.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
   }, [scrollToId]);
 
   const count =
     results.length === 1 ? t("finder.count.one") : t("finder.count.other", { n: results.length });
   return (
-    <section class="grid gap-2" data-results>
+    <section ref={section} class="grid gap-2" data-results>
       <h2 class="sr-only">{t("finder.results")}</h2>
       <p data-count aria-live="polite" class="text-sm font-semibold text-ink-soft">
         {count}
