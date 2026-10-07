@@ -9,11 +9,8 @@ let cargando: Promise<L> | null = null;
 /** Carga Leaflet + markercluster bajo demanda. markercluster espera `window.L`. */
 export function loadLeaflet(): Promise<L> {
   cargando ??= (async () => {
-    const mod = await import("leaflet");
-    const L = ("default" in mod ? mod.default : mod) as L;
-    (window as unknown as { L: L }).L = L;
-    await import("leaflet.markercluster");
-    return L;
+    const mod = await import("@/components/map/leaflet-bundle");
+    return mod.default;
   })().catch((error: unknown) => {
     cargando = null;
     throw error;
@@ -37,8 +34,36 @@ const TILE_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 const ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
+type TileInternals = {
+  _tileOnLoad: Leaflet.DoneCallback;
+  _tileOnError: (done: Leaflet.DoneCallback, tile: HTMLElement, e: Event) => void;
+  getTileUrl(coords: Leaflet.Coords): string;
+};
+
 export function addTiles(L: L, map: Leaflet.Map): Leaflet.TileLayer {
-  return L.tileLayer(TILE_URL, { attribution: ATTRIBUTION, maxZoom: 19 }).addTo(map);
+  // Las teselas son el LCP: se piden con prioridad alta. Leaflet asigna `src` dentro de su
+  // `createTile`, así que se reimplementa para fijar `fetchPriority` antes. `_tileOnLoad` y
+  // `_tileOnError` son internos estables de Leaflet 1.9.
+  const PriorityTileLayer = L.TileLayer.extend({
+    createTile(
+      this: Leaflet.TileLayer & TileInternals,
+      coords: Leaflet.Coords,
+      done: Leaflet.DoneCallback,
+    ) {
+      const tile = document.createElement("img");
+      L.DomEvent.on(tile, "load", L.Util.bind(this._tileOnLoad, this, done, tile));
+      L.DomEvent.on(tile, "error", L.Util.bind(this._tileOnError, this, done, tile));
+      if (this.options.crossOrigin || this.options.crossOrigin === "") {
+        tile.crossOrigin = this.options.crossOrigin === true ? "" : this.options.crossOrigin;
+      }
+      // alt vacío: las teselas son decorativas. Sin referrerPolicy: OSM necesita el Referer.
+      tile.alt = "";
+      tile.fetchPriority = "high";
+      tile.src = this.getTileUrl(coords);
+      return tile;
+    },
+  }) as unknown as new (url: string, options?: Leaflet.TileLayerOptions) => Leaflet.TileLayer;
+  return new PriorityTileLayer(TILE_URL, { attribution: ATTRIBUTION, maxZoom: 19 }).addTo(map);
 }
 
 const TILE_ERRORS_BEFORE_NOTICE = 3;

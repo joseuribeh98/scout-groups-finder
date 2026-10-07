@@ -227,7 +227,7 @@ test.describe("mapa del buscador", () => {
   });
 
   test("si Leaflet no carga, la lista sigue funcionando y se avisa", async ({ page }) => {
-    await page.route(/leaflet[^/]*-src\.[^/]*\.js(\?|$)/i, (route) => route.abort());
+    await page.route(/leaflet-bundle[^/]*\.js(\?|$)/i, (route) => route.abort());
     await gotoHydrated(page, "/");
     await expect(page.getByText("No se pudo cargar el mapa")).toBeVisible();
     await searchBox(page).fill("fenix");
