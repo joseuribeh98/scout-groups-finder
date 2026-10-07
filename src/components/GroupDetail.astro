@@ -1,5 +1,6 @@
 ---
 import ContactActions from "@/components/ContactActions.astro";
+import Icon from "@/components/Icon.astro";
 import MiniMap from "@/components/map/MiniMap";
 import RamaChip from "@/components/RamaChip.astro";
 import type { Grupo } from "@/data/schema";
@@ -21,23 +22,33 @@ const lugar = grupo.localidad ? `${grupo.localidad}, ${grupo.municipio}` : grupo
 
 <article class="grid gap-8 md:grid-cols-[1fr_20rem]">
   <div class="grid content-start gap-6">
-    <a href={pagePath(lang, "home")} class="text-sm font-semibold text-brand hover:underline">
-      ← {t("grupo.back")}
+    <a
+      href={pagePath(lang, "home")}
+      class="inline-flex items-center gap-1.5 justify-self-start text-sm font-semibold text-brand hover:underline"
+    >
+      <Icon name="arrow-left" class="size-4" />
+      {t("grupo.back")}
     </a>
     <header>
       <p class="text-sm font-semibold tracking-wide text-ink-soft uppercase">
         {t("grupo.number", { id: grupo.id })} · {lugar}
       </p>
-      <h1 class="mt-1 text-4xl font-extrabold text-balance text-brand">{grupo.nombre}</h1>
+      <h1 class="mt-1 text-4xl font-extrabold text-balance text-ink">{grupo.nombre}</h1>
     </header>
     <dl class="grid gap-4">
       <div>
         <dt class="text-sm font-semibold text-ink-soft">{t("grupo.meets")}</dt>
-        <dd class="text-lg tabular-nums">{formatReunion(grupo.reunion, lang)}</dd>
+        <dd class="mt-0.5 flex items-center gap-2 text-lg tabular-nums">
+          <Icon name="clock" class="size-5 text-ink-soft" />
+          {formatReunion(grupo.reunion, lang)}
+        </dd>
       </div>
       <div>
         <dt class="text-sm font-semibold text-ink-soft">{t("grupo.address")}</dt>
-        <dd class="text-lg">{grupo.direccion}</dd>
+        <dd class="mt-0.5 flex items-start gap-2 text-lg">
+          <Icon name="map-pin" class="mt-1 size-5 text-ink-soft" />
+          {grupo.direccion}
+        </dd>
       </div>
       <div>
         <dt class="text-sm font-semibold text-ink-soft">{t("grupo.ramas")}</dt>
