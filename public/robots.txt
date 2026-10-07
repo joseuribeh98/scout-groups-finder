@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://buscador.vallescout.org.co/sitemap-index.xml
