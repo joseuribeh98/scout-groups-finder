@@ -150,24 +150,26 @@ test.describe("mapa del buscador", () => {
     await expect(
       page.locator(".leaflet-marker-pane .pin, .leaflet-marker-pane .marker-cluster-brand").first(),
     ).toBeVisible();
-    const panel = await ui(page).boundingBox();
-    const pins = await page
-      .locator(".leaflet-marker-pane .leaflet-marker-icon")
-      .evaluateAll((els) =>
-        els.map((el) => {
-          const r = el.getBoundingClientRect();
-          return { x: r.x, y: r.y, w: r.width, h: r.height };
-        }),
-      );
-    expect(panel).not.toBeNull();
-    for (const p of pins) {
-      const overlaps =
-        p.x < panel!.x + panel!.width &&
-        p.x + p.w > panel!.x &&
-        p.y < panel!.y + panel!.height &&
-        p.y + p.h > panel!.y;
-      expect(overlaps, `pin en ${p.x},${p.y} bajo el panel`).toBe(false);
-    }
+    await expect(async () => {
+      const panel = await ui(page).boundingBox();
+      const pins = await page
+        .locator(".leaflet-marker-pane .leaflet-marker-icon")
+        .evaluateAll((els) =>
+          els.map((el) => {
+            const r = el.getBoundingClientRect();
+            return { x: r.x, y: r.y, w: r.width, h: r.height };
+          }),
+        );
+      expect(panel).not.toBeNull();
+      for (const p of pins) {
+        const overlaps =
+          p.x < panel!.x + panel!.width &&
+          p.x + p.w > panel!.x &&
+          p.y < panel!.y + panel!.height &&
+          p.y + p.h > panel!.y;
+        expect(overlaps, `pin en ${p.x},${p.y} bajo el panel`).toBe(false);
+      }
+    }).toPass();
   });
 
   test("móvil: la hoja arranca asomada y el mapa es visible", async ({ page, isMobile }) => {
@@ -178,10 +180,24 @@ test.describe("mapa del buscador", () => {
     await expect(cards(page).first()).toBeVisible();
   });
 
-  test("móvil: tocar un resultado muestra su tarjeta en la hoja y centra el mapa", async ({
-    page,
-    isMobile,
-  }) => {
+  test("móvil: la atribución del mapa no queda bajo la hoja", async ({ page, isMobile }) => {
+    test.skip(!isMobile, "solo móvil");
+    await gotoHydrated(page, "/");
+    const attribution = page.locator(".leaflet-control-attribution");
+    await expect(attribution).toBeVisible();
+    const clear = async () => {
+      const a = await attribution.boundingBox();
+      const sheet = await ui(page).boundingBox();
+      expect(a && sheet).toBeTruthy();
+      expect(a!.y + a!.height).toBeLessThanOrEqual(sheet!.y + 1);
+    };
+    await expect(clear).toPass();
+    await page.getByRole("button", { name: "Expandir lista" }).click();
+    await expect(page.getByRole("button", { name: "Contraer lista" })).toBeVisible();
+    await expect(clear).toPass();
+  });
+
+  test("móvil: tocar un resultado muestra su tarjeta en la hoja", async ({ page, isMobile }) => {
     test.skip(!isMobile, "solo móvil");
     await gotoHydrated(page, "/");
     await ui(page).getByRole("button", { name: "Ver Águilas Doradas en el mapa" }).click();

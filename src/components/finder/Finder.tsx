@@ -116,9 +116,16 @@ export default function Finder({ grupos, lang, municipios }: Props) {
   );
   const closeSelected = () => {
     focusedId.current = null;
+    setActiveId(null);
     setSelectedId(null);
     setSnap("half");
   };
+
+  // Los controles del mapa suben con la hoja; Task 6 lo actualizará en vivo durante el arrastre.
+  useEffect(() => {
+    const offset = { peek: "30%", half: "55%", full: "calc(100% - 0.5rem)" }[snap];
+    root.current?.style.setProperty("--sheet-offset", offset);
+  }, [snap]);
 
   // La hoja asomada ocupa SHEET_PEEK_RATIO del contenedor (Task 6 medirá la real).
   const fitPadding = useMemo<FitPadding>(() => {
@@ -208,7 +215,7 @@ export default function Finder({ grupos, lang, municipios }: Props) {
 
   return (
     <div ref={root} class="relative h-full">
-      <div class="hidden js:absolute js:inset-0 js:isolate js:block">
+      <div class="hidden finder-map js:absolute js:inset-0 js:isolate js:block">
         <GroupMap
           results={results}
           activeId={activeId}
