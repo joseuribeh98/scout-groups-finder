@@ -1,4 +1,5 @@
 import Icon from "@/components/Icon";
+import type { RamaId } from "@/data/ramas";
 import type { Lang } from "@/i18n/lang";
 import { grupoPath } from "@/i18n/routes";
 import type { Translate } from "@/i18n/ui";
@@ -15,7 +16,7 @@ interface Props {
   onFocusGroup: (id: number) => void;
 }
 
-const RAMA_DOT: Record<string, string> = {
+const RAMA_DOT: Record<RamaId, string> = {
   cachorros: "bg-rama-cachorros",
   lobatos: "bg-rama-lobatos",
   scouts: "bg-rama-scouts",
@@ -49,7 +50,7 @@ export default function ResultItem({
         {/* El nombre es el botón que muestra el grupo en el mapa; su área de clic cubre el ítem. */}
         <button
           type="button"
-          class="text-left text-base leading-snug font-bold after:absolute after:inset-0 after:rounded-xl"
+          class="cursor-pointer text-left text-base leading-snug font-bold after:absolute after:inset-0 after:rounded-xl"
           aria-label={t("card.showOnMap", { nombre: grupo.nombre })}
           onClick={() => onFocusGroup(grupo.id)}
         >
@@ -58,11 +59,11 @@ export default function ResultItem({
         <p class="mt-0.5 text-sm text-ink-soft tabular-nums">
           {t("grupo.number", { id: grupo.id })} · {lugar} · {formatReunion(grupo.reunion, lang)}
         </p>
-        <ul class="mt-1.5 flex gap-1" aria-hidden="true">
+        <div class="mt-1.5 flex gap-1" aria-hidden="true">
           {grupo.ramas.map((id) => (
-            <li key={id} class={`size-2 rounded-full ${RAMA_DOT[id]}`} />
+            <span key={id} class={`size-2 rounded-full ${RAMA_DOT[id]}`} />
           ))}
-        </ul>
+        </div>
       </div>
       <div class="relative z-10 flex shrink-0 flex-col items-end gap-1.5">
         {distanciaKm !== null && (

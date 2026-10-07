@@ -34,7 +34,7 @@ export default function FilterChips({ lang, t, filters, municipios, onChange }: 
     <div class="grid gap-2" aria-label={t("finder.filters")} role="group">
       {/* Municipio: selección única; la fila hace scroll horizontal si no cabe. */}
       <div
-        class="-mx-4 flex gap-2 overflow-x-auto px-4 py-1.5 -my-1.5 [scrollbar-width:none]"
+        class="-mx-4 -my-1.5 flex gap-2 overflow-x-auto px-4 py-1.5 [scrollbar-width:none] lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0"
         role="group"
         aria-label={t("finder.municipio")}
       >
@@ -62,7 +62,7 @@ export default function FilterChips({ lang, t, filters, municipios, onChange }: 
       </div>
       {/* Ramas: multiselección; el color oficial va solo en el punto. */}
       <div
-        class="-mx-4 flex gap-2 overflow-x-auto px-4 py-1.5 -my-1.5 [scrollbar-width:none]"
+        class="-mx-4 -my-1.5 flex gap-2 overflow-x-auto px-4 py-1.5 [scrollbar-width:none] lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0"
         role="group"
         aria-label={t("finder.ramas")}
       >

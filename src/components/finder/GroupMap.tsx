@@ -206,6 +206,17 @@ export default function GroupMap({
     fitToResults();
   }, [ready, results, origin, lang, t, popups]);
 
+  // Reencuadrar cuando cambia el relleno (p. ej. al medir la altura asomada de la hoja).
+  useEffect(() => {
+    if (ready) fitToResults();
+  }, [
+    ready,
+    fitPadding.topLeft[0],
+    fitPadding.topLeft[1],
+    fitPadding.bottomRight[0],
+    fitPadding.bottomRight[1],
+  ]);
+
   // Marcador "tu ubicación".
   useEffect(() => {
     const L = leaflet.current;

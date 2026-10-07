@@ -100,6 +100,12 @@ const ldJson = jsonLd ? JSON.stringify(jsonLd).replace(/</g, "\\u003c") : null;
     >
       <slot />
     </main>
-    {!viewport && <Footer lang={lang} />}
+    {viewport ? (
+      <div class="js:hidden">
+        <Footer lang={lang} />
+      </div>
+    ) : (
+      <Footer lang={lang} />
+    )}
   </body>
 </html>
