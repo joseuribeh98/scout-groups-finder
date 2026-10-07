@@ -1,3 +1,4 @@
+import { useEffect } from "preact/hooks";
 import { REGION } from "@/data/region";
 import type { Lang } from "@/i18n/lang";
 import type { Translate } from "@/i18n/ui";
@@ -9,11 +10,20 @@ interface Props {
   t: Translate;
   results: Resultado[];
   activeId: number | null;
+  scrollToId: number | null;
   onActivate: (id: number | null) => void;
   onClear: () => void;
 }
 
-export default function GroupList({ lang, t, results, activeId, onActivate, onClear }: Props) {
+export default function GroupList({ lang, t, results, activeId, scrollToId, onActivate, onClear }: Props) {
+  useEffect(() => {
+    if (scrollToId === null) return;
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document
+      .querySelector(`li[data-grupo-id="${scrollToId}"]`)
+      ?.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
+  }, [scrollToId]);
+
   const count =
     results.length === 1 ? t("finder.count.one") : t("finder.count.other", { n: results.length });
   return (

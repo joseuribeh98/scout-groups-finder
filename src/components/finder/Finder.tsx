@@ -1,6 +1,8 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "preact/hooks";
 import Filters, { type GeoStatus } from "@/components/finder/Filters";
 import GroupList from "@/components/finder/GroupList";
+import GroupMap from "@/components/finder/GroupMap";
+import { useMediaQuery } from "@/components/finder/useMediaQuery";
 import type { Grupo } from "@/data/schema";
 import type { Lang } from "@/i18n/lang";
 import { translator } from "@/i18n/ui";
@@ -21,6 +23,19 @@ export default function Finder({ grupos, lang, municipios }: Props) {
   const [geoStatus, setGeoStatus] = useState<GeoStatus>("idle");
   const [activeId, setActiveId] = useState<number | null>(null);
   const skipSync = useRef(true);
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const [view, setView] = useState<"list" | "map">("list");
+  const [mapRequested, setMapRequested] = useState(false);
+  const [scrollToId, setScrollToId] = useState<number | null>(null);
+  const showMap = isDesktop || view === "map";
+  useEffect(() => {
+    if (showMap) setMapRequested(true);
+  }, [showMap]);
+
+  const selectFromMap = (id: number) => {
+    setActiveId(id);
+    setScrollToId(id);
+  };
 
   // Lee los filtros de la URL una vez, después de hidratar.
   useEffect(() => {
@@ -73,26 +88,49 @@ export default function Finder({ grupos, lang, municipios }: Props) {
   const clear = () => setFilters(EMPTY_FILTERS);
 
   return (
-    <div class="grid gap-6">
-      <Filters
-        lang={lang}
-        t={t}
-        filters={filters}
-        municipios={municipios}
-        geoStatus={geoStatus}
-        canClear={hasActiveFilters(filters)}
-        onChange={setFilters}
-        onNearMe={nearMe}
-        onClear={clear}
-      />
-      <GroupList
-        lang={lang}
-        t={t}
-        results={results}
-        activeId={activeId}
-        onActivate={setActiveId}
-        onClear={clear}
-      />
+    <div class="grid gap-6 lg:grid-cols-[minmax(0,26rem)_1fr] lg:items-start">
+      <div class={view === "map" ? "hidden lg:grid lg:gap-6" : "grid gap-6"}>
+        <Filters
+          lang={lang}
+          t={t}
+          filters={filters}
+          municipios={municipios}
+          geoStatus={geoStatus}
+          canClear={hasActiveFilters(filters)}
+          onChange={setFilters}
+          onNearMe={nearMe}
+          onClear={clear}
+        />
+        <GroupList
+          lang={lang}
+          t={t}
+          results={results}
+          activeId={activeId}
+          scrollToId={scrollToId}
+          onActivate={setActiveId}
+          onClear={clear}
+        />
+      </div>
+      <div class={showMap ? "h-[70dvh] lg:sticky lg:top-20 lg:h-[calc(100dvh-6rem)]" : "hidden"}>
+        {mapRequested && (
+          <GroupMap
+            results={results}
+            activeId={activeId}
+            origin={origin}
+            lang={lang}
+            t={t}
+            visible={showMap}
+            onSelect={selectFromMap}
+          />
+        )}
+      </div>
+      <button
+        type="button"
+        onClick={() => setView(view === "list" ? "map" : "list")}
+        class="fixed bottom-5 left-1/2 z-[1000] -translate-x-1/2 rounded-full bg-brand px-5 py-3 font-semibold text-on-brand shadow-lg lg:hidden"
+      >
+        {view === "list" ? t("finder.showMap") : t("finder.showList")}
+      </button>
     </div>
   );
 }
