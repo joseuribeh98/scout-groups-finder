@@ -44,10 +44,10 @@ const ldJson = jsonLd ? JSON.stringify(jsonLd).replace(/</g, "\\u003c") : null;
     <title>{title}</title>
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex" />}
-    <link rel="canonical" href={url(path)} />
-    <link rel="alternate" hreflang="es" href={url(esPath)} />
-    <link rel="alternate" hreflang="en" href={url(enPath)} />
-    <link rel="alternate" hreflang="x-default" href={url(esPath)} />
+    {!noindex && <link rel="canonical" href={url(path)} />}
+    {!noindex && <link rel="alternate" hreflang="es" href={url(esPath)} />}
+    {!noindex && <link rel="alternate" hreflang="en" href={url(enPath)} />}
+    {!noindex && <link rel="alternate" hreflang="x-default" href={url(esPath)} />}
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
