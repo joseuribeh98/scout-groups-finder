@@ -8,3 +8,10 @@ updates:
     directory: "/"
     schedule:
       interval: weekly
+    ignore:
+      # @astrojs/preact@6 requiere Preact 10; Preact 11 rompe el build.
+      - dependency-name: preact
+        update-types: ["version-update:semver-major"]
+      # @astrojs/check aún no soporta TypeScript 7.
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
