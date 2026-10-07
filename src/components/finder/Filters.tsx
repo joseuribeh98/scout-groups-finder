@@ -3,7 +3,7 @@ import type { Lang } from "@/i18n/lang";
 import type { Translate } from "@/i18n/ui";
 import type { Filters as FilterState } from "@/lib/search";
 
-export type GeoStatus = "idle" | "locating" | "ok" | "error";
+export type GeoStatus = "idle" | "locating" | "ok" | "error" | "far";
 
 interface Props {
   lang: Lang;
@@ -35,6 +35,17 @@ export default function Filters({
         ? filters.ramas.filter((r) => r !== id)
         : RAMA_IDS.filter((r) => r === id || filters.ramas.includes(r)),
     });
+
+  const geoMessage =
+    geoStatus === "error"
+      ? t("finder.geoError")
+      : geoStatus === "far"
+        ? t("finder.geoFar")
+        : geoStatus === "ok"
+          ? t("finder.nearMeActive")
+          : geoStatus === "locating"
+            ? t("finder.locating")
+            : "";
 
   return (
     <div class="grid gap-3" role="search">
@@ -96,11 +107,9 @@ export default function Filters({
           ))}
         </div>
       </fieldset>
-      {geoStatus === "error" && (
-        <p role="status" class="rounded-xl bg-brand-soft px-3 py-2 text-sm">
-          {t("finder.geoError")}
-        </p>
-      )}
+      <p role="status" class="rounded-xl bg-brand-soft px-3 py-2 text-sm empty:hidden">
+        {geoMessage || null}
+      </p>
       {canClear && (
         <button
           type="button"

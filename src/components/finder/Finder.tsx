@@ -3,6 +3,7 @@ import Filters, { type GeoStatus } from "@/components/finder/Filters";
 import GroupList from "@/components/finder/GroupList";
 import GroupMap from "@/components/finder/GroupMap";
 import { useMediaQuery } from "@/components/finder/useMediaQuery";
+import { VALLE_BOUNDS } from "@/data/region";
 import type { Grupo } from "@/data/schema";
 import type { Lang } from "@/i18n/lang";
 import { translator } from "@/i18n/ui";
@@ -14,6 +15,17 @@ interface Props {
   grupos: Grupo[];
   lang: Lang;
   municipios: { slug: string; nombre: string }[];
+}
+
+const FAR_MARGIN_DEG = 0.5;
+
+function isFarFromValle({ lat, lng }: LatLng): boolean {
+  return (
+    lat < VALLE_BOUNDS.latMin - FAR_MARGIN_DEG ||
+    lat > VALLE_BOUNDS.latMax + FAR_MARGIN_DEG ||
+    lng < VALLE_BOUNDS.lngMin - FAR_MARGIN_DEG ||
+    lng > VALLE_BOUNDS.lngMax + FAR_MARGIN_DEG
+  );
 }
 
 export default function Finder({ grupos, lang, municipios }: Props) {
@@ -77,7 +89,12 @@ export default function Finder({ grupos, lang, municipios }: Props) {
     setGeoStatus("locating");
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        setOrigin({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        const here = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        if (isFarFromValle(here)) {
+          setGeoStatus("far");
+          return;
+        }
+        setOrigin(here);
         setGeoStatus("ok");
       },
       () => setGeoStatus("error"),

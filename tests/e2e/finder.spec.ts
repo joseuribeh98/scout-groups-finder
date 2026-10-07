@@ -71,6 +71,16 @@ test.describe("buscador", () => {
     await expect(cards(page).first()).toHaveAttribute("data-grupo-id", primero ?? "");
   });
 
+  test("cerca de mí lejos del Valle avisa y conserva el orden", async ({ page, context }) => {
+    await context.grantPermissions(["geolocation"]);
+    await context.setGeolocation({ latitude: 4.71, longitude: -74.07 }); // Bogotá
+    await gotoHydrated(page, "/");
+    const primero = await cards(page).first().getAttribute("data-grupo-id");
+    await page.getByRole("button", { name: "Cerca de mí" }).click();
+    await expect(page.getByText("Parece que estás lejos del Valle del Cauca")).toBeVisible();
+    await expect(cards(page).first()).toHaveAttribute("data-grupo-id", primero ?? "");
+  });
+
   test("la tarjeta lleva a la ficha del grupo", async ({ page }) => {
     await gotoHydrated(page, "/?q=815");
     await page.getByRole("link", { name: "Fénix Escarlata" }).click();

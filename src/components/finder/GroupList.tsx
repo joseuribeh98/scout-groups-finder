@@ -36,6 +36,7 @@ export default function GroupList({
     results.length === 1 ? t("finder.count.one") : t("finder.count.other", { n: results.length });
   return (
     <section class="grid gap-3">
+      <h2 class="sr-only">{t("finder.results")}</h2>
       <p data-count aria-live="polite" class="text-sm font-semibold text-ink-soft">
         {count}
       </p>
