@@ -7,11 +7,13 @@ test("¿Qué es ser scout? lista las cinco ramas con edades oficiales", async ({
     await expect(page.getByRole("heading", { level: 3, name: texto, exact: true })).toBeVisible();
   }
   await expect(page.getByText("15–17 años")).toBeVisible();
+  await expect(page.getByText(/scout\.org\.co y vallescout\.org\.co/)).toBeVisible();
 });
 
 test("What is Scouting? en inglés", async ({ page }) => {
   await page.goto("/en/what-is-scouting/");
   await expect(page.getByRole("heading", { level: 1, name: "What is Scouting?" })).toBeVisible();
+  await expect(page.getByText(/scout\.org\.co and vallescout\.org\.co/)).toBeVisible();
 });
 
 test("404 bilingüe con enlace al buscador", async ({ page }) => {
