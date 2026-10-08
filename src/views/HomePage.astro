@@ -5,12 +5,14 @@ import type { Lang } from "@/i18n/lang";
 import { pagePath } from "@/i18n/routes";
 import { translator } from "@/i18n/ui";
 import Base from "@/layouts/Base.astro";
+import { buildWebSiteJsonLd } from "@/lib/jsonld";
 
 interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
 const t = translator(lang);
+const site = Astro.site ?? new URL("https://buscador.vallescout.org.co");
 ---
 
 <Base
@@ -18,6 +20,7 @@ const t = translator(lang);
   path={pagePath(lang, "home")}
   title={t("site.title")}
   description={t("site.description")}
+  jsonLd={buildWebSiteJsonLd(lang, site)}
   fullBleed
   viewport
 >

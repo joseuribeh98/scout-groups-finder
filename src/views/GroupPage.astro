@@ -5,7 +5,7 @@ import type { Lang } from "@/i18n/lang";
 import { grupoPath } from "@/i18n/routes";
 import { translator } from "@/i18n/ui";
 import Base from "@/layouts/Base.astro";
-import { buildGrupoJsonLd } from "@/lib/jsonld";
+import { buildBreadcrumbJsonLd, buildGrupoJsonLd, ogImagePath } from "@/lib/jsonld";
 import { grupoSlug } from "@/lib/slug";
 
 interface Props {
@@ -24,8 +24,11 @@ const site = Astro.site ?? new URL("https://buscador.vallescout.org.co");
   path={path}
   title={t("grupo.metaTitle", vars)}
   description={t("grupo.metaDescription", vars)}
-  ogImage={`/og/${grupoSlug(grupo)}.png`}
-  jsonLd={buildGrupoJsonLd(grupo, new URL(path, site).href)}
+  ogImage={ogImagePath(lang, grupoSlug(grupo))}
+  jsonLd={[
+    buildGrupoJsonLd(grupo, new URL(path, site).href, lang, site),
+    buildBreadcrumbJsonLd(grupo, lang, site),
+  ]}
   mapPage
 >
   <GroupDetail grupo={grupo} lang={lang} />

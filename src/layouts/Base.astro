@@ -13,7 +13,7 @@ interface Props {
   /** Ruta canónica de esta página en su idioma, con "/" final. */
   path: string;
   ogImage?: string;
-  jsonLd?: Record<string, unknown>;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
   fullBleed?: boolean;
   noindex?: boolean;
   /** Portada: <main> ocupa el alto de la ventana y la página no hace scroll (solo con JS). */
@@ -27,7 +27,7 @@ const {
   title,
   description,
   path,
-  ogImage = "/og/default.png",
+  ogImage = lang === "en" ? "/og/en/default.png" : "/og/default.png",
   jsonLd,
   fullBleed = false,
   noindex = false,
@@ -39,7 +39,9 @@ const site = Astro.site ?? new URL("https://buscador.vallescout.org.co");
 const url = (p: string) => new URL(p, site).href;
 const esPath = lang === "es" ? path : alternatePath(path, "es");
 const enPath = lang === "en" ? path : alternatePath(path, "en");
-const ldJson = jsonLd ? JSON.stringify(jsonLd).replace(/</g, "\\u003c") : null;
+const ldJson = (Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : []).map((item) =>
+  JSON.stringify(item).replace(/</g, "\\u003c"),
+);
 ---
 
 <!doctype html>
@@ -60,16 +62,21 @@ const ldJson = jsonLd ? JSON.stringify(jsonLd).replace(/</g, "\\u003c") : null;
     {/* Las teselas se piden como <img> sin CORS: el preconnect va sin crossorigin. */}
     {(viewport || mapPage) && <link rel="preconnect" href="https://tile.openstreetmap.org" />}
     <meta name="theme-color" content="#4d006e" />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content={t("site.title")} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={url(path)} />
-    <meta property="og:image" content={url(ogImage)} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:locale" content={LOCALE[lang].replace("-", "_")} />
-    <meta name="twitter:card" content="summary_large_image" />
+    {!noindex && (
+      <>
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content={t("site.title")} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={url(path)} />
+        <meta property="og:image" content={url(ogImage)} />
+        <meta property="og:image:alt" content={t("og.imageAlt")} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:locale" content={LOCALE[lang].replace("-", "_")} />
+        <meta name="twitter:card" content="summary_large_image" />
+      </>
+    )}
     <script is:inline>
       (() => {
         document.documentElement.classList.add("js");
@@ -85,7 +92,9 @@ const ldJson = jsonLd ? JSON.stringify(jsonLd).replace(/</g, "\\u003c") : null;
         document.documentElement.dataset.theme = theme;
       })();
     </script>
-    {ldJson && <script type="application/ld+json" set:html={ldJson} />}
+    {ldJson.map((json) => (
+      <script type="application/ld+json" set:html={json} />
+    ))}
   </head>
   <body class:list={["flex min-h-dvh flex-col", viewport && "js:h-dvh js:overflow-hidden"]}>
     <a
