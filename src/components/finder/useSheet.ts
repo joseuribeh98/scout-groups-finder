@@ -21,10 +21,16 @@ interface Options {
   onSnap: (next: Snap) => void;
   /** Avisa el alto en píxeles de la posición "asomada" (para el padding del mapa). */
   onPeekHeight?: ((px: number) => void) | undefined;
+  /** Cuando el cuerpo hace scroll por sí mismo, un gesto que empieza en él no arrastra la hoja. */
+  bodyScrolls: boolean;
 }
 
-/** Posiciones y arrastre de la hoja. Fija `--sheet-h` por CSSOM durante el arrastre. */
-export function useSheet({ snap, onSnap, onPeekHeight }: Options) {
+/**
+ * Posiciones y arrastre de la hoja. Los manejadores van en la hoja entera (patrón de Apple Maps /
+ * Google Maps): deslizar sobre la lista también la mueve, salvo que el cuerpo esté en modo scroll.
+ * Fija `--sheet-h` por CSSOM durante el arrastre.
+ */
+export function useSheet({ snap, onSnap, onPeekHeight, bodyScrolls }: Options) {
   const ref = useRef<HTMLElement>(null);
   const drag = useRef<{ startY: number; startH: number; active: boolean } | null>(null);
 
@@ -61,10 +67,13 @@ export function useSheet({ snap, onSnap, onPeekHeight }: Options) {
     el?.parentElement?.style.setProperty("--sheet-offset", SNAP_OFFSET[settled]);
   };
 
-  const gripProps = {
+  const dragProps = {
     onPointerDown: (e: PointerEvent) => {
       const el = ref.current;
       if (!el || e.button !== 0) return;
+      // Con el cuerpo en modo scroll (hoja completa o tarjeta abierta), el gesto es suyo.
+      const target = e.target instanceof Element ? e.target : null;
+      if (bodyScrolls && target?.closest("[data-sheet-body]")) return;
       // El arrastre arranca al superar TAP_PX: capturar antes desviaría el clic de botones y chips.
       drag.current = {
         startY: e.clientY,
@@ -115,8 +124,8 @@ export function useSheet({ snap, onSnap, onPeekHeight }: Options) {
     },
     onPointerCancel: () => endDrag(),
     onLostPointerCapture: (e: PointerEvent) => {
-      // Si el asa pierde la captura sin pointerup, abandona el arrastre en curso. En táctil, al capturar en el
-      // asa se suelta la captura implícita del botón hijo: ese evento (que burbujea hasta aquí) se ignora.
+      // Si la hoja pierde la captura sin pointerup, abandona el arrastre en curso. En táctil, al capturar en
+      // la hoja se suelta la captura implícita del elemento hijo: ese evento (que burbujea) se ignora.
       if (drag.current && e.target === e.currentTarget) endDrag();
     },
   };
@@ -132,5 +141,5 @@ export function useSheet({ snap, onSnap, onPeekHeight }: Options) {
     }
   };
 
-  return { ref, gripProps, onGripKeyDown };
+  return { ref, dragProps, onGripKeyDown };
 }

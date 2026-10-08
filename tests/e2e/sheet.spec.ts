@@ -50,6 +50,38 @@ test.describe("hoja inferior (móvil)", () => {
     await expect(ui(page)).toHaveAttribute("data-snap", "full");
   });
 
+  test("deslizar sobre la lista (hoja asomada) también expande la hoja", async ({ page }) => {
+    await gotoHydrated(page, "/");
+    // Asomada: el cuerpo no hace scroll propio; el gesto mueve la hoja.
+    await expect(ui(page).locator("[data-sheet-body]")).toHaveCSS("overflow-y", "hidden");
+    const item = cards(page).first();
+    const box = (await item.boundingBox())!;
+    const x = box.x + box.width / 2,
+      y = box.y + 10;
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x, y }] });
+    for (let i = 1; i <= 10; i++) {
+      await cdp.send("Input.dispatchTouchEvent", {
+        type: "touchMove",
+        touchPoints: [{ x, y: y - i * 40 }],
+      });
+    }
+    await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+    await expect(ui(page)).toHaveAttribute("data-snap", "full");
+    // Completa: ahora la lista hace scroll propio y el gesto no vuelve a mover la hoja.
+    await expect(ui(page).locator("[data-sheet-body]")).toHaveCSS("overflow-y", "auto");
+    await expect(page).not.toHaveURL(/\/grupos\//);
+  });
+
+  test("con una tarjeta abierta el cuerpo hace scroll aunque la hoja esté a media", async ({
+    page,
+  }) => {
+    await gotoHydrated(page, "/");
+    await ui(page).getByRole("button", { name: "Ver Águilas Doradas en el mapa" }).click();
+    await expect(ui(page)).toHaveAttribute("data-snap", "half");
+    await expect(ui(page).locator("[data-sheet-body]")).toHaveCSS("overflow-y", "auto");
+  });
+
   test("enfocar la búsqueda sube la hoja a completa", async ({ page }) => {
     await gotoHydrated(page, "/");
     await searchBox(page).focus();

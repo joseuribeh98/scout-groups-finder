@@ -288,6 +288,7 @@ export default function Finder({ grupos, lang, municipios }: Props) {
         snap={snap}
         onSnap={setSnap}
         onPeekHeight={setPeekPx}
+        bodyScrolls={snap === "full" || selected !== null}
         header={
           selected ? null : (
             <div class="grid gap-2 pt-1">
