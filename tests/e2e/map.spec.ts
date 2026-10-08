@@ -9,7 +9,7 @@ test.describe("mapa del buscador", () => {
     await expect(page.locator(".pin, .marker-cluster-brand").first()).toBeVisible();
   });
 
-  test("el Valle se resalta con una máscara que desatura el exterior", async ({
+  test("el Valle se resalta atenuando el exterior, sin blend (coste de render)", async ({
     page,
     isMobile,
   }) => {
@@ -17,10 +17,15 @@ test.describe("mapa del buscador", () => {
     await gotoHydrated(page, "/");
     await expect(page.locator(".valle-mask")).toBeAttached();
     await expect(page.locator(".valle-outline")).toBeAttached();
-    const blend = await page.evaluate(
-      () => getComputedStyle(document.querySelector(".leaflet-overlay-pane")!).mixBlendMode,
-    );
-    expect(blend).toBe("saturation");
+    const style = await page.evaluate(() => {
+      const mask = getComputedStyle(document.querySelector(".valle-mask")!);
+      const pane = getComputedStyle(document.querySelector(".leaflet-overlay-pane")!);
+      return { fill: mask.fill, opacity: Number(mask.fillOpacity), blend: pane.mixBlendMode };
+    });
+    // Blanco translúcido en tema claro; un mix-blend-mode aquí retrasaba el LCP medio segundo.
+    expect(style.fill).toBe("rgb(255, 255, 255)");
+    expect(style.opacity).toBeCloseTo(0.45, 2);
+    expect(style.blend).toBe("normal");
   });
 
   test("filtrar por municipio deja solo sus pines", async ({ page, isMobile }) => {

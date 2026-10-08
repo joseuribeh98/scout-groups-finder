@@ -5,10 +5,10 @@ import "leaflet.markercluster";
 import valle from "@/data/valle-boundary.json";
 
 /**
- * Máscara inversa: todo el mundo con un hueco con la forma del Valle. Con `mix-blend-mode: saturation`
- * (map.css) desatura las teselas de fuera del departamento sin teñir nada. Un segundo polígono
- * igual, en su propio pane y con blend normal, aclara además el exterior en tema claro
- * (`.valle-dim`); en oscuro ese segundo polígono es transparente.
+ * Máscara inversa: todo el mundo con un hueco con la forma del Valle, semitransparente (blanca en
+ * claro, negra en oscuro; ver map.css). Atenúa el exterior sin teñir el departamento. Sin
+ * `mix-blend-mode` a propósito: un blend sobre toda la capa de teselas se compone por software y
+ * retrasaba medio segundo el primer pintado (LCP) en móviles lentos.
  */
 export function addValleHighlight(map: Leaflet.Map): void {
   const ring = (valle.features[0]!.geometry.coordinates[0] as [number, number][]).map(
@@ -20,21 +20,13 @@ export function addValleHighlight(map: Leaflet.Map): void {
     [89, 180],
     [-89, 180],
   ];
-  const inverse = (className: string, pane: string) =>
-    L.polygon([world, ring], {
-      stroke: false,
-      fill: true,
-      fillOpacity: 1,
-      interactive: false,
-      className,
-      pane,
-    }).addTo(map);
-  inverse("valle-mask", "overlayPane");
-  if (!map.getPane("valleDim")) {
-    const pane = map.createPane("valleDim");
-    pane.style.zIndex = "401"; // justo encima del overlayPane (400); CSSOM, no atributo style
-  }
-  inverse("valle-dim", "valleDim");
+  L.polygon([world, ring], {
+    stroke: false,
+    fill: true,
+    fillOpacity: 1,
+    interactive: false,
+    className: "valle-mask",
+  }).addTo(map);
   L.polyline(ring, {
     fill: false,
     weight: 1.5,

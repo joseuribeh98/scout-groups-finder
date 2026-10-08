@@ -199,35 +199,17 @@
   white-space: nowrap;
 }
 
-/* Fuera del Valle: la máscara gris con blend "saturation" quita el color a las teselas de debajo.
-   El pane de overlays es hermano del de teselas dentro del map-pane, así que el blend aplica. */
-.leaflet-overlay-pane {
-  mix-blend-mode: saturation;
-}
+/* Exterior del Valle atenuado: blanco translúcido en claro, negro translúcido en oscuro.
+   Leaflet escribe fill/fill-opacity como atributos de presentación; estas reglas CSS ganan. */
 .valle-mask {
-  fill: #808080;
+  fill: #ffffff;
+  fill-opacity: 0.45;
 }
 .valle-outline {
   stroke: var(--color-brand);
   stroke-opacity: 0.55;
 }
-/* Segundo polígono inverso con blend normal: aclara el exterior para que el Valle se lea de un
-   vistazo en tema claro. Va en su propio pane para no heredar el blend del overlayPane. */
-.leaflet-valleDim-pane {
-  mix-blend-mode: normal;
-  pointer-events: none;
-}
-.valle-dim {
-  fill: #ffffff;
-  fill-opacity: 0.32;
-}
-/* En oscuro las teselas ya son grises: en vez de desaturar, se oscurece un poco el exterior. */
-[data-theme="dark"] .leaflet-overlay-pane {
-  mix-blend-mode: multiply;
-}
 [data-theme="dark"] .valle-mask {
-  fill: #a9a9a9;
-}
-[data-theme="dark"] .valle-dim {
-  fill-opacity: 0;
+  fill: #000000;
+  fill-opacity: 0.4;
 }

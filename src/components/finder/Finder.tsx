@@ -240,22 +240,6 @@ export default function Finder({ grupos, lang, municipios }: Props) {
 
   return (
     <div ref={root} class="relative h-full">
-      <div class="hidden finder-map js:absolute js:inset-0 js:isolate js:block">
-        <GroupMap
-          results={results}
-          activeId={activeId}
-          origin={origin}
-          lang={lang}
-          t={t}
-          fitPadding={fitPadding}
-          focusBottomPad={Math.round((peekPx / PEEK) * HALF) + 16}
-          popups={isDesktop}
-          focusRequest={focusRequest}
-          onSelect={selectFromMap}
-          onPopupOpen={onPopupOpen}
-          onPopupClose={onPopupClose}
-        />
-      </div>
       <Panel
         label={t("sheet.results")}
         header={header}
@@ -327,6 +311,24 @@ export default function Finder({ grupos, lang, municipios }: Props) {
           )
         }
       />
+      {/* El mapa va al final del DOM: con teclado se llega primero a la búsqueda y a la lista
+          (está posicionado en absoluto, así que el orden no cambia lo que se ve). */}
+      <div class="hidden finder-map js:absolute js:inset-0 js:isolate js:block">
+        <GroupMap
+          results={results}
+          activeId={activeId}
+          origin={origin}
+          lang={lang}
+          t={t}
+          fitPadding={fitPadding}
+          focusBottomPad={Math.round((peekPx / PEEK) * HALF) + 16}
+          popups={isDesktop}
+          focusRequest={focusRequest}
+          onSelect={selectFromMap}
+          onPopupOpen={onPopupOpen}
+          onPopupClose={onPopupClose}
+        />
+      </div>
     </div>
   );
 }

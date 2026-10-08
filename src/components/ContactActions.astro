@@ -90,13 +90,14 @@ const secondary: Action[] = [
 ];
 const base =
   "flex h-12 items-center justify-center gap-2 rounded-xl px-3 font-semibold whitespace-nowrap transition-colors";
+// La barra móvil usa text-sm y min-w-0: a 320 px de ancho las dos acciones caben sin desbordar.
 ---
 
 {variant === "bar" ? (
-  <div data-contact-bar class="flex gap-2">
+  <div data-contact-bar class="flex gap-2 text-sm">
     {primary && (
       <a
-        class={`${base} flex-1 bg-brand text-on-brand`}
+        class={`${base} min-w-0 flex-1 bg-brand text-on-brand`}
         href={primary.href}
         target={primary.external ? "_blank" : undefined}
         rel={primary.external ? "noopener noreferrer" : undefined}
@@ -107,7 +108,7 @@ const base =
       </a>
     )}
     <a
-      class={`${base} ${primary ? "" : "flex-1 "}border border-line bg-surface text-ink`}
+      class={`${base} min-w-0 ${primary ? "" : "flex-1 "}border border-line bg-surface text-ink`}
       href={directionsUrl(grupo.ubicacion)}
       target="_blank"
       rel="noopener noreferrer"
