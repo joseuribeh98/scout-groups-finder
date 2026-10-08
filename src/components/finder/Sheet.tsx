@@ -1,5 +1,5 @@
 import type { ComponentChildren } from "preact";
-import { useSheet } from "@/components/finder/useSheet";
+import { useSheet, type SheetHeights } from "@/components/finder/useSheet";
 import type { Translate } from "@/i18n/ui";
 
 export type Snap = "peek" | "half" | "full";
@@ -8,7 +8,7 @@ interface Props {
   t: Translate;
   snap: Snap;
   onSnap: (next: Snap) => void;
-  onPeekHeight?: (px: number) => void;
+  onHeights?: (px: SheetHeights) => void;
   /** El cuerpo hace scroll propio (y un gesto sobre él no mueve la hoja). Si no, deslizar la mueve. */
   bodyScrolls: boolean;
   header: ComponentChildren;
@@ -26,14 +26,14 @@ export default function Sheet({
   t,
   snap,
   onSnap,
-  onPeekHeight,
+  onHeights,
   bodyScrolls,
   header,
   status,
   body,
 }: Props) {
   const expanded = snap === "full";
-  const { ref, dragProps, onGripKeyDown } = useSheet({ snap, onSnap, onPeekHeight, bodyScrolls });
+  const { ref, dragProps, onGripKeyDown } = useSheet({ snap, onSnap, onHeights, bodyScrolls });
   return (
     <section
       ref={ref}

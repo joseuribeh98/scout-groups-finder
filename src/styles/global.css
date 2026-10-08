@@ -48,6 +48,12 @@
 
   html {
     @apply bg-canvas text-ink font-sans antialiased;
+    /* Zonas seguras del iPhone (viewport-fit=cover): barra de estado, isla dinámica, barra de
+       Safari e indicador de inicio. Como variables para que la UI y las pruebas las lean igual. */
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
   }
 
   :focus-visible {
@@ -134,13 +140,15 @@
     bottom: 0;
     display: flex;
     flex-direction: column;
-    height: 30%;
-    /* iPhone: deja libre el indicador de inicio (requiere viewport-fit=cover). */
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    /* iPhone: la parte bajo la barra de Safari y el indicador de inicio es relleno, así que la hoja
+       crece ese mismo inset y la lista visible no se encoge. useSheet.ts lee el relleno computado. */
+    height: calc(30% + var(--safe-bottom));
+    padding-bottom: var(--safe-bottom);
+    padding-inline: var(--safe-left) var(--safe-right);
     transition: height 0.25s ease;
   }
   .js .sheet[data-snap="half"] {
-    height: 55%;
+    height: calc(55% + var(--safe-bottom));
   }
   .js .sheet[data-snap="full"] {
     /* Deja libre la búsqueda flotante: sincronizado con bounds() y SNAP_OFFSET en useSheet.ts. */

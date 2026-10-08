@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { cards, gotoHydrated, searchBox, ui } from "./helpers";
+import { cards, emulateSafeArea, gotoHydrated, searchBox, ui } from "./helpers";
 
 test.describe("hoja inferior (móvil)", () => {
   test.skip(({ isMobile }) => !isMobile, "solo móvil");
@@ -80,6 +80,35 @@ test.describe("hoja inferior (móvil)", () => {
     await ui(page).getByRole("button", { name: "Ver Águilas Doradas en el mapa" }).click();
     await expect(ui(page)).toHaveAttribute("data-snap", "half");
     await expect(ui(page).locator("[data-sheet-body]")).toHaveCSS("overflow-y", "auto");
+  });
+
+  test("con inset inferior (iPhone) la hoja crece ese inset y los controles siguen sobre ella", async ({
+    page,
+  }) => {
+    await emulateSafeArea(page, { bottom: "80px" });
+    await gotoHydrated(page, "/");
+    await expect(page.locator(".leaflet-control-attribution")).toBeVisible();
+    const main = (await page.locator("main").boundingBox())!;
+    const controlsAboveSheet = async () => {
+      await expect(async () => {
+        const a = (await page.locator(".leaflet-control-attribution").boundingBox())!;
+        const s = (await ui(page).boundingBox())!;
+        expect(a.y + a.height).toBeLessThanOrEqual(s.y + 1);
+      }).toPass();
+    };
+    const sheet = (await ui(page).boundingBox())!;
+    expect(Math.abs(sheet.height - (Math.round(main.height * 0.3) + 80))).toBeLessThanOrEqual(1);
+    // La lista visible termina sobre la barra de Safari: el inset es relleno, no contenido.
+    const body = (await ui(page).locator("[data-sheet-body]").boundingBox())!;
+    expect(body.y + body.height).toBeLessThanOrEqual(main.y + main.height - 80 + 1);
+    await controlsAboveSheet();
+    await ui(page).getByRole("button", { name: "Expandir lista" }).focus();
+    await page.keyboard.press("ArrowUp");
+    await expect(ui(page)).toHaveAttribute("data-snap", "half");
+    await ui(page).evaluate((el) => Promise.all(el.getAnimations().map((a) => a.finished)));
+    const half = (await ui(page).boundingBox())!;
+    expect(Math.abs(half.height - (Math.round(main.height * 0.55) + 80))).toBeLessThanOrEqual(1);
+    await controlsAboveSheet();
   });
 
   test("enfocar la búsqueda sube la hoja a completa", async ({ page }) => {

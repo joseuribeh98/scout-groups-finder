@@ -4,13 +4,19 @@ import type { Snap } from "@/components/finder/Sheet";
 const ORDER: Snap[] = ["peek", "half", "full"];
 export const PEEK = 0.3;
 export const HALF = 0.55;
-/** Offset de los controles del mapa para cada posición (única fuente de verdad). */
+/** Offset de los controles del mapa para cada posición (única fuente de verdad; sincronizado con
+ *  `.sheet[data-snap]` en global.css, que suma el inset inferior del iPhone igual que bounds()). */
 export const SNAP_OFFSET: Record<Snap, string> = {
-  peek: "30%",
-  half: "55%",
+  peek: "calc(30% + var(--safe-bottom, 0px))",
+  half: "calc(55% + var(--safe-bottom, 0px))",
   // Con la hoja completa los controles quedan fuera de pantalla (bajo la búsqueda flotante no serían tocables).
   full: "100%",
 };
+/** Altos en píxeles de las posiciones asomada y media (para el encuadre del mapa). */
+export interface SheetHeights {
+  peek: number;
+  half: number;
+}
 /** 4.5rem: espacio para la búsqueda flotante; sincronizado con `.sheet[data-snap="full"]` en global.css. */
 const FULL_GAP = 72;
 const TAP_PX = 8;
@@ -19,8 +25,8 @@ const FLICK_PX = 60;
 interface Options {
   snap: Snap;
   onSnap: (next: Snap) => void;
-  /** Avisa el alto en píxeles de la posición "asomada" (para el padding del mapa). */
-  onPeekHeight?: ((px: number) => void) | undefined;
+  /** Avisa los altos en píxeles de las posiciones asomada y media (para el encuadre del mapa). */
+  onHeights?: ((px: SheetHeights) => void) | undefined;
   /** Cuando el cuerpo hace scroll por sí mismo, un gesto que empieza en él no arrastra la hoja. */
   bodyScrolls: boolean;
 }
@@ -30,28 +36,34 @@ interface Options {
  * Google Maps): deslizar sobre la lista también la mueve, salvo que el cuerpo esté en modo scroll.
  * Fija `--sheet-h` por CSSOM durante el arrastre.
  */
-export function useSheet({ snap, onSnap, onPeekHeight, bodyScrolls }: Options) {
+export function useSheet({ snap, onSnap, onHeights, bodyScrolls }: Options) {
   const ref = useRef<HTMLElement>(null);
   const drag = useRef<{ startY: number; startH: number; active: boolean } | null>(null);
 
   const bounds = () => {
-    const parent = ref.current?.parentElement;
-    const total = parent?.clientHeight ?? 0;
+    const el = ref.current;
+    const total = el?.parentElement?.clientHeight ?? 0;
+    // El relleno inferior es el inset del iPhone (var(--safe-bottom) en global.css): la parte de la
+    // hoja que queda bajo la barra de Safari. Asomada y media crecen ese mismo inset.
+    const inset = el ? parseFloat(getComputedStyle(el).paddingBottom) || 0 : 0;
     return {
-      peek: Math.round(total * PEEK),
-      half: Math.round(total * HALF),
+      peek: Math.round(total * PEEK) + inset,
+      half: Math.round(total * HALF) + inset,
       full: total - FULL_GAP,
     };
   };
 
   useEffect(() => {
-    if (!onPeekHeight) return;
-    const report = () => onPeekHeight(bounds().peek);
+    if (!onHeights) return;
+    const report = () => {
+      const { peek, half } = bounds();
+      onHeights({ peek, half });
+    };
     report();
     const ro = new ResizeObserver(report);
     if (ref.current?.parentElement) ro.observe(ref.current.parentElement);
     return () => ro.disconnect();
-  }, [onPeekHeight]);
+  }, [onHeights]);
 
   const step = (dir: 1 | -1) => {
     const i = ORDER.indexOf(snap) + dir;

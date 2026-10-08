@@ -99,7 +99,7 @@ const ldJson = (Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : []).map((it
   <body class:list={["flex min-h-dvh flex-col", viewport && "js:h-dvh js:overflow-hidden"]}>
     <a
       href="#main"
-      class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[2000] focus:rounded-lg focus:bg-surface focus:px-4 focus:py-2"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-[calc(0.5rem+var(--safe-top))] focus:left-[max(0.5rem,var(--safe-left))] focus:z-[2000] focus:rounded-lg focus:bg-surface focus:px-4 focus:py-2"
     >
       {t("nav.skip")}
     </a>
@@ -109,7 +109,9 @@ const ldJson = (Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : []).map((it
       class:list={[
         "flex-1",
         viewport && "js:relative js:min-h-0",
-        !fullBleed && !viewport && "mx-auto w-full max-w-5xl px-4 py-8",
+        !fullBleed &&
+          !viewport &&
+          "mx-auto w-full max-w-5xl py-8 pl-[max(1rem,var(--safe-left))] pr-[max(1rem,var(--safe-right))]",
       ]}
     >
       <slot />

@@ -6,7 +6,7 @@ import SelectedCard from "@/components/finder/SelectedCard";
 import Sheet, { type Snap } from "@/components/finder/Sheet";
 import GroupMap, { type FitPadding, type FocusRequest } from "@/components/finder/GroupMap";
 import SearchBar, { type GeoStatus } from "@/components/finder/SearchBar";
-import { HALF, PEEK, SNAP_OFFSET } from "@/components/finder/useSheet";
+import { SNAP_OFFSET, type SheetHeights } from "@/components/finder/useSheet";
 import { useMediaQuery } from "@/components/finder/useMediaQuery";
 import { VALLE_BOUNDS } from "@/data/region";
 import type { Grupo } from "@/data/schema";
@@ -43,7 +43,7 @@ export default function Finder({ grupos, lang, municipios }: Props) {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const root = useRef<HTMLDivElement>(null);
   const [snap, setSnap] = useState<Snap>("peek");
-  const [peekPx, setPeekPx] = useState(0);
+  const [sheetPx, setSheetPx] = useState<SheetHeights>({ peek: 0, half: 0 });
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [scrollToId, setScrollToId] = useState<number | null>(null);
   const lastSelectedId = useRef<number | null>(null);
@@ -156,8 +156,8 @@ export default function Finder({ grupos, lang, municipios }: Props) {
   // La hoja asomada (medida por la propia hoja) deja libre el borde inferior del mapa.
   const fitPadding = useMemo<FitPadding>(() => {
     if (isDesktop) return { topLeft: [PANEL_WIDTH + PANEL_INSET * 2, 16], bottomRight: [16, 16] };
-    return { topLeft: [16, 72], bottomRight: [16, peekPx + 16] };
-  }, [isDesktop, peekPx]);
+    return { topLeft: [16, 72], bottomRight: [16, sheetPx.peek + 16] };
+  }, [isDesktop, sheetPx.peek]);
 
   const nearMe = () => {
     if (geoStatus === "locating") return;
@@ -265,7 +265,7 @@ export default function Finder({ grupos, lang, municipios }: Props) {
         list={list}
       />
       {/* Móvil: búsqueda flotante sobre el mapa + hoja */}
-      <div class="p-4 lg:hidden js:absolute js:inset-x-3 js:top-3 js:z-20 js:p-0">
+      <div class="p-4 lg:hidden js:absolute js:top-3 js:left-[max(0.75rem,var(--safe-left))] js:right-[max(0.75rem,var(--safe-right))] js:z-20 js:p-0">
         <SearchBar
           t={t}
           q={filters.q}
@@ -287,7 +287,7 @@ export default function Finder({ grupos, lang, municipios }: Props) {
         t={t}
         snap={snap}
         onSnap={setSnap}
-        onPeekHeight={setPeekPx}
+        onHeights={setSheetPx}
         bodyScrolls={snap === "full" || selected !== null}
         header={
           selected ? null : (
@@ -322,7 +322,7 @@ export default function Finder({ grupos, lang, municipios }: Props) {
           lang={lang}
           t={t}
           fitPadding={fitPadding}
-          focusBottomPad={Math.round((peekPx / PEEK) * HALF) + 16}
+          focusBottomPad={sheetPx.half + 16}
           popups={isDesktop}
           focusRequest={focusRequest}
           onSelect={selectFromMap}
