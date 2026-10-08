@@ -50,10 +50,13 @@ export const VALLE_BOUNDS = { latMin: 3.0, latMax: 5.1, lngMin: -77.6, lngMax: -
 export const VALLE_CENTER = { lat: 3.9, lng: -76.4 } as const;
 export const VALLE_ZOOM = 9;
 
+/** La Región Valle hace parte de la Asociación Scouts de Colombia, miembro de la WOSM. */
 export const REGION = {
-  nombre: "Región Valle · Scouts de Colombia",
+  nombre: "Asociación Scouts de Colombia - Región Valle",
   web: "https://vallescout.org.co/",
   nacional: "https://scout.org.co/",
+  /** World Organization of the Scout Movement (Organización Mundial del Movimiento Scout). */
+  mundial: "https://www.scout.org/",
 } as const;
 
 export const REPO_URL = "https://github.com/joseuribeh98/scout-groups-finder";

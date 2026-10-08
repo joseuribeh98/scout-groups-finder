@@ -21,7 +21,14 @@ describe("buildGrupoJsonLd", () => {
         addressCountry: "CO",
       },
       geo: { "@type": "GeoCoordinates", latitude: 3.493053, longitude: -76.520585 },
-      parentOrganization: { name: "Asociación Scouts de Colombia" },
+      parentOrganization: {
+        name: "Asociación Scouts de Colombia - Región Valle",
+        url: "https://vallescout.org.co/",
+        parentOrganization: {
+          name: "Asociación Scouts de Colombia",
+          memberOf: { name: "World Organization of the Scout Movement" },
+        },
+      },
     });
     expect(ld["sameAs"]).toEqual(["https://www.instagram.com/fenix_escarlata_815"]);
   });

@@ -42,14 +42,14 @@ npm run build        # sitio estático en dist/
 
 Todos los datos están en [`src/data/grupos.json`](src/data/grupos.json). Edita, haz commit y push: CI valida los datos y Vercel publica. Guía paso a paso: [`docs/actualizar-grupos.md`](docs/actualizar-grupos.md).
 
-Límite del Valle del Cauca: [Natural Earth](https://www.naturalearthdata.com) (dominio público).
-
 Por privacidad, el sitio solo publica canales institucionales (correos `@scout.org.co`), redes del grupo y números de WhatsApp autorizados por cada grupo. El esquema rechaza cualquier otro campo.
 
 ## English
 
-Scout group finder for the Valle del Cauca region of the Scouts of Colombia Association. Static Astro site with a single Preact island, bilingual (ES/EN), tested with axe (WCAG 2.2 AA), with validated data and no personal information. See the sections above for commands; group data lives in `src/data/grupos.json`.
+Scout group finder of the Asociación Scouts de Colombia - Región Valle (Valle del Cauca, Colombia). The Asociación Scouts de Colombia is a member of the World Organization of the Scout Movement (WOSM). Static Astro site with a single Preact island, bilingual (ES/EN), tested with axe (WCAG 2.2 AA), with validated data and no personal information. See the sections above for commands; group data lives in `src/data/grupos.json`.
 
 ## Licencia
 
-Código bajo licencia [MIT](LICENSE). Los nombres, logos y emblemas de Scouts de Colombia y de la Región Valle pertenecen a sus titulares.
+Código bajo licencia [MIT](LICENSE). Los nombres, logos y emblemas de la Asociación Scouts de Colombia y de su Región Valle pertenecen a sus titulares.
+
+Créditos: mapa base © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors (ODbL) · límite del Valle del Cauca de [Natural Earth](https://www.naturalearthdata.com) (dominio público) · iconos de [Lucide](https://lucide.dev) (ISC) y [Simple Icons](https://simpleicons.org) (CC0).

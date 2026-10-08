@@ -20,10 +20,21 @@ export function buildGrupoJsonLd(g: Grupo, url: string): Record<string, unknown>
     },
     geo: { "@type": "GeoCoordinates", latitude: g.ubicacion.lat, longitude: g.ubicacion.lng },
     ...(sameAs.length > 0 ? { sameAs } : {}),
+    // Grupo → Región Valle → Asociación Scouts de Colombia (miembro de la WOSM).
     parentOrganization: {
       "@type": "Organization",
-      name: "Asociación Scouts de Colombia",
-      url: REGION.nacional,
+      name: REGION.nombre,
+      url: REGION.web,
+      parentOrganization: {
+        "@type": "Organization",
+        name: "Asociación Scouts de Colombia",
+        url: REGION.nacional,
+        memberOf: {
+          "@type": "Organization",
+          name: "World Organization of the Scout Movement",
+          url: REGION.mundial,
+        },
+      },
     },
   };
 }

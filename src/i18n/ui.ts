@@ -35,7 +35,7 @@ const es = {
   "finder.geoFar":
     "Parece que estás lejos del Valle del Cauca. Los grupos se muestran por municipio.",
   "finder.results": "Resultados",
-  "og.region": "Región Valle del Cauca",
+  "og.region": "Asociación Scouts de Colombia - Región Valle",
   "finder.geoError": "No pudimos obtener tu ubicación. Los grupos se muestran por municipio.",
   "finder.count.one": "1 grupo",
   "finder.count.other": "{n} grupos",
@@ -81,18 +81,19 @@ const es = {
   "notFound.title": "Página no encontrada",
   "notFound.body": "La página que buscas no existe o cambió de dirección.",
   "notFound.cta": "Ir al buscador",
-  "footer.about": "Buscador de grupos de la Región Valle, Asociación Scouts de Colombia.",
+  "footer.about":
+    "Buscador de grupos de la Asociación Scouts de Colombia - Región Valle. La Asociación es miembro de la Organización Mundial del Movimiento Scout (WOSM).",
   "footer.region": "Sitio de la Región Valle",
-  "footer.national": "Scouts de Colombia",
+  "footer.national": "Asociación Scouts de Colombia",
   "footer.source": "Código abierto en GitHub",
   "footer.trademark":
-    "Los nombres, logos y emblemas de Scouts de Colombia y de la Región Valle pertenecen a sus titulares.",
+    "Los nombres, logos y emblemas de la Asociación Scouts de Colombia y de su Región Valle pertenecen a sus titulares.",
 } as const;
 
 export type UiKey = keyof typeof es;
 
 const en: Record<UiKey, string> = {
-  "site.title": "Scout Group Finder · Valle Region",
+  "site.title": "Scout Group Finder · Región Valle",
   "site.description":
     "Find the nearest scout group in Valle del Cauca, Colombia, check its meeting times and get in touch.",
   "nav.skip": "Skip to content",
@@ -125,13 +126,13 @@ const en: Record<UiKey, string> = {
   "finder.locating": "Finding your location…",
   "finder.geoFar": "It looks like you're far from Valle del Cauca. Groups are listed by town.",
   "finder.results": "Results",
-  "og.region": "Valle del Cauca Region",
+  "og.region": "Asociación Scouts de Colombia - Región Valle",
   "finder.geoError": "We couldn't get your location. Groups are listed by town.",
   "finder.count.one": "1 group",
   "finder.count.other": "{n} groups",
   "finder.clear": "Clear filters",
   "finder.empty.title": "No groups match those filters",
-  "finder.empty.body": "Try fewer filters or contact the Valle Region.",
+  "finder.empty.body": "Try fewer filters or contact the Región Valle.",
   "finder.empty.contact": "Contact the Region",
   "map.label": "Map of scout groups in Valle del Cauca",
   "map.error": "The map couldn't load. The list of groups is still available.",
@@ -149,7 +150,7 @@ const en: Record<UiKey, string> = {
   "grupo.contact": "Contact",
   "grupo.whatsapp": "Message on WhatsApp",
   "grupo.whatsappMsg":
-    "Hi, I found Group {id} {nombre} on the Valle Region finder and I'd like information about joining.",
+    "Hi, I found Group {id} {nombre} on the Región Valle finder and I'd like information about joining.",
   "grupo.email": "Send email",
   "grupo.emailSubject": "Joining information — Group {id} {nombre}",
   "grupo.directions": "Get directions",
@@ -158,25 +159,26 @@ const en: Record<UiKey, string> = {
   "grupo.facebook": "Facebook",
   "grupo.web": "Website",
   "grupo.noContact": "This group hasn't published contact channels yet.",
-  "grupo.contactRegion": "Contact the Valle Region",
+  "grupo.contactRegion": "Contact the Región Valle",
   "grupo.updated": "Information updated: {fecha}",
   "grupo.back": "Back to the finder",
   "grupo.mapLabel": "Location of Group {id} {nombre}",
   "grupo.metaTitle": "Scout Group {id} {nombre} · {municipio}",
   "grupo.metaDescription":
     "Scout Group {id} {nombre} in {municipio}, Colombia: meeting times, active sections and contact.",
-  "about.metaTitle": "What is Scouting? · Valle Region",
+  "about.metaTitle": "What is Scouting? · Región Valle",
   "about.metaDescription":
     "What the Scout Movement is, its age sections and how to join a group in Valle del Cauca, Colombia.",
   "notFound.title": "Page not found",
   "notFound.body": "The page you're looking for doesn't exist or has moved.",
   "notFound.cta": "Go to the finder",
-  "footer.about": "Group finder of the Valle Region, Scouts of Colombia Association.",
-  "footer.region": "Valle Region website",
-  "footer.national": "Scouts of Colombia",
+  "footer.about":
+    "Group finder of the Asociación Scouts de Colombia - Región Valle. The Association is a member of the World Organization of the Scout Movement (WOSM).",
+  "footer.region": "Región Valle website",
+  "footer.national": "Asociación Scouts de Colombia",
   "footer.source": "Open source on GitHub",
   "footer.trademark":
-    "Names, logos and emblems of Scouts of Colombia and the Valle Region belong to their owners.",
+    "Names, logos and emblems of the Asociación Scouts de Colombia and its Región Valle belong to their owners.",
 };
 
 export const ui: Record<Lang, Record<UiKey, string>> = { es, en };
