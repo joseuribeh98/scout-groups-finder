@@ -135,6 +135,8 @@
     display: flex;
     flex-direction: column;
     height: 30%;
+    /* iPhone: deja libre el indicador de inicio (requiere viewport-fit=cover). */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
     transition: height 0.25s ease;
   }
   .js .sheet[data-snap="half"] {

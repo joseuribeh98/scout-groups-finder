@@ -40,7 +40,8 @@ export default function Sheet({ t, snap, onSnap, onPeekHeight, header, status, b
         {header}
         {status}
       </div>
-      <div class="min-h-0 flex-1 overflow-y-auto px-4 pb-4">{body}</div>
+      {/* overscroll-contain: en iOS el scroll de la lista no arrastra la página entera. */}
+      <div class="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-4">{body}</div>
     </section>
   );
 }

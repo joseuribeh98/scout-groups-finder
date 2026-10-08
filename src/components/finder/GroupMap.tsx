@@ -124,7 +124,8 @@ export default function GroupMap({
             .addTo(m);
           watchZoomLabels(m);
           watchTileFailures(addTiles(L, m), () => setTilesFailed(true));
-          addValleHighlight(m);
+          // El chunk ya está cargado: resuelve de inmediato. Si fallara, el mapa sigue sin resaltado.
+          void addValleHighlight(m).catch(() => undefined);
           cluster.current = L.markerClusterGroup({
             showCoverageOnHover: false,
             maxClusterRadius: 40,

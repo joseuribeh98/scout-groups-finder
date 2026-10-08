@@ -76,7 +76,7 @@ export default function MiniMap({ lat, lng, label, errorText, fallbackHref, fall
         ref={ref}
         role="region"
         aria-label={label}
-        class="h-56 w-full overflow-hidden rounded-xl border border-line"
+        class="isolate h-56 w-full overflow-hidden rounded-xl border border-line"
       />
       {tilesFailed && (
         <p role="status" class="rounded-xl border border-line bg-brand-soft p-3 text-sm">
