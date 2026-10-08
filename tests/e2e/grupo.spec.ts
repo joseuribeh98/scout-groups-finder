@@ -36,16 +36,42 @@ test.describe("ficha de grupo", () => {
     );
   });
 
-  test("en móvil, la barra de contacto queda fija abajo", async ({ page, isMobile }) => {
+  test("en móvil, el contacto va antes que el mapa y no hay barra fija", async ({
+    page,
+    isMobile,
+  }) => {
     test.skip(!isMobile, "solo móvil");
     await page.goto("/grupos/815-fenix-escarlata/");
-    const bar = page.locator("[data-contact-bar]");
-    await expect(bar).toBeVisible();
-    await expect(bar.locator('[data-action="email"]')).toHaveAttribute("href", /^mailto:/);
-    await expect(bar.locator('[data-action="directions"]')).toBeVisible();
-    const vh = page.viewportSize()!.height;
-    const box = (await bar.boundingBox())!;
-    expect(box.y + box.height).toBeLessThanOrEqual(vh + 1);
+    await expect(page.locator("[data-contact-bar]")).toHaveCount(0);
+    const contact = (await page
+      .getByRole("heading", { level: 2, name: "Contacto" })
+      .boundingBox())!;
+    const map = (await page
+      .getByRole("region", { name: /Ubicación del Grupo 815/ })
+      .boundingBox())!;
+    expect(contact.y).toBeLessThan(map.y);
+    // Las acciones aparecen una sola vez en la página.
+    await expect(page.locator('[data-action="email"]')).toHaveCount(1);
+    await expect(page.locator('[data-action="directions"]')).toHaveCount(1);
+  });
+
+  test("en escritorio, el contacto va a la derecha y el mapa bajo los datos", async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(isMobile, "solo escritorio");
+    await page.goto("/grupos/815-fenix-escarlata/");
+    const title = (await page.getByRole("heading", { level: 1 }).boundingBox())!;
+    const contact = (await page
+      .getByRole("heading", { level: 2, name: "Contacto" })
+      .boundingBox())!;
+    const map = (await page
+      .getByRole("region", { name: /Ubicación del Grupo 815/ })
+      .boundingBox())!;
+    expect(contact.x).toBeGreaterThan(title.x + title.width);
+    expect(Math.abs(contact.y - title.y)).toBeLessThan(80);
+    expect(map.x).toBeCloseTo(title.x, 0);
+    expect(map.y).toBeGreaterThan(title.y);
   });
 
   test("versión en inglés", async ({ page }) => {

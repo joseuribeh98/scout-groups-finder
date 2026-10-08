@@ -20,8 +20,10 @@ const t = translator(lang);
 const lugar = grupo.localidad ? `${grupo.localidad}, ${grupo.municipio}` : grupo.municipio;
 ---
 
-<article class="grid gap-8 pb-2 md:grid-cols-[1fr_20rem] md:pb-0">
-  <div class="grid content-start gap-6">
+{/* Móvil: datos → contacto → mapa, para que las acciones queden a la vista casi sin scroll.
+    Escritorio: datos y mapa en la columna izquierda; contacto a la derecha, a lo largo de ambas filas. */}
+<article class="grid gap-8 md:grid-cols-[1fr_20rem]">
+  <div class="grid content-start gap-6 md:col-start-1 md:row-start-1">
     <a
       href={pagePath(lang, "home")}
       class="inline-flex items-center gap-1.5 justify-self-start text-sm font-semibold text-brand hover:underline"
@@ -59,6 +61,15 @@ const lugar = grupo.localidad ? `${grupo.localidad}, ${grupo.municipio}` : grupo
         </dd>
       </div>
     </dl>
+  </div>
+  <aside class="grid content-start gap-4 md:col-start-2 md:row-span-2 md:row-start-1">
+    <h2 class="text-lg font-bold">{t("grupo.contact")}</h2>
+    <ContactActions grupo={grupo} lang={lang} />
+    <p class="text-xs text-ink-soft">
+      {t("grupo.updated", { fecha: formatMonth(grupo.actualizado, lang) })}
+    </p>
+  </aside>
+  <div class="md:col-start-1 md:row-start-2">
     <MiniMap
       client:visible
       lat={grupo.ubicacion.lat}
@@ -68,17 +79,5 @@ const lugar = grupo.localidad ? `${grupo.localidad}, ${grupo.municipio}` : grupo
       fallbackHref={directionsUrl(grupo.ubicacion)}
       fallbackText={t("grupo.directions")}
     />
-  </div>
-  <aside class="grid content-start gap-4">
-    <h2 class="text-lg font-bold">{t("grupo.contact")}</h2>
-    <ContactActions grupo={grupo} lang={lang} />
-    <p class="text-xs text-ink-soft">
-      {t("grupo.updated", { fecha: formatMonth(grupo.actualizado, lang) })}
-    </p>
-  </aside>
-  {/* z-10 + el `isolate` del mini mapa: los paneles de Leaflet (z 200–400) no pasan por encima.
-      El padding inferior deja libre el indicador de inicio en iPhone. */}
-  <div class="sticky bottom-0 z-10 -mx-4 border-t border-line bg-surface/95 px-4 pt-3 pb-[calc(0.75rem+var(--safe-bottom))] backdrop-blur md:hidden">
-    <ContactActions grupo={grupo} lang={lang} variant="bar" />
   </div>
 </article>

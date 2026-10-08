@@ -29,7 +29,7 @@ Cambios de datos, nuevas páginas, analítica, y rediseño profundo de "¿Qué e
 | Colores de rama  | Solo en el punto del chip (sin fondos de color), como hoy                                                                                                                 |
 | Mapa             | OSM estándar, desaturado en claro y gris en oscuro, como hoy; pines SVG actuales + etiqueta con el número del grupo a partir de zoom 12                                   |
 | Interacción      | Clic en pin o en resultado → ficha resumida (popup en escritorio; tarjeta en la hoja en móvil). "Ver ficha" es la única vía a la página del grupo                         |
-| Página del grupo | Se mantiene; en móvil gana una barra de contacto fija abajo                                                                                                               |
+| Página del grupo | Se mantiene; en móvil el contacto va antes que el mapa (la barra fija de la primera versión se retiró el 2026-10-07)                                                      |
 | Sin JS           | La portada se renderiza como columna estática (búsqueda inerte + lista); el layout de mapa se activa con la clase `js` en `<html>`                                        |
 
 ## 3. Portada en escritorio (≥ 1024 px)
@@ -100,7 +100,7 @@ Cambios de datos, nuevas páginas, analítica, y rediseño profundo de "¿Qué e
 
 Se mantiene la estructura actual con dos ajustes:
 
-- **Móvil:** barra de acciones fija abajo (`position: sticky; bottom: 0`), con el contacto principal lleno (WhatsApp si existe; si no, correo) y "Cómo llegar" al lado. El resto de acciones sigue en la sección "Contacto".
+- **Móvil:** la sección "Contacto" va justo después de los datos (reuniones, dirección, ramas) y antes del mini mapa, así las acciones quedan a la vista casi sin scroll. _Cambio del 2026-10-07:_ la primera versión tenía además una barra fija abajo (`position: sticky; bottom: 0`) con el contacto principal y "Cómo llegar"; se retiró porque la ficha apenas hace scroll y la barra duplicaba botones ya visibles.
 - **Escritorio:** sin cambios de estructura; se alinean tamaños y espaciados con el panel (mismos radios, mismas píldoras).
 
 ## 6. Sin JavaScript y accesibilidad
