@@ -177,7 +177,7 @@ export default function GroupMap({
 
   const focusPending = () => focusRequest !== null && handledFocus.current !== focusRequest.nonce;
 
-  const fitToResults = () => {
+  const fitToResults = ({ allowAnimation = true } = {}) => {
     const L = leaflet.current;
     const m = map.current;
     if (!L || !m || results.length === 0) return;
@@ -201,7 +201,9 @@ export default function GroupMap({
     if (focusPending()) return;
     const p = fitPaddingRef.current;
     // El primer encuadre no se anima: una animación en curso descartaría el siguiente (p. ej. "Cerca de mí").
-    const animate = fitted.current && !prefersReducedMotion();
+    // Los reencuadres por cambio de relleno tampoco: Leaflet oculta las teselas nuevas mientras anima
+    // el zoom, y eso retrasaba el primer pintado (LCP) justo después de cargar.
+    const animate = allowAnimation && fitted.current && !prefersReducedMotion();
     fitted.current = true;
     m.fitBounds(bounds, {
       paddingTopLeft: p.topLeft,
@@ -248,7 +250,7 @@ export default function GroupMap({
       paddingSeen.current = true;
       return;
     }
-    if (activeIdRef.current === null) fitToResults();
+    if (activeIdRef.current === null) fitToResults({ allowAnimation: false });
   }, [
     ready,
     fitPadding.topLeft[0],
