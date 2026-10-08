@@ -59,12 +59,61 @@ function preloadFinderChunks() {
   };
 }
 
+// Sitemap: hreflang es-CO/en/x-default y lastmod de las fichas. Réplica mínima de
+// `langFromPath`/`alternatePath` de src/i18n/routes.ts (la config no resuelve el alias "@/").
+const SITE = "https://buscador.vallescout.org.co";
+const grupos = JSON.parse(readFileSync(new URL("./src/data/grupos.json", import.meta.url), "utf8"));
+const actualizadoPorRuta = new Map(
+  grupos.map((g) => {
+    const slug = `${g.id}-${g.nombre
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")}`;
+    return [`/grupos/${slug}/`, `${g.actualizado}-01`];
+  }),
+);
+const PAGES = {
+  es: ["/", "/que-es-ser-scout/"],
+  en: ["/en/", "/en/what-is-scouting/"],
+};
+function sitemapAlternates(path) {
+  const isEn = path === "/en" || path.startsWith("/en/");
+  let es;
+  let en;
+  if (isEn) {
+    en = path;
+    es = path.startsWith("/en/groups/") ? path.replace("/en/groups/", "/grupos/") : undefined;
+    es ??= PAGES.es[PAGES.en.indexOf(path)] ?? "/";
+  } else {
+    es = path;
+    en = path.startsWith("/grupos/") ? path.replace("/grupos/", "/en/groups/") : undefined;
+    en ??= PAGES.en[PAGES.es.indexOf(path)] ?? "/en/";
+  }
+  return { es, en };
+}
+
 export default defineConfig({
   site: "https://buscador.vallescout.org.co",
   trailingSlash: "always",
   integrations: [
     preact(),
-    sitemap({ filter: (page) => !page.includes("/404") && !page.includes("/og/") }),
+    sitemap({
+      filter: (page) => !page.includes("/404") && !page.includes("/og/"),
+      serialize(item) {
+        const path = new URL(item.url).pathname;
+        const { es, en } = sitemapAlternates(path);
+        item.links = [
+          { url: SITE + es, lang: "es-CO" },
+          { url: SITE + en, lang: "en" },
+          { url: SITE + es, lang: "x-default" },
+        ];
+        const lastmod = actualizadoPorRuta.get(es);
+        if (lastmod) item.lastmod = lastmod;
+        return item;
+      },
+    }),
     preloadFinderChunks(),
   ],
   security: {
