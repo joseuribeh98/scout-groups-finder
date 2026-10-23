@@ -5,6 +5,7 @@ import Header from "@/components/Header.astro";
 import { LOCALE, type Lang } from "@/i18n/lang";
 import { alternatePath } from "@/i18n/routes";
 import { translator } from "@/i18n/ui";
+import { inject } from "@vercel/analytics";
 
 interface Props {
   lang: Lang;
@@ -42,6 +43,8 @@ const enPath = lang === "en" ? path : alternatePath(path, "en");
 const ldJson = (Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : []).map((item) =>
   JSON.stringify(item).replace(/</g, "\\u003c"),
 );
+
+inject();
 ---
 
 <!doctype html>
